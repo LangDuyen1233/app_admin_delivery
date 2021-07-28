@@ -79,7 +79,8 @@ class Body extends StatelessWidget {
                                   width: 0.5, color: Colors.black12))),
                     ),
                   ),
-                  ChooseFood()
+                  //cần bật lại nha nha
+                  // ChooseFood()
                 ],
               ))
             ],

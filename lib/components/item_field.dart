@@ -3,27 +3,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ItemField extends StatelessWidget {
+  final TextEditingController controller;
+  final FormFieldValidator<String> validator;
+  final TextInputType type;
   final String hintText;
+  final ValueChanged<String> onChanged;
 
-  const ItemField({Key key, this.hintText}) : super(key: key);
+  const ItemField(
+      {Key key, this.hintText, this.controller, this.validator, this.type, this.onChanged})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          // color: defaulColorThem,
-          border:
-              Border(bottom: BorderSide(width: 0.5, color: Colors.black12))),
+      color: Colors.white,
+      margin: EdgeInsets.only(top: 5.h, left: 10.w, right: 10.w),
       width: MediaQuery.of(context).size.width,
-      child: TextField(
-          style: TextStyle(
-              fontSize: 16.0.sp,
-              color: Colors.black
-          ),
+      child: TextFormField(
+        onChanged: onChanged,
+        validator: validator,
+        controller: controller,
+        keyboardType: type,
+        style: TextStyle(fontSize: 16.0.sp, color: Colors.black),
         decoration: InputDecoration(
-          contentPadding: EdgeInsets.only(top:20.w,bottom: 20,left: 12,right: 15),
+          fillColor: Colors.white,
+          contentPadding:
+              EdgeInsets.only(top: 20.h, bottom: 20.h, left: 12.w, right: 15.w),
           hintText: hintText,
-          border: InputBorder.none,
+          // border: InputBorder.none,
+          border: new OutlineInputBorder(
+            borderRadius: new BorderRadius.circular(5.0.w),
+            borderSide: const BorderSide(color: Colors.black12, width: 0.1),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black12, width: 0.7),
+          ),
         ),
       ),
     );

@@ -7,8 +7,9 @@ class DiscountController extends GetxController {
   static DiscountController get to => Get.find<DiscountController>();
   DateTime selectedDate = DateTime.now();
 
-  String startDates = "Select Date";
-  String endDates = "Select Date";
+  String startDates = "Chọn ngày";
+  String endDates = "Chọn ngày";
+  String dob ="Chọn ngày";
 
   selectStartDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -20,7 +21,7 @@ class DiscountController extends GetxController {
       print('vo dday ah');
       print(picked);
       selectedDate = picked;
-      startDates = DateFormat('dd-MM-yyyy').format(picked);
+      startDates = DateFormat('yyyy-MM-dd').format(picked);
       print('vo dday ah ' + selectedDate.toString());
     }
     update();
@@ -36,7 +37,23 @@ class DiscountController extends GetxController {
       print('vo dday ah');
       print(picked);
       selectedDate = picked;
-      endDates = DateFormat('dd-MM-yyyy').format(picked);
+      endDates = DateFormat('yyyy-MM-dd').format(picked);
+      print('vo dday ah ' + selectedDate.toString());
+    }
+    update();
+  }
+
+  selectDateDob(BuildContext context) async{
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != selectedDate) {
+      print('vo dday ah');
+      print(picked);
+      selectedDate = picked;
+      dob = DateFormat('yyyy-MM-dd').format(picked);
       print('vo dday ah ' + selectedDate.toString());
     }
     update();
@@ -48,33 +65,26 @@ class DiscountController extends GetxController {
   String range = '';
   String rangeCount = '';
 
-  // void checkMulti(DateRangePickerSelectionChangedArgs args) {
-  //   if (DateFormat('dd/MM/yyyy').format(args.value.startDates) !=
-  //       DateFormat('dd/MM/yyyy')
-  //           .format(args.value.endDates ?? args.value.startDates))
-  //     selectedDateMultiPicker = args.value.toString();
-  // }
-
   void onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {
     if (args.value is PickerDateRange) {
       if (args.value.startDate ==
           (args.value.endDate ?? args.value.startDate)) {
         print('bang');
         range =
-            DateFormat('dd/MM/yyyy').format(args.value.startDate).toString();
+            DateFormat('yyyy-MM-dd').format(args.value.startDate).toString();
       } else {
         print('khac');
         range =
-            DateFormat('dd/MM/yyyy').format(args.value.startDate).toString() +
+            DateFormat('yyyy-MM-dd').format(args.value.startDate).toString() +
                 ' - ' +
-                DateFormat('dd/MM/yyyy')
+                DateFormat('yyyy-MM-dd')
                     .format(args.value.endDate ?? args.value.startDate)
                     .toString();
       }
     } else if (args.value is DateTime) {
       print('dgasj');
       selectedDateMultiPicker =
-          DateFormat('dd/MM/yyyy').format(args.value.startDates).toString();
+          DateFormat('yyyy-MM-dd').format(args.value.startDates).toString();
     } else if (args.value is List<DateTime>) {
       dateCount = args.value.length.toString();
     } else {

@@ -6,65 +6,100 @@ import 'package:get/get.dart';
 
 import 'add_topping.dart';
 
-class ChooseProducts extends StatelessWidget {
+class ChooseProducts extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: Body(),
-    );
-  }
-
-  AppBar buildAppBar() {
-    return AppBar(
-      centerTitle: true,
-      elevation: 0,
-      title: Text("Chọn loại sản phẩm"),
-    );
+  State<StatefulWidget> createState() {
+    return _ChooseProducts();
   }
 }
 
-class Body extends StatelessWidget {
+class _ChooseProducts extends State<ChooseProducts> {
+  int categoryId;
+
+  @override
+  void initState() {
+    categoryId = Get.arguments['category_id'];
+    print("choos $categoryId");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFFEEEEEE),
-      height: 834.h,
-      width: double.infinity,
-      child: Column(
-        children: [
-          ChooseItem(
-            icon: Icons.food_bank,
-            name: 'Đồ ăn',
-            content: 'Thêm một món ăn mới vào danh sách món ăn của quán',
-            page: AddProduct(),
-          ),
-          ChooseItem(
-            icon: Icons.icecream,
-            name: 'Topping',
-            content: 'Thêm topping mới cho món ăn',
-            page: AddToppings(),
-          )
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        title: Text("Chọn loại sản phẩm"),
+      ),
+      body: Container(
+        color: Color(0xFFEEEEEE),
+        height: 834.h,
+        width: double.infinity,
+        child: Column(
+          children: [
+            ChooseItem(
+              icon: Icons.food_bank,
+              name: 'Đồ ăn',
+              content: 'Thêm một món ăn mới vào danh sách món ăn của quán',
+              page: AddProduct(),
+              category_id: categoryId,
+            ),
+            ChooseItem(
+              icon: Icons.icecream,
+              name: 'Topping',
+              content: 'Thêm topping mới cho món ăn',
+              page: AddToppings(),
+              category_id: categoryId,
+            )
+          ],
+        ),
       ),
     );
   }
 }
+// class ChooseItem extends StatefulWidget {
+//   final IconData icon;
+//   final String name;
+//   final String content;
+//   final Widget page;
+//
+//   ChooseItem({Key key, this.icon, this.name, this.content, this.page})
+//       : super(key: key);
+//
+//   @override
+//   State<StatefulWidget> createState() {
+//     return _ChooseItem(
+//         key: key, icon: icon, name: name, content: content, page: page);
+//   }
+// }
 
 class ChooseItem extends StatelessWidget {
   final IconData icon;
   final String name;
   final String content;
   final Widget page;
+  final int category_id;
 
-  const ChooseItem({Key key, this.icon, this.name, this.content, this.page})
-      : super(key: key);
+  ChooseItem(
+      {Key key,
+      this.icon,
+      this.name,
+      this.content,
+      this.page,
+      this.category_id});
+
+  // @override
+  // void initState() {
+  //   category_id = Get.arguments['category_id'];
+  //   print('bof dom $category_id');
+  // }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(page);
+        print(category_id);
+        Get.to(page, arguments: {'category_id': category_id});
       },
       child: Container(
         margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),
@@ -127,7 +162,7 @@ class ChooseItem extends StatelessWidget {
                   alignment: Alignment.center,
                   child: IconButton(
                       onPressed: () {
-                        Get.to(page);
+                        Get.to(page, arguments: {'category_id': category_id});
                       },
                       icon: Icon(
                         Icons.arrow_forward_ios,

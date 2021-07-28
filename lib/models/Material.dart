@@ -1,52 +1,76 @@
-class Materials {
-  final String name;
-  final double quantity;
-  final String image;
+class ListMaterialsJson {
+  List<Materials> materials;
 
-  Materials({this.name, this.quantity, this.image});
+  ListMaterialsJson({this.materials});
+
+  ListMaterialsJson.fromJson(Map<String, dynamic> json) {
+    if (json['materials'] != null) {
+      materials = new List<Materials>();
+      json['materials'].forEach((v) {
+        materials.add(new Materials.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.materials != null) {
+      data['materials'] = this.materials.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
 }
 
-List<Materials> list = [
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-  Materials(
-    name: 'Gao',
-    image:
-        'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-    quantity: 5,
-  ),
-];
+class MaterialsJson {
+  Materials materials;
+
+  MaterialsJson({this.materials});
+
+  MaterialsJson.fromJson(Map<String, dynamic> json) {
+    materials = json['materials'] != null
+        ? new Materials.fromJson(json['materials'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.materials != null) {
+      data['materials'] = this.materials.toJson();
+    }
+    return data;
+  }
+}
+
+class Materials {
+  int id;
+  String name;
+  int quantity;
+  String image;
+  int restaurantId;
+
+  Materials({
+    this.id,
+    this.name,
+    this.quantity,
+    this.image,
+    this.restaurantId,
+  });
+
+  Materials.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    quantity = json['quantity'];
+    image = json['image'];
+    restaurantId = json['restaurant_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['quantity'] = this.quantity;
+    data['image'] = this.image;
+    data['restaurant_id'] = this.restaurantId;
+    return data;
+  }
+}

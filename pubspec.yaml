@@ -35,7 +35,7 @@ dependencies:
   #  getx
   get: ^4.1.4
   dialog: ^0.7.2+1
-  http: ^0.13.3
+
   image_picker: ^0.7.5+2
   multi_image_picker2: ^5.0.0
   animated_text_kit: ^2.4.0
@@ -44,10 +44,13 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   syncfusion_flutter_datepicker: ^19.1.66-beta
   multi_select_flutter: ^4.0.0
-#  address_picker_vn
+  #  address_picker_vn
   address_picker_vn: ^0.3.2
-#  chart
+  #  chart
   fl_chart: ^0.36.1
+  flutter_easyloading: ^3.0.0
+  shared_preferences: ^2.0.6
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_test:

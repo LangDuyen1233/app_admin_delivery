@@ -14,8 +14,7 @@ class ItemProfile extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(left: 15.w,right: 10.w),
       decoration: BoxDecoration(
-          border:
-              Border(bottom: BorderSide(width: 0.3, color: Colors.black12))),
+          border: Border(bottom: BorderSide(width: 0.3, color: Colors.black12))),
       width: MediaQuery.of(context).size.width,
       child: Row(
 
