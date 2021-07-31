@@ -1,3 +1,5 @@
+import 'package:app_delivery/screen/admin_order/tab_received/widget/delivered_screen.dart';
+import 'package:app_delivery/screen/admin_order/tab_received/widget/delivering_screen.dart';
 import 'package:app_delivery/screen/admin_order/tab_received/widget/prepare_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,12 +74,8 @@ class TabReceivedScreen extends StatelessWidget {
               child: Container(
                 child: TabBarView(children: [
                   PrepareScreen(),
-                  Container(
-                    child: Text("Articles Body"),
-                  ),
-                  Container(
-                    child: Text("User Body"),
-                  ),
+                  DeliveringScreen(),
+                  DeliveredScreen(),
                 ]),
               ),
             )

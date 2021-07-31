@@ -1,3 +1,4 @@
+import 'package:app_delivery/models/Order.dart';
 import 'package:app_delivery/models/Restaurant.dart';
 import 'package:app_delivery/models/Topping.dart';
 
@@ -60,7 +61,7 @@ class Food {
   List<Image> image;
   List<Topping> topping;
   PivotFoodTopping pivot;
-
+  PivotOrderFood pivotOrder;
 
   Food(
       {this.id,
@@ -75,7 +76,9 @@ class Food {
       this.category,
       this.restaurant,
       this.image,
-      this.topping,this.pivot});
+      this.topping,
+      this.pivot,
+      this.pivotOrder});
 
   Food.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -105,7 +108,12 @@ class Food {
         topping.add(new Topping.fromJson(v));
       });
     }
-    pivot = json['pivot'] != null ? new PivotFoodTopping.fromJson(json['pivot']) : null;
+    pivot = json['pivot'] != null
+        ? new PivotFoodTopping.fromJson(json['pivot'])
+        : null;
+    pivotOrder = json['pivot'] != null
+        ? new PivotOrderFood.fromJson(json['pivot'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -133,6 +141,9 @@ class Food {
     }
     if (this.pivot != null) {
       data['pivot'] = this.pivot.toJson();
+    }
+    if (this.pivotOrder != null) {
+      data['pivot'] = this.pivotOrder.toJson();
     }
     return data;
   }

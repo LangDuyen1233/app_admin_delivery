@@ -30,57 +30,28 @@ class HomProduct extends GetView<CategoryController> {
             height: 834.h,
             width: double.infinity,
             padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 10.h),
-            child: Obx(
-              () => GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 20.w,
-                    childAspectRatio: 80.w / 60.h,
-                    mainAxisSpacing: 10.h),
-                itemCount: controller.category.length,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return CategoriesItem(
-                    item: controller.category[index],
-                  );
-                },
+            child: RefreshIndicator(
+              onRefresh: () => controller.fetchCategory(),
+              child: Obx(
+                () => GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 20.w,
+                      childAspectRatio: 80.w / 60.h,
+                      mainAxisSpacing: 10.h),
+                  itemCount: controller.category.length,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return CategoriesItem(
+                      item: controller.category[index],
+                    );
+                  },
+                ),
               ),
-            )
-            // ));
-            // resizeToAvoidBottomInset: false,
-            ));
+            )));
   }
 }
-
-// class Body extends GetView<CategoryController> {
-//   CategoryController controller = Get.put(CategoryController());
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       color: Color(0xFFEEEEEE),
-//       height: 834.h,
-//       width: double.infinity,
-//       padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 10.h),
-//       child: Obx(
-//         () => GridView.builder(
-//           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//               crossAxisCount: 2,
-//               crossAxisSpacing: 20.w,
-//               childAspectRatio: 80.w / 60.h,
-//               mainAxisSpacing: 10.h),
-//           itemCount: controller.category.length,
-//           itemBuilder: (BuildContext context, int index) {
-//             return CategoriesItem(
-//               item: controller.category[index],
-//             );
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class CategoriesItem extends StatelessWidget {
   final Category item;
@@ -135,10 +106,6 @@ class CategoriesItem extends StatelessWidget {
                           fontSize: 18.sp, fontWeight: FontWeight.w600),
                     ),
                   ),
-                  // Text(
-                  //   'Số lượng: ' + 'item.quantity.toString()',
-                  //   style: TextStyle(fontSize: 15.sp),
-                  // ),
                 ],
               ),
             ),

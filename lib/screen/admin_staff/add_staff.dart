@@ -6,11 +6,10 @@ import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/controllers/discount_controller.dart';
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Staff.dart';
-import 'package:app_delivery/screen/admin_staff/staff_screen.dart';
 import 'package:app_delivery/widgets/form_add_widget.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -244,8 +243,6 @@ class ListImages extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(5)),
                               child: Image.file(
                                 controller.image,
-                                // width: 90.w,
-                                // height: 90.h,
                                 fit: BoxFit.cover,
                               ),
                             ),

@@ -2,12 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/models/Order.dart';
-import 'package:app_delivery/models/Staff.dart';
-import 'package:app_delivery/screen/admin_order/tab_received/widget/empty_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -15,18 +11,18 @@ import 'package:http/http.dart' as http;
 
 import '../../../../apis.dart';
 import '../../../../utils.dart';
+import 'empty_card.dart';
 
-class PrepareScreen extends StatefulWidget {
+class DeliveredScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _PrepareScreen();
+    return _DeliveredScreen();
   }
 }
 
 RxList<Order> listOrder;
-RxList<Staff> staff;
 
-class _PrepareScreen extends State<PrepareScreen> {
+class _DeliveredScreen extends State<DeliveredScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -128,6 +124,110 @@ class _PrepareScreen extends State<PrepareScreen> {
                                     ],
                                   ),
                                 ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 0.5,
+                                          color: Colors.grey[300])))),
+                          Container(
+                            height: 50.h,
+                            margin: EdgeInsets.only(left: 15.h, right: 15.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Icon(
+                                      Icons.motorcycle,
+                                      color: Colors.blue,
+                                      size: 25.sp,
+                                    ),
+                                    SizedBox(
+                                      width: 5.w,
+                                    ),
+                                    listOrder[index].userDeliveryId == null
+                                        ? Text(
+                                            'Giao hàng bởi quán',
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          )
+                                        : Text(
+                                            'Giao hàng bởi sinh viên',
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                  ],
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.navigate_next),
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                              title: Text(
+                                                  'Thông tin người giao hàng'),
+                                              content: listOrder[index]
+                                                          .userDeliveryId ==
+                                                      null
+                                                  ? SingleChildScrollView(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                              "Tên người giao: " +
+                                                                  listOrder[
+                                                                          index]
+                                                                      .staff
+                                                                      .name),
+                                                          SizedBox(
+                                                            height: 10.h,
+                                                          ),
+                                                          Text(
+                                                              "Số điện thoại: " +
+                                                                  listOrder[
+                                                                          index]
+                                                                      .staff
+                                                                      .phone),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : SingleChildScrollView(
+                                                      child: Column(
+                                                        children: [
+                                                          Text("Tên người giao: " +
+                                                              listOrder[index]
+                                                                  .user
+                                                                  .username),
+                                                          SizedBox(
+                                                            height: 10.h,
+                                                          ),
+                                                          Text(
+                                                              "Số điện thoại: " +
+                                                                  listOrder[
+                                                                          index]
+                                                                      .user
+                                                                      .phone),
+                                                        ],
+                                                      ),
+                                                    ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () => Get.back(),
+                                                  child: const Text('Ok'),
+                                                ),
+                                              ]);
+                                        });
+                                  },
+                                )
                               ],
                             ),
                           ),
@@ -292,149 +392,6 @@ class _PrepareScreen extends State<PrepareScreen> {
                               ],
                             ),
                           ),
-                          Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 0.5,
-                                          color: Colors.grey[300])))),
-                          Container(
-                            height: 55.h,
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 45.h,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                    title: Text(
-                                                        'Chọn người giao hàng của quán'),
-                                                    content: StatefulBuilder(
-                                                      builder:
-                                                          (BuildContext context,
-                                                              StateSetter
-                                                                  setState) {
-                                                        return SingleChildScrollView(
-                                                          child: Container(
-                                                              width: double
-                                                                  .maxFinite,
-                                                              child: Column(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  children: <
-                                                                      Widget>[
-                                                                    ConstrainedBox(
-                                                                      constraints:
-                                                                          BoxConstraints(
-                                                                        maxHeight:
-                                                                            MediaQuery.of(context).size.height *
-                                                                                0.4,
-                                                                      ),
-                                                                      child: ListView.builder(
-                                                                          shrinkWrap: true,
-                                                                          itemCount: staff.length,
-                                                                          itemBuilder: (BuildContext context, int index) {
-                                                                            return RadioListTile(
-                                                                                title: Text(staff[index].name),
-                                                                                value: staff[index].id,
-                                                                                groupValue: selected,
-                                                                                onChanged: (value) {
-                                                                                  setState(() {
-                                                                                    selected = value;
-                                                                                    print(selected);
-                                                                                  });
-                                                                                });
-                                                                          }),
-                                                                    ),
-                                                                  ])),
-                                                        );
-                                                      },
-                                                    ),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Get.back(),
-                                                        child:
-                                                            const Text('Hủy'),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          await deliveryByRestaurant(
-                                                              listOrder[index]
-                                                                  .id);
-                                                          setState(() {
-                                                            listOrder.removeAt(
-                                                                index);
-                                                            listOrder.refresh();
-                                                            Get.back();
-                                                            showToast(
-                                                                "Xác nhận đơn hàng thành công");
-                                                          });
-                                                        },
-                                                        child: const Text(
-                                                          'Xác nhận',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.red),
-                                                        ),
-                                                      ),
-                                                    ]);
-                                              });
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: 190.w,
-                                          child: Text('Giao bởi quán',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.blue)),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    right: BorderSide(
-                                                        width: 1,
-                                                        color: Colors.grey)))),
-                                      ),
-                                      InkWell(
-                                        onTap: () async {
-                                          await deliveryByUser(
-                                              listOrder[index].id);
-                                          setState(() {
-                                            listOrder.removeAt(index);
-                                            listOrder.refresh();
-                                            Get.back();
-                                            showToast(
-                                                "Báo cho tài xế thành công");
-                                          });
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          width: 190.w,
-                                          child: Text(
-                                            'Báo cho tài xế',
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.blue),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
                         ],
                       ),
                     ),
@@ -448,9 +405,6 @@ class _PrepareScreen extends State<PrepareScreen> {
   void initState() {
     listOrder = new RxList<Order>();
     fetch();
-    staff = new RxList<Staff>();
-    fetchStaff();
-    // listStaff=
     super.initState();
   }
 
@@ -466,9 +420,9 @@ class _PrepareScreen extends State<PrepareScreen> {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getPrepareCardUrl);
+      print(Apis.getDeliveredCardUrl);
       http.Response response = await http.get(
-        Uri.parse(Apis.getPrepareCardUrl),
+        Uri.parse(Apis.getDeliveredCardUrl),
         headers: <String, String>{
           'Accept': 'application/json',
           'Authorization': "Bearer $token",
@@ -492,105 +446,5 @@ class _PrepareScreen extends State<PrepareScreen> {
       print(e.toString());
     }
     return null;
-  }
-
-  int selected;
-
-  Future<void> fetchStaff() async {
-    var list = await getStaff();
-    if (list != null) {
-      staff.assignAll(list);
-      staff.refresh();
-    }
-  }
-
-  Future<List<Staff>> getStaff() async {
-    List<Staff> list;
-    String token = (await getToken());
-    try {
-      print(Apis.getStaffUrl);
-      http.Response response = await http.get(
-        Uri.parse(Apis.getStaffUrl),
-        headers: <String, String>{
-          'Accept': 'application/json',
-          'Authorization': "Bearer $token",
-        },
-      );
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
-        list = ListStaffJson.fromJson(parsedJson).staff;
-        print(list);
-        return list;
-      }
-      if (response.statusCode == 401) {
-        showToast("Loading faild");
-      }
-    } on TimeoutException catch (e) {
-      showError(e.toString());
-    } on SocketException catch (e) {
-      showError(e.toString());
-      print(e.toString());
-    }
-    return null;
-  }
-
-  Future<Order> deliveryByRestaurant(int id) async {
-    String token = await getToken();
-    print(token);
-    print('jwehfjwejfwe $selected');
-    try {
-      EasyLoading.show(status: 'Loading...');
-      http.Response response = await http.post(
-        Uri.parse(Apis.deliveryByRestaurantUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': "Bearer $token",
-        },
-        body: jsonEncode(
-            <String, dynamic>{'orderId': id, 'staffId': selected.toString()}),
-      );
-
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        EasyLoading.dismiss();
-        var parsedJson = jsonDecode(response.body);
-        Order order = Order.fromJson(parsedJson['order']);
-        return order;
-      }
-    } on TimeoutException catch (e) {
-      showError(e.toString());
-    } on SocketException catch (e) {
-      showError(e.toString());
-    }
-  }
-
-  Future<Order> deliveryByUser(int id) async {
-    String token = await getToken();
-    print(token);
-    try {
-      EasyLoading.show(status: 'Loading...');
-      http.Response response = await http.post(
-        Uri.parse(Apis.deliveryByUserUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': "Bearer $token",
-        },
-        body: jsonEncode(<String, dynamic>{'orderId': id}),
-      );
-
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        EasyLoading.dismiss();
-        var parsedJson = jsonDecode(response.body);
-        Order order = Order.fromJson(parsedJson['order']);
-        return order;
-      }
-    } on TimeoutException catch (e) {
-      showError(e.toString());
-    } on SocketException catch (e) {
-      showError(e.toString());
-    }
   }
 }

@@ -43,11 +43,6 @@ class CardBody extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Container(
-                //     decoration: BoxDecoration(
-                //         border: Border(
-                //             bottom:
-                //             BorderSide(width: 0.5, color: Colors.grey[300])))),
                 SizedBox(
                   height: 10.h,
                 ),
@@ -78,12 +73,6 @@ class CardBody extends StatelessWidget {
                             style:
                                 TextStyle(fontSize: 15.sp, color: Colors.grey),
                           ),
-                          // Text(
-                          //   'Size ' + 'map.values.elementAt(i).size.name',
-                          //   style: TextStyle(
-                          //     fontSize: 16.sp,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -126,12 +115,6 @@ class CardBody extends StatelessWidget {
                             style:
                                 TextStyle(fontSize: 15.sp, color: Colors.grey),
                           ),
-                          // Text(
-                          //   'Size ' + 'map.values.elementAt(i).size.name',
-                          //   style: TextStyle(
-                          //     fontSize: 16.sp,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),

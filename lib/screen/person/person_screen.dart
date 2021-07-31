@@ -195,6 +195,7 @@ class _Person extends State<Person> {
 
   @override
   void initState() {
+    // lu.avatar= null;
     fetchUsers();
     super.initState();
   }

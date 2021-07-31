@@ -57,21 +57,6 @@ class _ChooseProducts extends State<ChooseProducts> {
     );
   }
 }
-// class ChooseItem extends StatefulWidget {
-//   final IconData icon;
-//   final String name;
-//   final String content;
-//   final Widget page;
-//
-//   ChooseItem({Key key, this.icon, this.name, this.content, this.page})
-//       : super(key: key);
-//
-//   @override
-//   State<StatefulWidget> createState() {
-//     return _ChooseItem(
-//         key: key, icon: icon, name: name, content: content, page: page);
-//   }
-// }
 
 class ChooseItem extends StatelessWidget {
   final IconData icon;
@@ -87,12 +72,6 @@ class ChooseItem extends StatelessWidget {
       this.content,
       this.page,
       this.category_id});
-
-  // @override
-  // void initState() {
-  //   category_id = Get.arguments['category_id'];
-  //   print('bof dom $category_id');
-  // }
 
   @override
   Widget build(BuildContext context) {

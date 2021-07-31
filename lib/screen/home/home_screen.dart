@@ -17,6 +17,7 @@ class Home extends StatelessWidget {
         preferredSize: Size.fromHeight(270.h),
         child: AppBar(
           title: Container(
+            padding: EdgeInsets.only(top: 12.h),
             height: 70.h,
             child: Row(
               children: [

@@ -49,6 +49,7 @@ class Topping {
   int status;
   PivotFoodTopping pivot;
   List<Food> food;
+  PivotOrderTopping pivotOrderTopping;
 
   Topping(
       {this.id, this.name, this.price, this.status, this.pivot, this.food});
@@ -65,6 +66,8 @@ class Topping {
         food.add(new Food.fromJson(v));
       });
     }
+    pivotOrderTopping = json['pivot'] != null ? new PivotOrderTopping.fromJson(json['pivot']) : null;
+
   }
 
   Map<String, dynamic> toJson() {
@@ -79,7 +82,9 @@ class Topping {
     if (this.food != null) {
       data['food'] = this.food.map((v) => v.toJson()).toList();
     }
-
+    if (this.pivotOrderTopping != null) {
+      data['pivot'] = this.pivotOrderTopping.toJson();
+    }
     return data;
   }
 }
@@ -99,6 +104,24 @@ class PivotFoodTopping {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['topping_id'] = this.toppingId;
     data['food_id'] = this.foodId;
+    return data;
+  }
+}
+class PivotOrderTopping {
+  int foodOrdersId;
+  int toppingId;
+
+  PivotOrderTopping({this.foodOrdersId, this.toppingId});
+
+  PivotOrderTopping.fromJson(Map<String, dynamic> json) {
+    foodOrdersId = json['food_orders_id'];
+    toppingId = json['topping_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['food_orders_id'] = this.foodOrdersId;
+    data['topping_id'] = this.toppingId;
     return data;
   }
 }

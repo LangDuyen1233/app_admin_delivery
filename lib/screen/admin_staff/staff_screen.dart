@@ -2,10 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:app_delivery/controllers/discount_controller.dart';
-import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Staff.dart';
-import 'package:app_delivery/models/User.dart';
 import 'package:app_delivery/screen/admin_staff/edit_staff.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -16,7 +13,6 @@ import 'package:http/http.dart' as http;
 
 import '../../apis.dart';
 import '../../utils.dart';
-import '../constants.dart';
 import 'add_staff.dart';
 
 class StaffScreen extends StatefulWidget {

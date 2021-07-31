@@ -56,4 +56,31 @@ class Apis {
   static String changeDobUrl = '$root/changeDob';
   static String changeGenderUrl = '$root/changeGender';
   static String changeAvatarUrl = '$root/changeAvatar';
+
+  //admin restaurant
+  static String getRestaurantUrl = '$root/getRestaurant';
+  static String changeImageRestaurantUrl = '$root/changeImageRestaurant';
+
+  //admin discount
+  static String getDiscountUrl = '$root/getDiscount';
+  static String addDiscountVoucherUrl = '$root/addDiscountVoucher';
+  static String editDiscountVoucherUrl = '$root/editDiscountVoucher';
+  static String updateDiscountVoucherUrl = '$root/updateDiscountVoucher';
+  static String deleteDiscountVoucherUrl = '$root/deleteDiscountVoucher';
+
+  //admin order
+  static String getNewCardUrl = '$root/getNewCard';
+  static String cancelOrderUrl = '$root/cancelOrder';
+  static String prepareOrderUrl = '$root/prepareOrder';
+  ////
+  static String getPrepareCardUrl = '$root/getPrepareCard';
+  static String deliveryByRestaurantUrl = '$root/deliveryByRestaurant';
+  static String deliveryByUserUrl = '$root/deliveryByUser';
+  ////
+  static String getDeliveringCardUrl = '$root/getDeliveringCard';
+  static String deliveredUrl = '$root/delivered';
+
+  static String getDeliveredCardUrl = '$root/getDeliveredCard';
+
+  static String getHistoryCardUrl = '$root/getHistoryCard';
 }
