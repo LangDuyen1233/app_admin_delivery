@@ -25,7 +25,6 @@ class AddProduct extends StatefulWidget {
 }
 
 String img;
-// String image;
 String validateImage;
 
 class _AddProduct extends State<AddProduct> {
@@ -99,7 +98,52 @@ class _AddProduct extends State<AddProduct> {
                         controller: ingredients,
                         type: TextInputType.text,
                       ),
-                      new ChooseTopping()
+                      SingleChildScrollView(
+                        child: Container(
+                          color: Colors.white,
+                          margin: EdgeInsets.only(
+                              top: 5.h, left: 10.w, right: 10.w),
+                          child: MultiSelectBottomSheetField<Topping>(
+                            key: _multiSelectKey,
+                            // initialValue: topping,
+                            initialChildSize: .7,
+                            maxChildSize: 0.95,
+                            title: Text("Danh sách topping"),
+                            buttonText: Text("Chọn topping áp dụng"),
+                            buttonIcon: Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.grey,
+                            ),
+                            decoration: BoxDecoration(),
+                            items: _items,
+                            searchable: true,
+                            validator: (values) {
+                              if (values == null || values.isEmpty) {
+                                return null;
+                              }
+                              return null;
+                            },
+                            onConfirm: (values) {
+                              setState(() {
+                                _selectedAnimals3 = values;
+                              });
+                              _multiSelectKey.currentState.validate();
+                            },
+                            chipDisplay: MultiSelectChipDisplay(
+                              onTap: (item) {
+                                setState(() {
+                                  _selectedAnimals3.remove(item);
+                                });
+                                _multiSelectKey.currentState.validate();
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -111,6 +155,13 @@ class _AddProduct extends State<AddProduct> {
     );
   }
 
+  List<Topping> _selectedAnimals3 = [];
+  static RxList<Topping> topping = new RxList<Topping>();
+  final _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+
+  // var _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+
+  final _multiSelectKey = GlobalKey<FormFieldState>();
   TextEditingController name;
   TextEditingController size;
   TextEditingController price;
@@ -135,9 +186,50 @@ class _AddProduct extends State<AddProduct> {
     weight = TextEditingController();
     ingredients = TextEditingController();
     toppingId = '';
-
+    fetchTopping();
     validateImage = '';
     super.initState();
+  }
+
+  Future<void> fetchTopping() async {
+    var listTopping = await getTopping();
+    if (listTopping != null) {
+      printInfo(info: listTopping.length.toString());
+      topping.assignAll(listTopping);
+      topping.refresh();
+    }
+  }
+
+  Future<List<Topping>> getTopping() async {
+    List<Topping> list;
+    String token = (await getToken());
+    try {
+      print(Apis.getToppingUrl);
+      http.Response response = await http.get(
+        Uri.parse(Apis.getToppingUrl),
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        print(parsedJson['topping']);
+        list = ListTopping.fromJson(parsedJson).topping;
+        print(list);
+        return list;
+      }
+      // if (response.statusCode == 401) {
+      //   showToast("Loading faild");
+      // }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+    return null;
   }
 
   void getCategory() async {
@@ -146,10 +238,7 @@ class _AddProduct extends State<AddProduct> {
 
   Future<void> addFood(BuildContext context) async {
     String token = await getToken();
-    print(token);
-    print('category $category_id');
     if (Form.of(context).validate()) {
-      print(img);
       String nameImage;
 
       int code = await uploadImage(controller.image, controller.imagePath);
@@ -163,7 +252,6 @@ class _AddProduct extends State<AddProduct> {
         try {
           EasyLoading.show(status: 'Loading...');
           List<Topping> tp = _selectedAnimals3;
-          // print(_selectedAnimals3[0].name);
           for (int i = 0; i < tp.length; i++) {
             if (i == tp.length - 1) {
               toppingId += tp[i].id.toString();
@@ -222,8 +310,6 @@ class _AddProduct extends State<AddProduct> {
       showToast('Vui lòng điền đầy đủ các trường');
     }
   }
-
-
 }
 
 class ListImages extends StatelessWidget {
@@ -288,17 +374,16 @@ class ListImages extends StatelessWidget {
   }
 }
 
-List<Topping> _selectedAnimals3;
-
 class ChooseTopping extends StatefulWidget {
   @override
   _ChooseTopping createState() => _ChooseTopping();
 }
 
 class _ChooseTopping extends State<ChooseTopping> {
+  List<Topping> _selectedAnimals3;
   static RxList<Topping> topping = new RxList<Topping>();
 
-  var _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+  // var _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
 
   final _multiSelectKey = GlobalKey<FormFieldState>();
 
@@ -306,7 +391,6 @@ class _ChooseTopping extends State<ChooseTopping> {
   void initState() {
     fetchTopping();
     _selectedAnimals3 = [];
-    // print(_items);
     super.initState();
   }
 
@@ -333,20 +417,20 @@ class _ChooseTopping extends State<ChooseTopping> {
                 .map((f) => MultiSelectItem<Topping>(f, f.name))
                 .toList(),
             searchable: true,
-            // validator: (values) {
-            //   if (values == null || values.isEmpty) {
-            //     return null;
-            //   }
-            //   List<String> names = values.map((e) => e.name).toList();
-            //   if (names.contains("Frog")) {
-            //     return "Frogs are weird!";
-            //   }
-            //   return null;
-            // },
-
+            validator: (values) {
+              if (values == null || values.isEmpty) {
+                return null;
+              }
+              List<String> names = values.map((e) => e.name).toList();
+              if (names.contains("Frog")) {
+                return "Frogs are weird!";
+              }
+              return null;
+            },
             onConfirm: (values) {
               setState(() {
                 _selectedAnimals3 = values;
+                print(values);
               });
               _multiSelectKey.currentState.validate();
             },

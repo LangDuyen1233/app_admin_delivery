@@ -3,11 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/apis.dart';
+import 'package:app_delivery/models/User.dart';
+import 'package:app_delivery/screen/auth/login.dart';
 import 'package:app_delivery/screen/index.dart';
 import 'package:app_delivery/utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -103,5 +107,59 @@ class AuthController extends GetxController {
     } else {
       showToast("Vui lòng điền email và mật khẩu.");
     }
+  }
+
+  GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Rxn<User> _firebaseUser = Rxn<User>();
+
+  bool isUserSignedIn = false;
+
+  Future<User> google_SignIn() async {
+    User user;
+    bool isSignedIn = await googleSignIn.isSignedIn();
+
+    print(isSignedIn.toString());
+
+    if (isSignedIn) {
+      user = _auth.currentUser;
+      print(user.email);
+      print(user.toString());
+      Get.off(MyStatefulWidgetState());
+    } else {
+      final GoogleSignInAccount googleUser = (await googleSignIn.signIn());
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        UserCredential result = await _auth.signInWithCredential(credential);
+        user = result.user;
+        isUserSignedIn = await googleSignIn.isSignedIn();
+
+        print(user.displayName);
+        print(user.email);
+        if (user != null) {
+          String phone = user.phoneNumber;
+          if (phone == null) {
+            phone = '0';
+          }
+          print(phone);
+          Get.to(MyStatefulWidgetState());
+          // postRegisger(user.displayName, user.email, phone, user.photoURL);
+
+          return user;
+        } else {
+          Get.to(SignIn());
+        }
+      } else {
+        showToast('Đăng nhập thất bại!');
+      }
+    }
+    return null;
   }
 }

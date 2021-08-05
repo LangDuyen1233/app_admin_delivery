@@ -78,7 +78,8 @@ class ChooseItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         print(category_id);
-        Get.to(page, arguments: {'category_id': category_id});
+        // Get.to(page, arguments: {'category_id': category_id});
+        Get.off(page, arguments: {'category_id': category_id});
       },
       child: Container(
         margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),

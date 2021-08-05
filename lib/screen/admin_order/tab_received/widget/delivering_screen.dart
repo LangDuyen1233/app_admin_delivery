@@ -406,7 +406,7 @@ class _DeliveringScreen extends State<DeliveringScreen> {
                                   setState(() {
                                     listOrder.removeAt(index);
                                     listOrder.refresh();
-                                    Get.back();
+                                    // Get.back();
                                     showToast("Xác nhận đã giao thành công");
                                   });
                                 },

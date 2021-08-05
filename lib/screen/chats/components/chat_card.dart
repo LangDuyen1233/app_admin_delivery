@@ -81,4 +81,13 @@ class ChatCard extends StatelessWidget {
       ),
     );
   }
+
+  // FloatingActionButton: FloatingActionButton(
+  // onPressed: () {},
+  // backgroundColor: kPrimaryColor,
+  // child: Icon(
+  // Icons.person_add_alt_1,
+  // color: Colors.white,
+  // ),
+  // ),
 }

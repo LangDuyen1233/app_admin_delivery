@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:app_delivery/screen/auth/login.dart';
+import 'package:app_delivery/screen/index.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +24,28 @@ showToast(String s) {
 Future<String> getToken() async {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
   return _prefs.getString('token');
+}
+
+Future<String> getID() async {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  return _prefs.getString('id');
+}
+
+handleAuth() {
+  return StreamBuilder(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.hasData) {
+          return MyStatefulWidgetState();
+        } else {
+          return SignIn();
+        }
+      });
+}
+
+Future<void> saveToken(String token) async {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  await _prefs.setString('token', token);
 }
 
 Future<int> uploadImage(File file, String filename) async {

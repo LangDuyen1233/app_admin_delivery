@@ -27,7 +27,7 @@ class EditFood extends StatefulWidget {
 
 List<Topping> ltp;
 
-class _EditFood extends State<EditFood>  {
+class _EditFood extends State<EditFood> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -125,6 +125,8 @@ class _EditFood extends State<EditFood>  {
       },
     );
   }
+
+  final _multiSelectKey = GlobalKey<FormFieldState>();
 
   TextEditingController name;
   TextEditingController size;
@@ -226,9 +228,8 @@ class _EditFood extends State<EditFood>  {
   Future<void> updateFood(BuildContext context) async {
     String token = await getToken();
     print(token);
-    print('category $category_id');
+    print(selectedAnimals3);
     if (Form.of(context).validate()) {
-      print(img);
       String nameImage;
       if (f.image[0] != null) {
         if (controller.imagePath != null) {
@@ -244,8 +245,6 @@ class _EditFood extends State<EditFood>  {
       if (name.text.isNotEmpty &&
           nameImage.isNotEmpty &&
           price.text.isNotEmpty) {
-        // int code = await uploadImage(controller.image, controller.imagePath);
-        // print('dddfgg$code');
         try {
           EasyLoading.show(status: 'Loading...');
           List<Topping> tp = selectedAnimals3;
@@ -283,8 +282,6 @@ class _EditFood extends State<EditFood>  {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
             Food food = Food.fromJson(parsedJson['food']);
-            // Get.off(ListProduct(),
-            //     arguments: {'food': food, 'category_id': category_id});
             Get.back(result: food);
             showToast("Sửa thành công");
           }
@@ -324,9 +321,6 @@ class _EditFood extends State<EditFood>  {
         print(list);
         return list;
       }
-      // if (response.statusCode == 401) {
-      //   showToast("Loading faild");
-      // }
     } on TimeoutException catch (e) {
       showError(e.toString());
     } on SocketException catch (e) {
@@ -418,13 +412,6 @@ class _ChooseTopping extends State<ChooseTopping> {
 
   @override
   void initState() {
-    // fetchTopping();
-    // var listTopping =  getTopping();
-    // if (listTopping != null) {
-    // printInfo(info: listTopping.length.toString());
-    // topping.assignAll(listTopping);
-    // topping.refresh();
-    // }
     selectedAnimals3 = [];
     for (int i = 0; i < ltp.length; i++) {
       selectedAnimals3.add(ltp[i]);
@@ -436,21 +423,13 @@ class _ChooseTopping extends State<ChooseTopping> {
       }
       topping.add(ltp[i]);
     }
-    // selectedAnimals3 = [topping[0],topping[1]];
-    // toppingSelect.assignAll(selectedAnimals3);
-    // toppingSelect.refresh();
-
-    // print(selectedAnimals3);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child:
-          // Obx(
-          // () =>
-          Container(
+      child: Container(
         color: Colors.white,
         margin: EdgeInsets.only(top: 5.h, left: 10.w, right: 10.w),
         child: MultiSelectBottomSheetField<Topping>(
@@ -481,7 +460,6 @@ class _ChooseTopping extends State<ChooseTopping> {
             setState(() {
               selectedAnimals3 = values;
             });
-            // _multiSelectKey.currentState.validate();
           },
           initialValue: selectedAnimals3,
           chipDisplay: MultiSelectChipDisplay(
@@ -489,7 +467,6 @@ class _ChooseTopping extends State<ChooseTopping> {
               setState(() {
                 selectedAnimals3.remove(item);
               });
-              // _multiSelectKey.currentState.validate();
             },
             icon: Icon(
               Icons.close,
@@ -501,14 +478,4 @@ class _ChooseTopping extends State<ChooseTopping> {
       // ),
     );
   }
-
-// Future<void> fetchTopping() async {
-//   var listTopping = await getTopping();
-//   if (listTopping != null) {
-//     printInfo(info: listTopping.length.toString());
-//     topping.assignAll(listTopping);
-//     // topping.refresh();
-//   }
-// }
-
 }

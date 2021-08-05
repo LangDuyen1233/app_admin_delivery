@@ -16,6 +16,7 @@ class Home extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(270.h),
         child: AppBar(
+          automaticallyImplyLeading: false,
           title: Container(
             padding: EdgeInsets.only(top: 12.h),
             height: 70.h,
@@ -125,7 +126,7 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 400.w,
-      height: 175.h,
+      height: 188.h,
       child: Card(
         margin: EdgeInsets.only(left: 10.w, right: 10.w),
         shape: RoundedRectangleBorder(

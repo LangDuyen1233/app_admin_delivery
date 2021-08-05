@@ -56,6 +56,8 @@ class _ListProduct extends State<ListProduct>
               print("Thêm một món ăn mới");
               Get.to(() => ChooseProducts(),
                   arguments: {'category_id': category_id});
+              // Get.off(() => ChooseProducts(),
+              //     arguments: {'category_id': category_id});
               final result = await Get.arguments['food'];
               print(result);
               if (result != null) {
@@ -463,12 +465,13 @@ class ProductItem extends StatelessWidget {
     return InkWell(
       onTap: () {},
       child: Container(
+        padding: EdgeInsets.only(top: 12.h, bottom: 12.h),
         margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8.sp)),
           color: Colors.white,
         ),
-        height: 120.h,
+        // height: 120.h,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -481,14 +484,14 @@ class ProductItem extends StatelessWidget {
                     child: Image.network(
                       Apis.baseURL + item.image[0].url,
                       width: 100.w,
-                      height: 100.w,
+                      height: 100.h,
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 15.w, right: 10.w),
-                  height: 92.h,
+                  // height: 92.h,
                   width: 275.w,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

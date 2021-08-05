@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/apis.dart';
+import 'package:app_delivery/authService.dart';
 import 'package:app_delivery/components/item_profile.dart';
 import 'package:app_delivery/controllers/profile_controller.dart';
 import 'package:app_delivery/models/User.dart';
@@ -166,6 +167,7 @@ class _Person extends State<Person> {
                   InkWell(
                     onTap: () {
                       controller.logout();
+                      AuthService().signOut();
                     },
                     child: Container(
                       margin: EdgeInsets.only(
