@@ -88,12 +88,6 @@ class _ReviewScreen extends State<ReviewScreen> {
   Future<List<Review>> getReview() async {
     List<Review> list;
     String token = (await getToken());
-    // int categoryId = Get.arguments['category_id'];
-    // print(categoryId.toString() + " dduj mas m");
-    // Map<String, String> queryParams = {
-    //   // 'category_id': categoryId.toString(),
-    // };
-    // String queryString = Uri(queryParameters: queryParams).query;
     try {
       print(Apis.getReviewUrl);
       http.Response response = await http.get(
@@ -147,34 +141,41 @@ class ReviewItemTop extends StatelessWidget {
               //img user
               Container(
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                    border: Border.all(
+                        width: 1,
+                        color: Colors.black12),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(50)),
                   ),
-                  // margin: EdgeInsets.all(5),
                   //image
-                  child: item.user.avatar != null
-                      ? Container(
-                          width: 50.w,
-                          height: 50.h,
-                          padding: EdgeInsets.only(
-                              right: 12.w, bottom: 12.h, left: 12.w, top: 12.h),
-                          child: Image.network(
-                            Apis.baseURL + item.user.avatar,
-                            fit: BoxFit.fill,
-                            color: Colors.black26,
-                          ),
-                        )
-                      : Container(
-                          width: 50.w,
-                          height: 50.h,
-                          padding: EdgeInsets.only(
-                              right: 12.w, bottom: 12.h, left: 12.w, top: 12.h),
+                  child: Container(
+                      width: 50.w,
+                      height: 50.h,
+                      child: item.user.avatar == null
+                          ? Container(
+                        padding: EdgeInsets.only(
+                            right: 10.w,
+                            bottom: 10.h,
+                            left: 10.w,
+                            top: 10.h),
+                        child: ClipRRect(
                           child: Image.asset(
                             'assets/images/person.png',
-                            fit: BoxFit.fill,
-                            color: Colors.black26,
+                            fit: BoxFit.cover,
                           ),
-                        )),
+                        ),
+                      )
+                          : ClipRRect(
+                          borderRadius:
+                          BorderRadius.all(
+                              Radius.circular(
+                                  50)),
+                          child: Image.network(
+                            Apis.baseURL + item.user.avatar,
+                            width: 100.w,
+                            height: 100.h,
+                            fit: BoxFit.cover,
+                          )))),
               //user name
               Container(
                 padding: EdgeInsets.only(left: 5.w),
@@ -299,33 +300,13 @@ class ReviewBody extends StatelessWidget {
                                 width: 0.5, color: Colors.grey[300])))),
                 Container(
                   height: 45.h,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 190.w,
-                          child: Text('Xem đơn hàng'),
-                        ),
-                      ),
-                      Center(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    right: BorderSide(
-                                        width: 1, color: Colors.grey)))),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: 190.w,
-                          child: Text('Trả lời'),
-                        ),
-                      )
-                    ],
+                  child: InkWell(
+                    onTap: () {},
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 190.w,
+                      child: Text('Trả lời'),
+                    ),
                   ),
                 )
               ],

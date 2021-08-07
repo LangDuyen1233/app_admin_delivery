@@ -1,5 +1,5 @@
 class Apis {
-  static final String baseURL = 'http://192.168.1.233:8000';
+  static final String baseURL = 'http://192.168.1.10:8000';
   static final String root = '$baseURL/api';
 
   //auth
@@ -72,10 +72,12 @@ class Apis {
   static String getNewCardUrl = '$root/getNewCard';
   static String cancelOrderUrl = '$root/cancelOrder';
   static String prepareOrderUrl = '$root/prepareOrder';
+
   ////
   static String getPrepareCardUrl = '$root/getPrepareCard';
   static String deliveryByRestaurantUrl = '$root/deliveryByRestaurant';
   static String deliveryByUserUrl = '$root/deliveryByUser';
+
   ////
   static String getDeliveringCardUrl = '$root/getDeliveringCard';
   static String deliveredUrl = '$root/delivered';
@@ -83,4 +85,7 @@ class Apis {
   static String getDeliveredCardUrl = '$root/getDeliveredCard';
 
   static String getHistoryCardUrl = '$root/getHistoryCard';
+
+  //notify
+  static String getNotifyUrl = '$root/getNotify';
 }

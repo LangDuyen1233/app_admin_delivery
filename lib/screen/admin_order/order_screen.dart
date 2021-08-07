@@ -5,7 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:badges/badges.dart';
 
-class OrderScreen extends StatelessWidget {
+class OrderScreen extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return _OrderScreen();
+  }
+
+}
+
+class _OrderScreen extends State<OrderScreen> {
+
+  int tabBarCount =0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +44,7 @@ class OrderScreen extends StatelessWidget {
             children: <Widget>[
               Container(
                 color: Colors.white,
-                constraints: BoxConstraints.expand(height: 50),
+                constraints: BoxConstraints.expand(height: 50.h),
                 child: TabBar(
                   unselectedLabelColor: Colors.black87,
                   tabs: [
@@ -43,7 +53,7 @@ class OrderScreen extends StatelessWidget {
                         icon: Badge(
                       shape: BadgeShape.square,
                       borderRadius: BorderRadius.circular(5),
-                      position: BadgePosition.topEnd(top: -8),
+                      position: BadgePosition.topEnd(),
                       padding: EdgeInsets.all(2),
                       badgeContent: Text(
                         '2',

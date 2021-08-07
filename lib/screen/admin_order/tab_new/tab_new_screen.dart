@@ -70,10 +70,7 @@ class _TabNew extends State<TabNew> {
                                           child: Container(
                                               width: 50.w,
                                               height: 50.h,
-                                              child: listOrder[index]
-                                                          .user
-                                                          .avatar ==
-                                                      null
+                                              child: listOrder[index].user.avatar == null
                                                   ? Container(
                                                       padding: EdgeInsets.only(
                                                           right: 10.w,
