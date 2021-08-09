@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/models/Order.dart';
-import 'package:app_delivery/screen/admin_order/tab_received/widget/empty_card.dart';
-import 'package:app_delivery/screen/restaurant/restaurant_screen.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,347 +29,361 @@ class _HistoryScreen extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: RefreshIndicator(
-      onRefresh: () => fetch(),
-      child: Obx(
-        () => listOrder.length == 0
-            ? EmptyCard()
-            : ListView.builder(
-                shrinkWrap: true,
-                itemCount: listOrder.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    alignment: FractionalOffset.topCenter,
-                    margin: new EdgeInsets.only(top: 1.h),
-                    child: Card(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // date and status
-                          Container(
-                            padding: EdgeInsets.only(left: 15.w, right: 15.w),
-                            height: 50.h,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              // children: [Text(formatter.format(listOrder[index].updatedAt.)),
-                              // children: [Text(new DateFormat('yyyy-MM-dd').parse(listOrder[index].updatedAt).toString()),
-                              children: [
-                                Text(DateFormat('yyyy-MM-dd HH:mm').format(
-                                    DateTime.parse(
-                                        listOrder[index].updatedAt))),
-                                listOrder[index].orderStatusId == 5
-                                    ? Text('Đã hủy')
-                                    : Text('Đã giao')
-                              ],
-                            ),
-                          ),
-                          Container(
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 0.5,
-                                          color: Colors.grey[300])))),
-                          //
-                          Container(
-                            padding: EdgeInsets.only(left: 15, right: 18),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // user identify
-                                Container(
-                                  height: 70.h,
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                width: 1,
-                                                color: Colors.black12),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(50)),
-                                          ),
-                                          //image
-                                          child: Container(
-                                              width: 50.w,
-                                              height: 50.h,
-                                              child: listOrder[index]
+      child: FutureBuilder(
+          future: fetch(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Loading();
+            } else {
+              if (snapshot.hasError) {
+                return EmptyScreen(text: 'Bạn chưa có đơn hàng nào.');
+              } else {
+                // return buildLoading();
+                return RefreshIndicator(
+                  onRefresh: () => fetch(),
+                  child: Obx(
+                        () => listOrder.length == 0
+                        ? EmptyScreen(text: "Bạn chưa có đơn hàng nào.",)
+                        : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: listOrder.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            alignment: FractionalOffset.topCenter,
+                            margin: new EdgeInsets.only(top: 1.h),
+                            child: Card(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // date and status
+                                  Container(
+                                    padding: EdgeInsets.only(left: 15.w, right: 15.w),
+                                    height: 50.h,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      // children: [Text(formatter.format(listOrder[index].updatedAt.)),
+                                      // children: [Text(new DateFormat('yyyy-MM-dd').parse(listOrder[index].updatedAt).toString()),
+                                      children: [
+                                        Text(DateFormat('yyyy-MM-dd HH:mm').format(
+                                            DateTime.parse(
+                                                listOrder[index].updatedAt))),
+                                        listOrder[index].orderStatusId == 5
+                                            ? Text('Đã hủy')
+                                            : Text('Đã giao')
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  width: 0.5,
+                                                  color: Colors.grey[300])))),
+                                  //
+                                  Container(
+                                    padding: EdgeInsets.only(left: 15, right: 18),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        // user identify
+                                        Container(
+                                          height: 70.h,
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 1,
+                                                        color: Colors.black12),
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(50)),
+                                                  ),
+                                                  //image
+                                                  child: Container(
+                                                      width: 50.w,
+                                                      height: 50.h,
+                                                      child: listOrder[index]
                                                           .user
                                                           .avatar ==
-                                                      null
-                                                  ? Container(
-                                                      padding: EdgeInsets.only(
-                                                          right: 10.w,
-                                                          bottom: 10.h,
-                                                          left: 10.w,
-                                                          top: 10.h),
-                                                      child: ClipRRect(
-                                                        child: Image.asset(
-                                                          'assets/images/person.png',
-                                                          fit: BoxFit.cover,
+                                                          null
+                                                          ? Container(
+                                                        padding: EdgeInsets.only(
+                                                            right: 10.w,
+                                                            bottom: 10.h,
+                                                            left: 10.w,
+                                                            top: 10.h),
+                                                        child: ClipRRect(
+                                                          child: Image.asset(
+                                                            'assets/images/person.png',
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    )
-                                                  : ClipRRect(
-                                                      borderRadius:
+                                                      )
+                                                          : ClipRRect(
+                                                          borderRadius:
                                                           BorderRadius.all(
                                                               Radius.circular(
                                                                   50)),
-                                                      child: Image.network(
-                                                        Apis.baseURL +
-                                                            listOrder[index]
-                                                                .user
-                                                                .avatar,
-                                                        width: 100.w,
-                                                        height: 100.h,
-                                                        fit: BoxFit.cover,
-                                                      )))),
-                                      //user name
-                                      Container(
-                                        padding: EdgeInsets.only(left: 5.w),
-                                        child: Text(
-                                            listOrder[index].user.username),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                width: 0.2,
-                                                color: Colors.grey[300])))),
-                                listOrder[index].userDeliveryId != null
-                                    ? Container(
-                                        height: 50.h,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Icon(
-                                                  Icons.motorcycle,
-                                                  color: Colors.blue,
-                                                  size: 25.sp,
-                                                ),
-                                                SizedBox(
-                                                  width: 5.w,
-                                                ),
-                                                Text(
-                                                  'Giao hàng bởi sinh viên',
-                                                  style: TextStyle(
-                                                      color: Colors.blue),
-                                                ),
-                                              ],
-                                            ),
-                                            IconButton(
-                                              icon: Icon(Icons.navigate_next),
-                                              onPressed: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                          title: Text(
-                                                              'Thông tin người giao hàng'),
-                                                          content:
-                                                              SingleChildScrollView(
-                                                            child: Column(
-                                                              children: [
-                                                                Text("Tên người giao: " +
-                                                                    listOrder[
-                                                                            index]
-                                                                        .user
-                                                                        .username),
-                                                                SizedBox(
-                                                                  height: 10.h,
-                                                                ),
-                                                                Text("Số điện thoại: " +
-                                                                    listOrder[
-                                                                            index]
-                                                                        .user
-                                                                        .phone),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          actions: <Widget>[
-                                                            TextButton(
-                                                              onPressed: () =>
-                                                                  Get.back(),
-                                                              child: const Text(
-                                                                  'Ok'),
-                                                            ),
-                                                          ]);
-                                                    });
-                                              },
-                                            )
-                                          ],
+                                                          child: Image.network(
+                                                            Apis.baseURL +
+                                                                listOrder[index]
+                                                                    .user
+                                                                    .avatar,
+                                                            width: 100.w,
+                                                            height: 100.h,
+                                                            fit: BoxFit.cover,
+                                                          )))),
+                                              //user name
+                                              Container(
+                                                padding: EdgeInsets.only(left: 5.w),
+                                                child: Text(
+                                                    listOrder[index].user.username),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                    : listOrder[index].staffId != null
-                                        ? Container(
-                                            height: 50.h,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Row(
+                                        Container(
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        width: 0.2,
+                                                        color: Colors.grey[300])))),
+                                        listOrder[index].userDeliveryId != null
+                                            ? Container(
+                                          height: 50.h,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                                children: [
+                                                  Icon(
+                                                    Icons.motorcycle,
+                                                    color: Colors.blue,
+                                                    size: 25.sp,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.w,
+                                                  ),
+                                                  Text(
+                                                    'Giao hàng bởi sinh viên',
+                                                    style: TextStyle(
+                                                        color: Colors.blue),
+                                                  ),
+                                                ],
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.navigate_next),
+                                                onPressed: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                            title: Text(
+                                                                'Thông tin người giao hàng'),
+                                                            content:
+                                                            SingleChildScrollView(
+                                                              child: Column(
+                                                                children: [
+                                                                  Text("Tên người giao: " +
+                                                                      listOrder[
+                                                                      index]
+                                                                          .user
+                                                                          .username),
+                                                                  SizedBox(
+                                                                    height: 10.h,
+                                                                  ),
+                                                                  Text("Số điện thoại: " +
+                                                                      listOrder[
+                                                                      index]
+                                                                          .user
+                                                                          .phone),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            actions: <Widget>[
+                                                              TextButton(
+                                                                onPressed: () =>
+                                                                    Get.back(),
+                                                                child: const Text(
+                                                                    'Ok'),
+                                                              ),
+                                                            ]);
+                                                      });
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                            : listOrder[index].staffId != null
+                                            ? Container(
+                                          height: 50.h,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceAround,
+                                                children: [
+                                                  Icon(
+                                                    Icons.motorcycle,
+                                                    color: Colors.blue,
+                                                    size: 25.sp,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.w,
+                                                  ),
+                                                  Text(
+                                                    'Giao hàng bởi quán',
+                                                    style: TextStyle(
+                                                        color: Colors.blue),
+                                                  )
+                                                ],
+                                              ),
+                                              IconButton(
+                                                icon:
+                                                Icon(Icons.navigate_next),
+                                                onPressed: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                            title: Text(
+                                                                'Thông tin người giao hàng'),
+                                                            content:
+                                                            SingleChildScrollView(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                                children: [
+                                                                  Text("Tên người giao: " +
+                                                                      listOrder[index]
+                                                                          .staff
+                                                                          .name),
+                                                                  SizedBox(
+                                                                    height:
+                                                                    10.h,
+                                                                  ),
+                                                                  Text("Số điện thoại: " +
+                                                                      listOrder[index]
+                                                                          .staff
+                                                                          .phone),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            actions: <Widget>[
+                                                              TextButton(
+                                                                onPressed:
+                                                                    () => Get
+                                                                    .back(),
+                                                                child:
+                                                                const Text(
+                                                                    'Ok'),
+                                                              ),
+                                                            ]);
+                                                      });
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                            : Container(),
+                                        Container(
+                                            decoration: BoxDecoration(
+                                                border: Border(
+                                                    bottom: BorderSide(
+                                                        width: 0.2,
+                                                        color: Colors.grey[300])))),
+                                        Container(
+                                          height: 60.h,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              // trạng thái đã giao hoặc đã hủy
+                                              Container(
+                                                child: Column(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
+                                                  MainAxisAlignment.spaceEvenly,
                                                   children: [
-                                                    Icon(
-                                                      Icons.motorcycle,
-                                                      color: Colors.blue,
-                                                      size: 25.sp,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 5.w,
-                                                    ),
                                                     Text(
-                                                      'Giao hàng bởi quán',
-                                                      style: TextStyle(
-                                                          color: Colors.blue),
-                                                    )
+                                                      'Đã giao',
+                                                      style:
+                                                      TextStyle(color: Colors.grey),
+                                                    ),
+                                                    Text("20:57")
                                                   ],
                                                 ),
-                                                IconButton(
-                                                  icon:
-                                                      Icon(Icons.navigate_next),
-                                                  onPressed: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                              title: Text(
-                                                                  'Thông tin người giao hàng'),
-                                                              content:
-                                                                  SingleChildScrollView(
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text("Tên người giao: " +
-                                                                        listOrder[index]
-                                                                            .staff
-                                                                            .name),
-                                                                    SizedBox(
-                                                                      height:
-                                                                          10.h,
-                                                                    ),
-                                                                    Text("Số điện thoại: " +
-                                                                        listOrder[index]
-                                                                            .staff
-                                                                            .phone),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              actions: <Widget>[
-                                                                TextButton(
-                                                                  onPressed:
-                                                                      () => Get
-                                                                          .back(),
-                                                                  child:
-                                                                      const Text(
-                                                                          'Ok'),
-                                                                ),
-                                                              ]);
-                                                        });
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          )
-                                        : Container(),
-                                Container(
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                                width: 0.2,
-                                                color: Colors.grey[300])))),
-                                Container(
-                                  height: 60.h,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // trạng thái đã giao hoặc đã hủy
-                                      Container(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              'Đã giao',
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                            Text("20:57")
-                                          ],
-                                        ),
-                                      ),
-                                      // tổng số món
-                                      Container(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              'Món',
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                            Text("2")
-                                          ],
-                                        ),
-                                      ),
-                                      // khoảng cách
-                                      Container(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              'Khoảng cách',
-                                              style:
-                                                  TextStyle(color: Colors.grey),
-                                            ),
-                                            Text("1.7km")
-                                          ],
-                                        ),
-                                      )
-                                    ],
+                                              ),
+                                              // tổng số món
+                                              Container(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                    Text(
+                                                      'Món',
+                                                      style:
+                                                      TextStyle(color: Colors.grey),
+                                                    ),
+                                                    Text("2")
+                                                  ],
+                                                ),
+                                              ),
+                                              // khoảng cách
+                                              Container(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                    Text(
+                                                      'Khoảng cách',
+                                                      style:
+                                                      TextStyle(color: Colors.grey),
+                                                    ),
+                                                    Text("1.7km")
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                )
-                              ],
-                            ),
-                          ),
-                          Container(
-                              // color: Colors.blue,
-                              height: 40.h,
-                              padding: EdgeInsets.only(right: 15.w),
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Icon(
-                                    Icons.summarize,
-                                    size: 20.sp,
-                                    color: Colors.grey[700],
-                                  ),
-                                  Text('169.500đ'),
+                                  Container(
+                                    // color: Colors.blue,
+                                      height: 40.h,
+                                      padding: EdgeInsets.only(right: 15.w),
+                                      alignment: Alignment.centerRight,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Icon(
+                                            Icons.summarize,
+                                            size: 20.sp,
+                                            color: Colors.grey[700],
+                                          ),
+                                          Text('169.500đ'),
+                                        ],
+                                      )),
                                 ],
-                              )),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-      ),
-    ));
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
+                );
+              }
+            }
+          }),
+    );
   }
 
   @override

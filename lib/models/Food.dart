@@ -3,6 +3,7 @@ import 'package:app_delivery/models/Restaurant.dart';
 import 'package:app_delivery/models/Topping.dart';
 
 import 'Category.dart';
+import 'Discount.dart';
 import 'Image.dart';
 
 class ListFoodJson {
@@ -62,6 +63,8 @@ class Food {
   List<Topping> topping;
   PivotFoodTopping pivot;
   PivotOrderFood pivotOrder;
+  int discountId;
+  Discount discount;
 
   Food(
       {this.id,
@@ -78,7 +81,9 @@ class Food {
       this.image,
       this.topping,
       this.pivot,
-      this.pivotOrder});
+      this.pivotOrder,
+      this.discountId,
+      this.discount});
 
   Food.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -114,6 +119,10 @@ class Food {
     pivotOrder = json['pivot'] != null
         ? new PivotOrderFood.fromJson(json['pivot'])
         : null;
+    discountId = json['discount_id'];
+    discount = json['discount'] != null
+        ? new Discount.fromJson(json['discount'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -127,6 +136,7 @@ class Food {
     data['status'] = this.status;
     data['restaurant_id'] = this.restaurantId;
     data['category_id'] = this.categoryId;
+    data['discount_id'] = this.discountId;
     if (this.category != null) {
       data['category'] = this.category.toJson();
     }
@@ -144,6 +154,32 @@ class Food {
     }
     if (this.pivotOrder != null) {
       data['pivot'] = this.pivotOrder.toJson();
+    }
+    if (this.discount != null) {
+      data['discount'] = this.discount.toJson();
+    }
+    return data;
+  }
+}
+
+class DiscountFood {
+  List<Food> food;
+
+  DiscountFood({this.food});
+
+  DiscountFood.fromJson(Map<String, dynamic> json) {
+    if (json['food'] != null) {
+      food = new List<Food>();
+      json['food'].forEach((v) {
+        food.add(new Food.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.food != null) {
+      data['food'] = this.food.map((v) => v.toJson()).toList();
     }
     return data;
   }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class EmptyCard extends StatelessWidget {
+class EmptyScreen extends StatelessWidget {
+  final String text;
+
+  EmptyScreen({this.text});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,11 +24,10 @@ class EmptyCard extends StatelessWidget {
                     'assets/images/empty_order.png',
                     width: 120.w,
                     fit: BoxFit.cover,
-                    color: Colors.black26,
                   ),
                 ),
                 Text(
-                  "Bạn không có đơn hàng nào!!!",
+                  text,
                   style: TextStyle(color: Colors.blue, fontSize: 24.sp),
                 )
               ],

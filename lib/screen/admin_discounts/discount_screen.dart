@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/models/Discount.dart';
+import 'package:app_delivery/screen/admin_discounts/edit_discount_food.dart';
 import 'package:app_delivery/screen/admin_discounts/edit_discount_voucher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -23,7 +24,7 @@ class DiscountScreen extends StatefulWidget {
 }
 
 RxList<Discount> discount;
-RxList<Discount> topping = new RxList<Discount>();
+// RxList<Discount> topping = new RxList<Discount>();
 
 class _DiscountScreen extends State<DiscountScreen> {
   int type_discount_id;
@@ -72,7 +73,9 @@ class _DiscountScreen extends State<DiscountScreen> {
                             foregroundColor: Colors.blue,
                             onTap: () async {
                               var result = await Get.to(
-                                  () => EditDiscountVoucher(),
+                                  () => discount[index].typeDiscountId != 1
+                                      ? EditDiscountVoucher()
+                                      : EditDiscountFood(),
                                   arguments: {
                                     'discount_id': discount.value[index].id
                                   });
@@ -96,7 +99,7 @@ class _DiscountScreen extends State<DiscountScreen> {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                        title: Text('Xóa nhân viên'),
+                                        title: Text('Xóa khuyến mãi'),
                                         content: const Text(
                                             'Bạn có chắc chắn muốn xóa không?'),
                                         actions: <Widget>[
@@ -106,8 +109,8 @@ class _DiscountScreen extends State<DiscountScreen> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              await deleteDiscountVoucher(
-                                                  discount[index].id);
+                                               discount[index].typeDiscountId != 1? await deleteDiscountVoucher(
+                                                  discount[index].id): await deleteDiscountFood(discount[index].id);
 
                                               setState(() {
                                                 discount.removeAt(index);
@@ -135,7 +138,10 @@ class _DiscountScreen extends State<DiscountScreen> {
                     );
                   },
                 ),
-              ))
+              )),
+              SizedBox(
+                height: 5.h,
+              )
             ],
           )),
     );
@@ -144,8 +150,6 @@ class _DiscountScreen extends State<DiscountScreen> {
   @override
   void initState() {
     discount = new RxList<Discount>();
-    // type_discount_id = Get.arguments['type_discount_id'];
-    // print('type id $type_discount_id');
     fetchDiscount();
     super.initState();
   }
@@ -164,11 +168,6 @@ class _DiscountScreen extends State<DiscountScreen> {
   Future<List<Discount>> getDiscount() async {
     List<Discount> list;
     String token = (await getToken());
-    // int typeId = Get.arguments['type_discount_id'];
-    // print(typeId.toString() + " dduj mas m");
-    // Map<String, String> queryParams = {
-    //   'type_discount_id': typeId.toString(),
-    // };
     try {
       print(Apis.getDiscountUrl);
       http.Response response = await http.get(
@@ -234,6 +233,43 @@ class _DiscountScreen extends State<DiscountScreen> {
       showError(e.toString());
     }
   }
+
+  Future<Discount> deleteDiscountFood(int discount_id) async {
+    String token = await getToken();
+    print(token);
+
+    try {
+      EasyLoading.show(status: 'Loading...');
+      http.Response response = await http.post(
+        Uri.parse(Apis.deleteDiscountFoodUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': "Bearer $token",
+        },
+        body: jsonEncode(<String, dynamic>{
+          'discount_id': discount_id,
+        }),
+      );
+
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        EasyLoading.dismiss();
+        var parsedJson = jsonDecode(response.body);
+        // print(parsedJson['success']);
+        Discount discount = Discount.fromJson(parsedJson['discount']);
+        return discount;
+      }
+      if (response.statusCode == 404) {
+        EasyLoading.dismiss();
+        var parsedJson = jsonDecode(response.body);
+        print(parsedJson['error']);
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+    }
+  }
 }
 
 class DiscountItem extends StatelessWidget {
@@ -251,7 +287,7 @@ class DiscountItem extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(8.sp)),
           color: Colors.white,
         ),
-        height: 120.h,
+        height: 130.h,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -259,11 +295,17 @@ class DiscountItem extends StatelessWidget {
               children: [
                 Container(
                   padding: EdgeInsets.only(left: 10.w),
-                  child: Icon(
-                    Icons.local_offer,
-                    size: 35.h,
-                    color: Colors.amber,
-                  ),
+                  child: item.typeDiscountId != 1
+                      ? Icon(
+                          Icons.local_offer,
+                          size: 35.h,
+                          color: Colors.amber,
+                        )
+                      : Icon(
+                          Icons.food_bank,
+                          size: 35.h,
+                          color: Colors.blue,
+                        ),
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 15.w, right: 10.w),
@@ -288,11 +330,13 @@ class DiscountItem extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 16.sp, fontWeight: FontWeight.w400),
                       ),
-                      Text(
-                        "Mã giảm: " + item.code,
-                        style: TextStyle(
-                            fontSize: 16.sp, fontWeight: FontWeight.w400),
-                      ),
+                      item.typeDiscountId != 1
+                          ? Text(
+                              "Mã giảm: " + item.code,
+                              style: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.w400),
+                            )
+                          : Text(''),
                       Container(
                         width: 300.w,
                         child: Text(

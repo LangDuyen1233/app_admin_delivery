@@ -1,5 +1,5 @@
 class Apis {
-  static final String baseURL = 'http://192.168.1.10:8000';
+  static final String baseURL = 'http://192.168.1.233:8000';
   static final String root = '$baseURL/api';
 
   //auth
@@ -65,8 +65,14 @@ class Apis {
   static String getDiscountUrl = '$root/getDiscount';
   static String addDiscountVoucherUrl = '$root/addDiscountVoucher';
   static String editDiscountVoucherUrl = '$root/editDiscountVoucher';
-  static String updateDiscountVoucherUrl = '$root/updateDiscountVoucher';
+  static String updateDiscountVoucherUrl = '$root/updateDiscountFood';
   static String deleteDiscountVoucherUrl = '$root/deleteDiscountVoucher';
+
+  static String getDiscountFoodUrl = '$root/getDiscountFood';
+  static String addDiscountFoodUrl = '$root/addDiscountFood';
+  static String editDiscountFoodUrl = '$root/editDiscountFood';
+  static String updateDiscountFoodUrl = '$root/updateDiscountFood';
+  static String deleteDiscountFoodUrl = '$root/deleteDiscountFood';
 
   //admin order
   static String getNewCardUrl = '$root/getNewCard';
