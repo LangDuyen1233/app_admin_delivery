@@ -10,8 +10,6 @@ import 'package:app_delivery/screen/chat/chat.dart';
 import 'package:app_delivery/screen/chat/home.dart';
 import 'package:app_delivery/screen/chat/model/user_chat.dart';
 
-// import 'package:app_delivery/screen/chats/chats_screen.dart';
-// import 'package:app_delivery/screen/chats/user_chat.dart';
 import 'package:app_delivery/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -69,6 +67,31 @@ class _SignIn extends State<SignIn> {
   static var client = http.Client();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Future<void> updateUid(int userId, String uid) async {
+    try {
+      http.Response response = await http.post(
+        Uri.parse(Apis.postUpdateUidUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'user_id': userId,
+          'uid': uid,
+        }),
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {}
+      if (response.statusCode == 500) {
+        showToast("Server error, please try again later!");
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+  }
+
   Future<void> login(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Form.of(context).validate();
@@ -106,6 +129,7 @@ class _SignIn extends State<SignIn> {
           }
 
           User user = result.user;
+          user.updateDisplayName(u.username);
           print(user);
 
           if (user != null) {
@@ -118,7 +142,7 @@ class _SignIn extends State<SignIn> {
             if (documents.length == 0) {
               // Update data to server if new user
               FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-                'nickname': u.username,
+                'nickname': user.displayName,
                 'photoUrl': user.photoURL,
                 'id': user.uid,
                 'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
@@ -129,7 +153,7 @@ class _SignIn extends State<SignIn> {
               currentUser = user;
               print(currentUser.uid);
               await prefs?.setString('id', currentUser.uid);
-              await prefs?.setString('nickname', u.username ?? "");
+              await prefs?.setString('nickname', user.displayName ?? "");
               await prefs?.setString('photoUrl', currentUser.photoURL ?? "");
             } else {
               DocumentSnapshot documentSnapshot = documents[0];
@@ -140,19 +164,20 @@ class _SignIn extends State<SignIn> {
               await prefs?.setString('nickname', userChat.nickname);
               await prefs?.setString('photoUrl', userChat.photoUrl ?? "");
             }
-            Fluttertoast.showToast(msg: "Sign in success");
+            // Fluttertoast.showToast(msg: "Sign in success");
             this.setState(() {
               isLoading = false;
             });
           }
 
-          print('token $token');
-          if (token != null) {
-            print("TOKEN: " + token);
-            await EasyLoading.dismiss();
-            await _saveToken(token);
-            Get.to(MyStatefulWidgetState());
+          if (user.uid == null) {
+            await updateUid(u.id, user.uid);
           }
+
+          print('token $token');
+          await EasyLoading.dismiss();
+          await _saveToken(token);
+          Get.to(MyStatefulWidgetState());
         }
         if (response.statusCode == 401) {
           showToast("Login failed.");

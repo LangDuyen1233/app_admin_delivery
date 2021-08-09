@@ -33,8 +33,8 @@ class _MessagesScreen extends State<MessagesScreen> {
   @override
   void initState() {
     super.initState();
-   peerName = Get.arguments['name'];
-   peerImage = Get.arguments['image'];
+    peerName = Get.arguments['name'];
+    peerImage = Get.arguments['image'];
   }
 
   _MessagesScreen({this.peerId, this.peerAvatar});
@@ -50,43 +50,42 @@ class _MessagesScreen extends State<MessagesScreen> {
             Material(
               child: peerImage.isNotEmpty
                   ? Image.network(
-                peerImage,
-                fit: BoxFit.cover,
-                width: 40.0,
-                height: 40.0,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    width: 40,
-                    height: 40,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xff203152),
-                        value: loadingProgress.expectedTotalBytes !=
-                            null &&
-                            loadingProgress.expectedTotalBytes !=
-                                null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes
-                            : null,
-                      ),
-                    ),
-                  );
-                },
-                errorBuilder: (context, object, stackTrace) {
-                  return Icon(
-                    Icons.account_circle,
-                    size: 40.0,
-                    color: Color(0xffaeaeae),
-                  );
-                },
-              )
+                      peerImage,
+                      fit: BoxFit.cover,
+                      width: 40.0,
+                      height: 40.0,
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: 40,
+                          height: 40,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Color(0xff203152),
+                              value: loadingProgress.expectedTotalBytes !=
+                                          null &&
+                                      loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, object, stackTrace) {
+                        return Icon(
+                          Icons.account_circle,
+                          size: 40.0,
+                          color: Color(0xffaeaeae),
+                        );
+                      },
+                    )
                   : Icon(
-                Icons.account_circle,
-                size: 50.0,
-                color: Color(0xffaeaeae),
-              ),
+                      Icons.account_circle,
+                      size: 50.0,
+                      color: Color(0xffaeaeae),
+                    ),
               borderRadius: BorderRadius.all(Radius.circular(25.0)),
               clipBehavior: Clip.hardEdge,
             ),
@@ -192,7 +191,9 @@ class ChatScreenState extends State<ChatScreen> {
     }
 
     FirebaseFirestore.instance
-        .collection('users').doc(id).update({'chattingWith': peerId});
+        .collection('users')
+        .doc(id)
+        .update({'chattingWith': peerId});
 
     setState(() {});
   }

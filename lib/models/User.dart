@@ -13,6 +13,7 @@ class Users {
   String randomKey;
   String keyTime;
   String expiresAt;
+  String uid;
 
   Users(
       {this.id,
@@ -28,7 +29,9 @@ class Users {
       this.token,
       this.randomKey,
       this.keyTime,
-      this.expiresAt});
+      this.expiresAt,
+        this.uid,
+      });
 
   Users.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -45,6 +48,7 @@ class Users {
     randomKey = json['random_key'];
     keyTime = json['key_time'];
     expiresAt = json['expires_at'];
+    uid = json['uid'];
   }
 
   Map<String, dynamic> toJson() {
@@ -63,6 +67,7 @@ class Users {
     data['random_key'] = this.randomKey;
     data['key_time'] = this.keyTime;
     data['expires_at'] = this.expiresAt;
+    data['uid'] = this.uid;
     return data;
   }
 }

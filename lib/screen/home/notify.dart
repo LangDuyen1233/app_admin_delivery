@@ -70,6 +70,7 @@ class _Notify extends State<NotifyScreen> {
   Future<List<Notify>> getNotify() async {
     List<Notify> list;
     String token = (await getToken());
+    print(token);
     try {
       print(Apis.getNotifyUrl);
       http.Response response = await http.get(

@@ -5,6 +5,7 @@ class Apis {
   //auth
   static String getSignInUrl = '$root/loginowner';
   static String getLogoutUrl = '$root/logout';
+  static String postUpdateUidUrl = '$root/updateUid';
 
   //home
 

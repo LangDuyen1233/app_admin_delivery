@@ -5,6 +5,7 @@ import 'package:app_delivery/screen/auth/check_login.dart';
 import 'package:app_delivery/screen/auth/login.dart';
 import 'package:app_delivery/screen/index.dart';
 import 'package:app_delivery/utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,8 @@ class MyApp extends StatelessWidget {
         // home: CheckLogin(),
         // initialRoute: "/",
         // getPages: routes(),
-        home: handleAuth(),
+        // home: handleAuth(),
+        home: MyHomePage(),
         builder: EasyLoading.init(),
       ),
     );
@@ -84,10 +86,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  User user = FirebaseAuth.instance.currentUser;
+
+  _registerOnFirebase() {
+    FirebaseMessaging.instance.subscribeToTopic(user.uid);
+    FirebaseMessaging.instance.getToken().then((token) => print(token));
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    _registerOnFirebase();
 
     LocalNotificationService.initialize(context);
 
@@ -122,16 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Center(
-            child: Text(
-          "You will receive message soon",
-          style: TextStyle(fontSize: 34),
-        )),
-      ),
+      body: handleAuth(),
     );
   }
 }
