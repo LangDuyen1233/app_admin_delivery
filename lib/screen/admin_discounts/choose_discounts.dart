@@ -26,7 +26,7 @@ class ChooseDiscount extends StatelessWidget {
               name: 'Voucher',
               content: 'Dùng kiểu khuyến mãi này để ap dụng cho cả đơn hàng',
               page: AddDiscountVoucher(),
-              type_discount_id: 1,
+              type_discount_id: 2,
             ),
             ChooseItem(
               icon: Icons.food_bank,
@@ -34,7 +34,7 @@ class ChooseDiscount extends StatelessWidget {
               content:
                   'Dùng loại khuyến mãi này khi bạn muốn giảm giá theo từng món',
               page: AddDiscountFood(),
-              type_discount_id: 2,
+              type_discount_id: 1,
             )
           ],
         ),

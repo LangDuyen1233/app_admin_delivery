@@ -1,3 +1,5 @@
+import 'package:app_delivery/models/Food.dart';
+
 class ListDiscountJson {
   List<Discount> discount;
 
@@ -52,6 +54,7 @@ class Discount {
   int restaurantId;
   int typeDiscountId;
   TypeDiscount typeDiscount;
+  List<Food> food;
 
   Discount(
       {this.id,
@@ -63,7 +66,8 @@ class Discount {
       this.endDate,
       this.restaurantId,
       this.typeDiscountId,
-      this.typeDiscount});
+      this.typeDiscount,
+      this.food});
 
   Discount.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -78,6 +82,12 @@ class Discount {
     typeDiscount = json['type_discount'] != null
         ? new TypeDiscount.fromJson(json['type_discount'])
         : null;
+    if (json['food'] != null) {
+      food = new List<Food>();
+      json['food'].forEach((v) {
+        food.add(new Food.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -93,6 +103,9 @@ class Discount {
     data['type_discount_id'] = this.typeDiscountId;
     if (this.typeDiscount != null) {
       data['type_discount'] = this.typeDiscount.toJson();
+    }
+    if (this.food != null) {
+      data['food'] = this.food.map((v) => v.toJson()).toList();
     }
     return data;
   }

@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../../apis.dart';
 import '../../../utils.dart';
@@ -111,20 +112,20 @@ class _ListProduct extends State<ListProduct>
                                   icon: Icons.edit,
                                   foregroundColor: Colors.blue,
                                   onTap: () async {
-                                   var result = await Get.to(() => EditFood(), arguments: {
-                                      'category_id': category_id,
-                                      'food_id': food.value[index].id
-                                    });
+                                    var result = await Get.to(() => EditFood(),
+                                        arguments: {
+                                          'category_id': category_id,
+                                          'food_id': food.value[index].id
+                                        });
                                     // final result = await Get.arguments['food'];
                                     // print(result);
-                                   setState(() {
-                                     if (result != null) {
-                                       fetchFood();
-                                       // food.add(result);
-                                       // food.refresh();
-                                     }
-                                   });
-
+                                    setState(() {
+                                      if (result != null) {
+                                        fetchFood();
+                                        // food.add(result);
+                                        // food.refresh();
+                                      }
+                                    });
                                   },
                                 ),
                               ),
@@ -156,7 +157,8 @@ class _ListProduct extends State<ListProduct>
                                                       food.removeAt(index);
                                                       food.refresh();
                                                       Get.back();
-                                                      showToast("Xóa thành công");
+                                                      showToast(
+                                                          "Xóa thành công");
                                                     });
 
                                                     // Get.to(ListProduct());
@@ -198,10 +200,13 @@ class _ListProduct extends State<ListProduct>
                                     icon: Icons.edit,
                                     foregroundColor: Colors.blue,
                                     onTap: () async {
-                                     var result=await Get.to(() => EditToppings(), arguments: {
-                                        'category_id': category_id,
-                                        'topping_id': topping.value[index].id
-                                      });
+                                      var result = await Get.to(
+                                          () => EditToppings(),
+                                          arguments: {
+                                            'category_id': category_id,
+                                            'topping_id':
+                                                topping.value[index].id
+                                          });
                                       // final result =
                                       //     await Get.arguments['topping'];
                                       // print(result);
@@ -212,7 +217,6 @@ class _ListProduct extends State<ListProduct>
                                           // topping.refresh();
                                         }
                                       });
-
                                     },
                                   ),
                                 ),
@@ -268,6 +272,9 @@ class _ListProduct extends State<ListProduct>
                         )),
                   ]),
                 ),
+              ),
+              SizedBox(
+                height: 10.h,
               )
             ],
           ),
@@ -283,6 +290,7 @@ class _ListProduct extends State<ListProduct>
       // print(listFood.length);
       food.assignAll(listFood);
       food.refresh();
+      
       // print(food.length);
     }
   }
@@ -510,7 +518,29 @@ class ProductItem extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('Giá : ' + item.price.toString() + ' VNĐ'),
+                            item.discountId == null
+                                ? Text(
+                                    'Giá : ${NumberFormat.currency(locale: 'vi').format(item.price)}',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500),
+                                  )
+                                : Row(
+                                    children: [
+                                      Text(
+                                          'Giá :  ${NumberFormat.currency(locale: 'vi').format((item.price - item.price * (double.parse(item.discount.percent) / 100)).round())}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500)),
+                                      SizedBox(
+                                        width: 5.w,
+                                      ),
+                                      Text(
+                                        '${NumberFormat.currency(locale: 'vi').format(item.price)}',
+                                        style: TextStyle(
+                                            decoration:
+                                                TextDecoration.lineThrough),
+                                      )
+                                    ],
+                                  ),
                             SizedBox(
                               height: 2.h,
                             ),
