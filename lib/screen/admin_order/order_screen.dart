@@ -24,15 +24,15 @@ class _OrderScreen extends State<OrderScreen> {
         centerTitle: true,
         elevation: 0,
         title: Text("Danh sách hóa đơn"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              print("mày có vô đây không???");
-              // Get.to(ChooseDiscount());
-            },
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.add),
+        //     onPressed: () {
+        //       print("mày có vô đây không???");
+        //       // Get.to(ChooseDiscount());
+        //     },
+        //   ),
+        // ],
       ),
       body: Container(
         color: Color(0xFFEEEEEE),

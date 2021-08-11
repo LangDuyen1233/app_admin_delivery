@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/models/Material.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,91 +53,111 @@ class _MaterialsScreen extends State<MaterialsScreen> {
         body: Container(
             color: Color(0xFFEEEEEE),
             height: 834.h,
-            child: Obx(
-              () => ListView.builder(
-                shrinkWrap: true,
-                itemCount: materials.length,
-                itemBuilder: (context, index) {
-                  return Slidable(
-                    actionPane: SlidableDrawerActionPane(),
-                    actionExtentRatio: 0.12,
-                    child: MaterialItem(
-                      item: materials[index],
-                    ),
-                    secondaryActions: <Widget>[
-                      Container(
-                        child: IconSlideAction(
-                          caption: 'Edit',
-                          color: Color(0xFFEEEEEE),
-                          icon: Icons.edit,
-                          foregroundColor: Colors.blue,
-                          onTap: () async {
-                            var result = await Get.to(() => EditMaterials(),
-                                arguments: {
-                                  'materials_id': materials.value[index].id
-                                });
-                            // final result = await Get.arguments['materials'];
-                            // print(result);
-                            setState(() {
-                              if (result != null) {
-                                fetchMaterials();
-                                // materials.add(result);
-                                // materials.refresh();
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: IconSlideAction(
-                          caption: 'Delete',
-                          color: Color(0xFFEEEEEE),
-                          icon: Icons.delete,
-                          foregroundColor: Colors.red,
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                      title: Text('Xóa nhân viên'),
-                                      content: const Text(
-                                          'Bạn có chắc chắn muốn xóa không?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () => Get.back(),
-                                          child: const Text('Hủy'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            await deleteMaterials(
-                                                materials[index].id);
+            child: FutureBuilder(
+                future: fetchMaterials(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Loading();
+                  } else {
+                    if (snapshot.hasError) {
+                      return EmptyScreen(text: 'Bạn chưa có nguyên liệu nào.');
+                    } else {
+                      // return buildLoading();
+                      return RefreshIndicator(
+                        onRefresh: () => fetchMaterials(),
+                        child: Obx(
+                              () => materials.length == 0
+                              ? EmptyScreen(
+                            text: "Bạn chưa có nguyên liệu nào.",
+                          )
+                              : ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: materials.length,
+                                itemBuilder: (context, index) {
+                                  return Slidable(
+                                    actionPane: SlidableDrawerActionPane(),
+                                    actionExtentRatio: 0.12,
+                                    child: MaterialItem(
+                                      item: materials[index],
+                                    ),
+                                    secondaryActions: <Widget>[
+                                      Container(
+                                        child: IconSlideAction(
+                                          caption: 'Edit',
+                                          color: Color(0xFFEEEEEE),
+                                          icon: Icons.edit,
+                                          foregroundColor: Colors.blue,
+                                          onTap: () async {
+                                            var result = await Get.to(() => EditMaterials(),
+                                                arguments: {
+                                                  'materials_id': materials.value[index].id
+                                                });
+                                            // final result = await Get.arguments['materials'];
+                                            // print(result);
                                             setState(() {
-                                              materials.removeAt(index);
-                                              materials.refresh();
-                                              Get.back();
-                                              showToast("Xóa thành công");
+                                              if (result != null) {
+                                                fetchMaterials();
+                                                // materials.add(result);
+                                                // materials.refresh();
+                                              }
                                             });
-
-                                            // Get.to(ListProduct());
-
-                                            // food.refresh();
                                           },
-                                          child: const Text(
-                                            'Xóa',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
                                         ),
-                                      ]);
-                                });
-                          },
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 5),
+                                        child: IconSlideAction(
+                                          caption: 'Delete',
+                                          color: Color(0xFFEEEEEE),
+                                          icon: Icons.delete,
+                                          foregroundColor: Colors.red,
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      title: Text('Xóa nhân viên'),
+                                                      content: const Text(
+                                                          'Bạn có chắc chắn muốn xóa không?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () => Get.back(),
+                                                          child: const Text('Hủy'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            await deleteMaterials(
+                                                                materials[index].id);
+                                                            setState(() {
+                                                              materials.removeAt(index);
+                                                              materials.refresh();
+                                                              Get.back();
+                                                              showToast("Xóa thành công");
+                                                            });
+
+                                                            // Get.to(ListProduct());
+
+                                                            // food.refresh();
+                                                          },
+                                                          child: const Text(
+                                                            'Xóa',
+                                                            style: TextStyle(color: Colors.red),
+                                                          ),
+                                                        ),
+                                                      ]);
+                                                });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                              ),
                         ),
-                      )
-                    ],
-                  );
-                },
-              ),
-            )));
+                      );
+                    }
+                  }
+                }),));
   }
 
   @override

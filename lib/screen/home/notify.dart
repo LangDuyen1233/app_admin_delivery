@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/models/Notify.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -33,7 +34,7 @@ class _Notify extends State<NotifyScreen> {
             padding: EdgeInsets.only(top: 5.h),
             color: Color(0xFFEEEEEE),
             height: 834.h,
-            child: RefreshIndicator(
+            child: notify.length>0? RefreshIndicator(
               onRefresh: () => fetch(),
               child: Obx(
                 () => ListView.builder(
@@ -48,7 +49,7 @@ class _Notify extends State<NotifyScreen> {
                   },
                 ),
               ),
-            )));
+            ):EmptyScreen(text: 'Bạn chưa có thông báo',)));
   }
 
   @override

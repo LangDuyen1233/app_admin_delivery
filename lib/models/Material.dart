@@ -47,6 +47,8 @@ class Materials {
   int quantity;
   String image;
   int restaurantId;
+  String createdAt;
+  String updatedAt;
 
   Materials({
     this.id,
@@ -54,6 +56,8 @@ class Materials {
     this.quantity,
     this.image,
     this.restaurantId,
+    this.createdAt,
+    this.updatedAt,
   });
 
   Materials.fromJson(Map<String, dynamic> json) {
@@ -62,6 +66,8 @@ class Materials {
     quantity = json['quantity'];
     image = json['image'];
     restaurantId = json['restaurant_id'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
@@ -71,6 +77,8 @@ class Materials {
     data['quantity'] = this.quantity;
     data['image'] = this.image;
     data['restaurant_id'] = this.restaurantId;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }

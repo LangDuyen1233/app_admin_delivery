@@ -9,6 +9,7 @@ import 'package:app_delivery/screen/auth/widgets/input_field.dart';
 import 'package:app_delivery/screen/chat/chat.dart';
 import 'package:app_delivery/screen/chat/home.dart';
 import 'package:app_delivery/screen/chat/model/user_chat.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 
 import 'package:app_delivery/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,8 +34,6 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignIn extends State<SignIn> {
-  // AuthController controller = Get.put(AuthController());
-
   TextEditingController email;
   TextEditingController password;
   RxBool passwordvisible = true.obs;
@@ -44,7 +43,6 @@ class _SignIn extends State<SignIn> {
     email = TextEditingController();
     password = TextEditingController();
     super.initState();
-    // isSignedIn();
   }
 
   void showPassword() {
@@ -64,7 +62,6 @@ class _SignIn extends State<SignIn> {
     await _prefs.setString('token', token);
   }
 
-  static var client = http.Client();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> updateUid(int userId, String uid) async {
@@ -98,12 +95,12 @@ class _SignIn extends State<SignIn> {
     print(email.text);
     print(password.text);
     if (email.text.isNotEmpty && password.text.isNotEmpty) {
-      setState(() {
-        isLoading = true;
-      });
-
       try {
-        EasyLoading.show(status: 'Loading...');
+        setState(() {
+          isLoading = true;
+        });
+        // showAlertDialog(context);
+        // EasyLoading.show();
         print(Apis.getSignInUrl);
         http.Response response = await http.post(
           Uri.parse(Apis.getSignInUrl),
@@ -161,13 +158,9 @@ class _SignIn extends State<SignIn> {
               // Write data to local
               print(userChat.id);
               await prefs?.setString('id', userChat.id);
-              await prefs?.setString('nickname', userChat.nickname);
+              await prefs?.setString('nickname', userChat.nickname ?? "");
               await prefs?.setString('photoUrl', userChat.photoUrl ?? "");
             }
-            // Fluttertoast.showToast(msg: "Sign in success");
-            this.setState(() {
-              isLoading = false;
-            });
           }
 
           if (user.uid == null) {
@@ -175,15 +168,22 @@ class _SignIn extends State<SignIn> {
           }
 
           print('token $token');
-          await EasyLoading.dismiss();
           await _saveToken(token);
+          setState(() {
+            isLoading = false;
+          });
+          // Get.back();
           Get.to(MyStatefulWidgetState());
         }
         if (response.statusCode == 401) {
-          showToast("Login failed.");
+          setState(() {
+            isLoading = false;
+          });
+          // Get.back();
+          showToast("Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng");
         }
         if (response.statusCode == 500) {
-          showToast("Server error, please try again later!");
+          showToast("Hệ thống bị lỗi, vui lòng thử lại sau.");
         }
       } on TimeoutException catch (e) {
         showError(e.toString());
@@ -198,167 +198,174 @@ class _SignIn extends State<SignIn> {
 
   AuthService authService = new AuthService();
 
+  showAlertDialog(BuildContext context) {
+    showDialog(
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(width: 50.w, height: 50.h, child: const Loading());
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
       child: Container(
         padding: EdgeInsets.only(left: 24.w, right: 24.w),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Container(
-                  width: 414.w,
-                  height: 280.h,
-                  child: Center(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Image(
-                          image: ResizeImage(
-                        AssetImage('assets/images/fork.png'),
-                        width: 100,
-                        height: 100,
-                      )),
-                    ),
-                  )),
-              Form(
-                // key: controller.formKeySignIn,
-                child: Builder(
-                  builder: (BuildContext ctx) => Column(
-                    children: [
-                      InputField(
-                        controller: email,
-                        hintText: 'Email',
-                        icon: Icons.person,
-                        validator: (val) {
-                          if (val.length == 0) {
-                            return 'Vui lòng nhập Email hoặc Số điện thoại';
-                          } else if (!val.isEmail) {
-                            return 'Sai định dạng Email';
-                          } else
-                            return null;
-                        },
-                        // onChanged: (val) {
-                        //   controller.email = val;
-                        // },
-                      ),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      GetBuilder<AuthController>(
-                        init: AuthController(),
-                        // INIT IT ONLY THE FIRST TIME
-                        builder: (_) => InputField(
-                          controller: password,
-                          obscureText: passwordvisible.value,
-                          hintText: 'Mật khẩu',
-                          icon: Icons.vpn_key,
-                          validator: (val) {
-                            if (val.length == 0) {
-                              return 'Vui lòng nhập mật khẩu';
-                            } else
-                              return null;
-                          },
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                showPassword();
-                              });
-                            },
-                            // onTap: () {
-                            //   controller.hidePassword();
-                            // },
-                            child: Icon(passwordvisible.isTrue
-                                ? Icons.visibility
-                                : Icons.visibility_off),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // Get.to(ForgotPassword());
-                          },
-                          child: Text(
-                            'Quên mật khẩu ?',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 50.h,
-                        width: 414.w,
-                        padding: EdgeInsets.only(left: 24.w, right: 24.w),
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: TextButton(
-                          onPressed: () {
-                            // googleSignIn.signOut();
-                            login(ctx);
-                          },
-                          child: Text(
-                            'Đăng nhập'.toUpperCase(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                      // Align(
-                      //   alignment: Alignment.centerRight,
-                      //   child: TextButton(
-                      //     onPressed: () {
-                      //       handleSignIn().catchError((err) {
-                      //         Fluttertoast.showToast(msg: err.toString());
-                      //         this.setState(() {
-                      //           isLoading = false;
-                      //         });
-                      //       });
-                      //       // google_SignIn();
-                      //       saveToken(
-                      //           'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMGUzOTIyNTRlNGIyZTIwZmQwYjdiNTQ2NDQ0MjBmNmFlOTdmYTk5MzViYTNiNmI5NmJiNWZkOTUxMzgyYTQwNTc4OWI2ZmI5OGNmZjdhZGUiLCJpYXQiOjE2Mjc4MDAwNjMuNzc2MzY0LCJuYmYiOjE2Mjc4MDAwNjMuNzc2MzcsImV4cCI6MTY1OTMzNjA2My43MDQwOSwic3ViIjoiMSIsInNjb3BlcyI6W119.H5QTT4HgxGCGNIXbZPjC5QZ3NJzjVzg80n64TI6XpZgdqzWM6pfm-5BqNRw11MpwLjeDcFZQNZjz4ahMLHXQtWOJsPs9Swfiq_HtgLTTOO6f60CbURxMPV9-pm-Qi8dOcvLc6I7wGc1d1H-Yw9GvvX62gmgcVHNQzPnB4MMqaxci85cpMmoPb_VB-lTBWw3lCfy2pk_xLvAHWRfOsxDwVHcLQ0zHVW1PQq39449L8ie92x38QtIcOCRmS69pCdAYwA69AJgLl_brEqJzAjBcSYjnhxotR4ZqOhSR4-kk4qqiwl7I6vKp04z8lsQJy6mmb8MBgX8hsjFHrXzLjscikqUfujBfPdlW6_JmykECFEyBGwg1IJRxq8RHWE1pp1D6AxScXjxMLo_CgnfjCtr-DHxJLkouC0YeGoXa3G0v5vnDLDiAleaRqC825hk41gUqrX4idoTclz4-Sv7drEN5WbPDzwzH8nCl_iCvVglC2RkMM48qMSz9w6Sy0Av85c9pQzrmjB_y6HjfMRitXFEak3XP9Wc7U6MJMmcuAdnvxSREenjSLzottcP9Zae7N94YWP76Xp3TJNIa_xalQIrjmA_-J_7RTF-bN837N565t23JMaP5RsM0W088JDUnsJgyEsgFK9mpowSGuoiTxwDRuM-J4QJKUAQ0DpFzXc6OOzM');
-                      //     },
-                      //     child: Text(
-                      //       'Signin Google',
-                      //       style: TextStyle(color: Colors.grey),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 50.h,
                   ),
+                  Container(
+                      width: 414.w,
+                      height: 280.h,
+                      child: Center(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Image(
+                              image: ResizeImage(
+                            AssetImage('assets/images/logo_kitchen.png'),
+                            width: 200,
+                            height: 200,
+                          )),
+                        ),
+                      )),
+                  Form(
+                    child: Builder(
+                      builder: (BuildContext ctx) => Column(
+                        children: [
+                          InputField(
+                            controller: email,
+                            hintText: 'Email',
+                            icon: Icons.person,
+                            validator: (val) {
+                              if (val.length == 0) {
+                                return 'Vui lòng nhập Email hoặc Số điện thoại';
+                              } else if (!val.isEmail) {
+                                return 'Sai định dạng Email';
+                              } else
+                                return null;
+                            },
+                            // onChanged: (val) {
+                            //   controller.email = val;
+                            // },
+                          ),
+                          SizedBox(
+                            height: 30.h,
+                          ),
+                          GetBuilder<AuthController>(
+                            init: AuthController(),
+                            // INIT IT ONLY THE FIRST TIME
+                            builder: (_) => InputField(
+                              controller: password,
+                              obscureText: passwordvisible.value,
+                              hintText: 'Mật khẩu',
+                              icon: Icons.vpn_key,
+                              validator: (val) {
+                                if (val.length == 0) {
+                                  return 'Vui lòng nhập mật khẩu';
+                                } else
+                                  return null;
+                              },
+                              suffixIcon: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    showPassword();
+                                  });
+                                },
+                                // onTap: () {
+                                //   controller.hidePassword();
+                                // },
+                                child: Icon(passwordvisible.isTrue
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 40.h,),
+                          // Align(
+                          //   alignment: Alignment.centerRight,
+                          //   child: TextButton(
+                          //     onPressed: () {
+                          //       // Get.to(ForgotPassword());
+                          //     },
+                          //     child: Text(
+                          //       'Quên mật khẩu ?',
+                          //       style: TextStyle(color: Colors.grey),
+                          //     ),
+                          //   ),
+                          // ),
+                          Container(
+                            height: 50.h,
+                            width: 414.w,
+                            padding: EdgeInsets.only(left: 24.w, right: 24.w),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            child: TextButton(
+                              onPressed: () {
+                                print(isLoading);
+                                // googleSignIn.signOut();
+                                // setState(() {
+                                //   isLoading = true;
+                                // });
+                                if (isLoading == false) {
+                                  login(ctx);
+                                }
+                              },
+                              child: Text(
+                                'Đăng nhập'.toUpperCase(),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                          // Align(
+                          //   alignment: Alignment.centerRight,
+                          //   child: TextButton(
+                          //     onPressed: () {
+                          //       handleSignIn().catchError((err) {
+                          //         Fluttertoast.showToast(msg: err.toString());
+                          //         this.setState(() {
+                          //           isLoading = false;
+                          //         });
+                          //       });
+                          //       // google_SignIn();
+                          //       saveToken(
+                          //           'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMGUzOTIyNTRlNGIyZTIwZmQwYjdiNTQ2NDQ0MjBmNmFlOTdmYTk5MzViYTNiNmI5NmJiNWZkOTUxMzgyYTQwNTc4OWI2ZmI5OGNmZjdhZGUiLCJpYXQiOjE2Mjc4MDAwNjMuNzc2MzY0LCJuYmYiOjE2Mjc4MDAwNjMuNzc2MzcsImV4cCI6MTY1OTMzNjA2My43MDQwOSwic3ViIjoiMSIsInNjb3BlcyI6W119.H5QTT4HgxGCGNIXbZPjC5QZ3NJzjVzg80n64TI6XpZgdqzWM6pfm-5BqNRw11MpwLjeDcFZQNZjz4ahMLHXQtWOJsPs9Swfiq_HtgLTTOO6f60CbURxMPV9-pm-Qi8dOcvLc6I7wGc1d1H-Yw9GvvX62gmgcVHNQzPnB4MMqaxci85cpMmoPb_VB-lTBWw3lCfy2pk_xLvAHWRfOsxDwVHcLQ0zHVW1PQq39449L8ie92x38QtIcOCRmS69pCdAYwA69AJgLl_brEqJzAjBcSYjnhxotR4ZqOhSR4-kk4qqiwl7I6vKp04z8lsQJy6mmb8MBgX8hsjFHrXzLjscikqUfujBfPdlW6_JmykECFEyBGwg1IJRxq8RHWE1pp1D6AxScXjxMLo_CgnfjCtr-DHxJLkouC0YeGoXa3G0v5vnDLDiAleaRqC825hk41gUqrX4idoTclz4-Sv7drEN5WbPDzwzH8nCl_iCvVglC2RkMM48qMSz9w6Sy0Av85c9pQzrmjB_y6HjfMRitXFEak3XP9Wc7U6MJMmcuAdnvxSREenjSLzottcP9Zae7N94YWP76Xp3TJNIa_xalQIrjmA_-J_7RTF-bN837N565t23JMaP5RsM0W088JDUnsJgyEsgFK9mpowSGuoiTxwDRuM-J4QJKUAQ0DpFzXc6OOzM');
+                          //     },
+                          //     child: Text(
+                          //       'Signin Google',
+                          //       style: TextStyle(color: Colors.grey),
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned.fill(
+              child: Center(
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 100.w,
+                  height: 100.h,
+                  child: isLoading ? Loading() : Container(),
                 ),
               ),
-///////////////////
-//               Center(
-//                 child: TextButton(
-//                   onPressed: () {
-//                     handleSignIn().catchError((err) {
-//                       Fluttertoast.showToast(msg: err.toString());
-//                       this.setState(() {
-//                         isLoading = false;
-//                       });
-//                     });
-//                   },
-//                   child: Text(
-//                     'SIGN IN WITH GOOGLE',
-//                     style: TextStyle(fontSize: 16.0, color: Colors.white),
-//                   ),
-//                   style: ButtonStyle(
-//                       backgroundColor:
-//                           MaterialStateProperty.all<Color>(Color(0xffdd4b39)),
-//                       padding: MaterialStateProperty.all<EdgeInsets>(
-//                           EdgeInsets.fromLTRB(30.0, 15.0, 30.0, 15.0))),
-//                 ),
-//               ),
-//               // Loading
-//               Positioned(
-//                 child: isLoading ? const Loading() : Container(),
-//               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     ));

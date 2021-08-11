@@ -23,7 +23,7 @@ class AddressRestaurant extends StatelessWidget {
           color: Color(0xFFEEEEEE),
           // height: 834.h,
           child: Container(
-              height: 284.h,
+              height: 290.h,
               color: Color(0xFFEEEEEE),
               child: FormAddWidget(
                   widget: Column(

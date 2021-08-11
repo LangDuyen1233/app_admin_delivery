@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:app_delivery/models/Staff.dart';
 import 'package:app_delivery/screen/admin_staff/edit_staff.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,7 +30,7 @@ class _StaffScreen extends State<StaffScreen> {
   @override
   void initState() {
     staff = new RxList<Staff>();
-    fetchStaff();
+    // fetchStaff();
     super.initState();
   }
 
@@ -59,100 +61,130 @@ class _StaffScreen extends State<StaffScreen> {
           ],
         ),
         body: Container(
-            padding: EdgeInsets.only(top: 5.h),
-            color: Color(0xFFEEEEEE),
-            height: 834.h,
-            child: Obx(
-              () => ListView.builder(
-                shrinkWrap: true,
-                itemCount: staff.length,
-                itemBuilder: (context, index) {
-                  return Slidable(
-                    actionPane: SlidableDrawerActionPane(),
-                    actionExtentRatio: 0.12,
-                    child: StaffCard(
-                      item: staff[index],
-                    ),
-                    secondaryActions: <Widget>[
-                      Container(
-                        child: IconSlideAction(
-                          caption: 'Edit',
-                          color: Color(0xFFEEEEEE),
-                          icon: Icons.edit,
-                          foregroundColor: Colors.blue,
-                          onTap: () async {
-                            var result = await Get.to(() => EditStaff(),
-                                arguments: {'staff_id': staff.value[index].id});
-                            print(result);
-                            setState(() {
-                              if (result != null) {
-                                fetchStaff();
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 5),
-                        child: IconSlideAction(
-                          caption: 'Delete',
-                          color: Color(0xFFEEEEEE),
-                          icon: Icons.delete,
-                          foregroundColor: Colors.red,
-                          onTap: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                      title: Text('Xóa nhân viên'),
-                                      content: const Text(
-                                          'Bạn có chắc chắn muốn xóa không?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () => Get.back(),
-                                          child: const Text('Hủy'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            await deleteStaff(staff[index].id);
-
+          padding: EdgeInsets.only(top: 5.h),
+          color: Color(0xFFEEEEEE),
+          height: 834.h,
+          child: FutureBuilder(
+              future: fetchStaff(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Loading();
+                } else {
+                  if (snapshot.hasError) {
+                    return EmptyScreen(text: 'Bạn chưa có nhân viên nào.');
+                  } else {
+                    // return buildLoading();
+                    return RefreshIndicator(
+                      onRefresh: () => fetchStaff(),
+                      child: Obx(
+                        () => staff.length == 0
+                            ? EmptyScreen(
+                                text: "Bạn chưa có nhân viên nào.",
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: staff.length,
+                                itemBuilder: (context, index) {
+                                  return Slidable(
+                                    actionPane: SlidableDrawerActionPane(),
+                                    actionExtentRatio: 0.12,
+                                    child: StaffCard(
+                                      item: staff[index],
+                                    ),
+                                    secondaryActions: <Widget>[
+                                      Container(
+                                        child: IconSlideAction(
+                                          caption: 'Edit',
+                                          color: Color(0xFFEEEEEE),
+                                          icon: Icons.edit,
+                                          foregroundColor: Colors.blue,
+                                          onTap: () async {
+                                            var result = await Get.to(
+                                                () => EditStaff(),
+                                                arguments: {
+                                                  'staff_id':
+                                                      staff.value[index].id
+                                                });
+                                            print(result);
                                             setState(() {
-                                              staff.removeAt(index);
-                                              staff.refresh();
-                                              Get.back();
-                                              showToast("Xóa thành công");
+                                              if (result != null) {
+                                                fetchStaff();
+                                              }
                                             });
-
-                                            // Get.to(ListProduct());
-
-                                            // food.refresh();
                                           },
-                                          child: const Text(
-                                            'Xóa',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
                                         ),
-                                      ]);
-                                });
-                          },
-                        ),
-                      )
-                    ],
-                  );
-                },
-              ),
-            ))
-        );
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 5),
+                                        child: IconSlideAction(
+                                          caption: 'Delete',
+                                          color: Color(0xFFEEEEEE),
+                                          icon: Icons.delete,
+                                          foregroundColor: Colors.red,
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      title:
+                                                          Text('Xóa nhân viên'),
+                                                      content: const Text(
+                                                          'Bạn có chắc chắn muốn xóa không?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Get.back(),
+                                                          child:
+                                                              const Text('Hủy'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            await deleteStaff(
+                                                                staff[index]
+                                                                    .id);
+
+                                                            setState(() {
+                                                              staff.removeAt(
+                                                                  index);
+                                                              staff.refresh();
+                                                              Get.back();
+                                                              showToast(
+                                                                  "Xóa thành công");
+                                                            });
+
+                                                            // Get.to(ListProduct());
+
+                                                            // food.refresh();
+                                                          },
+                                                          child: const Text(
+                                                            'Xóa',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                        ),
+                                                      ]);
+                                                });
+                                          },
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                              ),
+                      ),
+                    );
+                  }
+                }
+              }),
+        ));
   }
 
   Future<void> fetchStaff() async {
     var list = await getStaff();
     if (list != null) {
-      // printInfo(info: listFood.length.toString());
-      // print(listFood.length);
       staff.assignAll(list);
       staff.refresh();
-      // print(food.length);
     }
   }
 

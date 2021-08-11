@@ -6,7 +6,9 @@ import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Food.dart';
 import 'package:app_delivery/models/Topping.dart';
+import 'package:app_delivery/screen/chat/widget/loading.dart';
 import 'package:app_delivery/screen/products/admin/list_products.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -98,52 +100,53 @@ class _AddProduct extends State<AddProduct> {
                         controller: ingredients,
                         type: TextInputType.text,
                       ),
-                      SingleChildScrollView(
-                        child: Container(
-                          color: Colors.white,
-                          margin: EdgeInsets.only(
-                              top: 5.h, left: 10.w, right: 10.w),
-                          child: MultiSelectBottomSheetField<Topping>(
-                            key: _multiSelectKey,
-                            // initialValue: topping,
-                            initialChildSize: .7,
-                            maxChildSize: 0.95,
-                            title: Text("Danh sách topping"),
-                            buttonText: Text("Chọn topping áp dụng"),
-                            buttonIcon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Colors.grey,
-                            ),
-                            decoration: BoxDecoration(),
-                            items: _items,
-                            searchable: true,
-                            validator: (values) {
-                              if (values == null || values.isEmpty) {
-                                return null;
-                              }
-                              return null;
-                            },
-                            onConfirm: (values) {
-                              setState(() {
-                                _selectedAnimals3 = values;
-                              });
-                              _multiSelectKey.currentState.validate();
-                            },
-                            chipDisplay: MultiSelectChipDisplay(
-                              onTap: (item) {
-                                setState(() {
-                                  _selectedAnimals3.remove(item);
-                                });
-                                _multiSelectKey.currentState.validate();
-                              },
-                              icon: Icon(
-                                Icons.close,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // SingleChildScrollView(
+                      //   child: Container(
+                      //     color: Colors.white,
+                      //     margin: EdgeInsets.only(
+                      //         top: 5.h, left: 10.w, right: 10.w),
+                      //     child: MultiSelectBottomSheetField<Topping>(
+                      //       key: _multiSelectKey,
+                      //       // initialValue: topping,
+                      //       initialChildSize: .7,
+                      //       maxChildSize: 0.95,
+                      //       title: Text("Danh sách topping"),
+                      //       buttonText: Text("Chọn topping áp dụng"),
+                      //       buttonIcon: Icon(
+                      //         Icons.arrow_drop_down,
+                      //         color: Colors.grey,
+                      //       ),
+                      //       decoration: BoxDecoration(),
+                      //       items: _items,
+                      //       searchable: true,
+                      //       validator: (values) {
+                      //         if (values == null || values.isEmpty) {
+                      //           return null;
+                      //         }
+                      //         return null;
+                      //       },
+                      //       onConfirm: (values) {
+                      //         setState(() {
+                      //           _selectedAnimals3 = values;
+                      //         });
+                      //         _multiSelectKey.currentState.validate();
+                      //       },
+                      //       chipDisplay: MultiSelectChipDisplay(
+                      //         onTap: (item) {
+                      //           setState(() {
+                      //             _selectedAnimals3.remove(item);
+                      //           });
+                      //           _multiSelectKey.currentState.validate();
+                      //         },
+                      //         icon: Icon(
+                      //           Icons.close,
+                      //           color: Colors.red,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      ChooseTopping()
                     ],
                   ),
                 ],
@@ -155,9 +158,9 @@ class _AddProduct extends State<AddProduct> {
     );
   }
 
-  List<Topping> _selectedAnimals3 = [];
-  static RxList<Topping> topping = new RxList<Topping>();
-  final _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+  // List<Topping> _selectedAnimals3 = [];
+  // static RxList<Topping> topping = new RxList<Topping>();
+  var _items;
 
   // var _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
 
@@ -186,51 +189,54 @@ class _AddProduct extends State<AddProduct> {
     weight = TextEditingController();
     ingredients = TextEditingController();
     toppingId = '';
-    fetchTopping();
+    // fetchTopping();
+    // _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+
     validateImage = '';
     super.initState();
   }
 
-  Future<void> fetchTopping() async {
-    var listTopping = await getTopping();
-    if (listTopping != null) {
-      printInfo(info: listTopping.length.toString());
-      topping.assignAll(listTopping);
-      topping.refresh();
-    }
-  }
-
-  Future<List<Topping>> getTopping() async {
-    List<Topping> list;
-    String token = (await getToken());
-    try {
-      print(Apis.getToppingUrl);
-      http.Response response = await http.get(
-        Uri.parse(Apis.getToppingUrl),
-        headers: <String, String>{
-          'Accept': 'application/json',
-          'Authorization': "Bearer $token",
-        },
-      );
-      print(response.statusCode);
-      if (response.statusCode == 200) {
-        var parsedJson = jsonDecode(response.body);
-        print(parsedJson['topping']);
-        list = ListTopping.fromJson(parsedJson).topping;
-        print(list);
-        return list;
-      }
-      // if (response.statusCode == 401) {
-      //   showToast("Loading faild");
-      // }
-    } on TimeoutException catch (e) {
-      showError(e.toString());
-    } on SocketException catch (e) {
-      showError(e.toString());
-      print(e.toString());
-    }
-    return null;
-  }
+  // Future<void> fetchTopping() async {
+  //   var listTopping = await getTopping();
+  //   if (listTopping != null) {
+  //     printInfo(info: listTopping.length.toString());
+  //     topping.assignAll(listTopping);
+  //     topping.refresh();
+  //     _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+  //   }
+  // }
+  //
+  // Future<List<Topping>> getTopping() async {
+  //   List<Topping> list;
+  //   String token = (await getToken());
+  //   try {
+  //     print(Apis.getToppingUrl);
+  //     http.Response response = await http.get(
+  //       Uri.parse(Apis.getToppingUrl),
+  //       headers: <String, String>{
+  //         'Accept': 'application/json',
+  //         'Authorization': "Bearer $token",
+  //       },
+  //     );
+  //     print(response.statusCode);
+  //     if (response.statusCode == 200) {
+  //       var parsedJson = jsonDecode(response.body);
+  //       print(parsedJson['topping']);
+  //       list = ListTopping.fromJson(parsedJson).topping;
+  //       print(list);
+  //       return list;
+  //     }
+  //     // if (response.statusCode == 401) {
+  //     //   showToast("Loading faild");
+  //     // }
+  //   } on TimeoutException catch (e) {
+  //     showError(e.toString());
+  //   } on SocketException catch (e) {
+  //     showError(e.toString());
+  //     print(e.toString());
+  //   }
+  //   return null;
+  // }
 
   void getCategory() async {
     category_id = await Get.arguments['category_id'];
@@ -379,11 +385,12 @@ class ChooseTopping extends StatefulWidget {
   _ChooseTopping createState() => _ChooseTopping();
 }
 
+List<Topping> _selectedAnimals3;
+
 class _ChooseTopping extends State<ChooseTopping> {
-  List<Topping> _selectedAnimals3;
   static RxList<Topping> topping = new RxList<Topping>();
 
-  // var _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
+  var _items = topping.map((f) => MultiSelectItem<Topping>(f, f.name)).toList();
 
   final _multiSelectKey = GlobalKey<FormFieldState>();
 
@@ -403,7 +410,7 @@ class _ChooseTopping extends State<ChooseTopping> {
           margin: EdgeInsets.only(top: 5.h, left: 10.w, right: 10.w),
           child: MultiSelectBottomSheetField<Topping>(
             key: _multiSelectKey,
-            initialValue: topping,
+            // initialValue: topping,
             initialChildSize: .7,
             maxChildSize: 0.95,
             title: Text("Danh sách topping"),

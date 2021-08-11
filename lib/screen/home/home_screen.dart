@@ -1,16 +1,24 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:app_delivery/components/choose_item.dart';
+import 'package:app_delivery/models/Order.dart';
 import 'package:app_delivery/screen/restaurant/restaurant_screen.dart';
 import 'package:app_delivery/screen/statistics/chartss.dart';
 import 'package:app_delivery/screen/statistics/statistics_order/statistics_order_screen.dart';
 import 'package:app_delivery/screen/statistics/statistics_revenue/statistics_revenue_screen.dart';
 import 'package:app_delivery/screen/statistics/statistics_screen.dart';
 import 'package:app_delivery/screen/statistics/statistics_warehouse/statistics_warehouse_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
+import '../../apis.dart';
+import '../../utils.dart';
 import 'notify.dart';
 
 class Home extends StatelessWidget {
@@ -124,7 +132,14 @@ class Home extends StatelessWidget {
   }
 }
 
-class UserCard extends StatelessWidget {
+class UserCard extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _UserCard();
+  }
+}
+
+class _UserCard extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -158,14 +173,17 @@ class UserCard extends StatelessWidget {
                         ),
                         Container(
                           margin: EdgeInsets.only(top: 10.h),
-                          child: Text(
-                            "1.000.000",
-                            style: TextStyle(
-                                fontSize: 20.sp,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
+                          child: Obx(
+                            () => Text(
+                              NumberFormat.currency(locale: 'vi')
+                                  .format(price.value),
+                              style: TextStyle(
+                                  fontSize: 20.sp,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
-                        )
+                        ),
                       ],
                     ),
                     InkWell(
@@ -199,11 +217,15 @@ class UserCard extends StatelessWidget {
                         ),
                         Container(
                             margin: EdgeInsets.only(top: 5.h),
-                            child: Text(
-                              "0",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
+                            child: Obx(
+                              () => Text(
+                                countNew.value != null
+                                    ? countNew.value.toString()
+                                    : '0',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ))
                       ],
                     ),
@@ -212,11 +234,15 @@ class UserCard extends StatelessWidget {
                         Text("Đơn hủy", style: TextStyle(color: Colors.grey)),
                         Container(
                             margin: EdgeInsets.only(top: 5.h),
-                            child: Text(
-                              "0",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
+                            child: Obx(
+                              () => Text(
+                                countCancel.value != null
+                                    ? countCancel.value.toString()
+                                    : '0',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ))
                       ],
                     ),
@@ -226,11 +252,15 @@ class UserCard extends StatelessWidget {
                             style: TextStyle(color: Colors.grey)),
                         Container(
                             margin: EdgeInsets.only(top: 5.h),
-                            child: Text(
-                              "0",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
+                            child: Obx(
+                              () => Text(
+                                countSum.value != null
+                                    ? countSum.value.toString()
+                                    : '0',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ))
                       ],
                     ),
@@ -242,6 +272,194 @@ class UserCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  RxList<Order> order;
+  RxList<Order> orderNew;
+  RxList<Order> orderCancel;
+  RxList<Order> orderSum;
+  RxInt price;
+  RxInt countNew;
+  RxInt countCancel;
+  RxInt countSum;
+  Timer timer;
+
+  @override
+  void initState() {
+    price = 0.obs;
+    countNew = 0.obs;
+    countCancel = 0.obs;
+    countSum = 0.obs;
+    order = new RxList<Order>();
+    orderNew = new RxList<Order>();
+    orderCancel = new RxList<Order>();
+    orderSum = new RxList<Order>();
+    fetch();
+    super.initState();
+  }
+
+  Future<void> fetch() async {
+    var list = await getOder();
+    var listNew = await getNewOrder();
+    var listCancel = await getCancelOrder();
+    var listSum = await getSumOrder();
+    if (list != null) {
+      order.assignAll(list);
+      order.refresh();
+
+      orderNew.assignAll(listNew);
+      orderNew.refresh();
+
+      orderCancel.assignAll(listCancel);
+      orderCancel.refresh();
+
+      orderSum.assignAll(listSum);
+      orderSum.refresh();
+    }
+    for (int i = 0; i < order.length; i++) {
+      price = price + (order[i].price);
+    }
+    print(price);
+
+    for (int i = 0; i < orderNew.length; i++) {
+      countNew += 1;
+    }
+    print(countNew);
+
+    for (int i = 0; i < orderCancel.length; i++) {
+      countCancel += 1;
+    }
+    print(countCancel);
+
+    for (int i = 0; i < orderSum.length; i++) {
+      countSum += 1;
+    }
+    print(countSum);
+  }
+
+  Future<List<Order>> getOder() async {
+    List<Order> list;
+    String token = (await getToken());
+    try {
+      print(Apis.getSalesUrl);
+      http.Response response = await http.get(
+        Uri.parse(Apis.getSalesUrl),
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        // print(parsedJson['food']);
+        list = ListOrderJson.fromJson(parsedJson).order;
+        print(list);
+        return list;
+      }
+      if (response.statusCode == 401) {
+        showToast("Loading faild");
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<List<Order>> getNewOrder() async {
+    List<Order> list;
+    String token = (await getToken());
+    try {
+      print(Apis.getNewCardUrl);
+      http.Response response = await http.get(
+        Uri.parse(Apis.getNewCardUrl),
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        list = ListOrderJson.fromJson(parsedJson).order;
+        print(list);
+        return list;
+      }
+      if (response.statusCode == 401) {
+        showToast("Loading faild");
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<List<Order>> getCancelOrder() async {
+    List<Order> list;
+    String token = (await getToken());
+    try {
+      print(Apis.getCancelUrl);
+      http.Response response = await http.get(
+        Uri.parse(Apis.getCancelUrl),
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        list = ListOrderJson.fromJson(parsedJson).order;
+        print(list);
+        return list;
+      }
+      if (response.statusCode == 401) {
+        showToast("Loading faild");
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+    return null;
+  }
+
+  Future<List<Order>> getSumOrder() async {
+    List<Order> list;
+    String token = (await getToken());
+    try {
+      print(Apis.getSumUrl);
+      http.Response response = await http.get(
+        Uri.parse(Apis.getSumUrl),
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        list = ListOrderJson.fromJson(parsedJson).order;
+        print(list);
+        return list;
+      }
+      if (response.statusCode == 401) {
+        showToast("Loading faild");
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+    return null;
   }
 }
 
@@ -264,202 +482,3 @@ class CustomShape extends CustomClipper<Path> {
     return true;
   }
 }
-
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   print("Handling a background message: ${message.messageId}");
-// }
-//
-// class HomePage extends StatefulWidget {
-//   @override
-//   _HomePageState createState() => _HomePageState();
-// }
-//
-// class PushNotification {
-//   PushNotification({
-//     this.title,
-//     this.body,
-//     this.dataTitle,
-//     this.dataBody,
-//   });
-//
-//   String title;
-//   String body;
-//   String dataTitle;
-//   String dataBody;
-// }
-//
-// class _HomePageState extends State<HomePage> {
-//   FirebaseMessaging _messaging;
-//   int _totalNotifications;
-//   PushNotification _notificationInfo;
-//
-//   void registerNotification() async {
-//     await Firebase.initializeApp();
-//     _messaging = FirebaseMessaging.instance;
-//
-//     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-//
-//     NotificationSettings settings = await _messaging.requestPermission(
-//       alert: true,
-//       badge: true,
-//       provisional: false,
-//       sound: true,
-//     );
-//
-//     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-//       print('User granted permission');
-//
-//       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//         print(
-//             'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
-//
-//         // Parse the message received
-//         PushNotification notification = PushNotification(
-//           title: message.notification?.title,
-//           body: message.notification?.body,
-//           dataTitle: message.data['title'],
-//           dataBody: message.data['body'],
-//         );
-//
-//         setState(() {
-//           _notificationInfo = notification;
-//           _totalNotifications++;
-//         });
-//
-//         if (_notificationInfo != null) {
-//           // For displaying the notification as an overlay
-//           showSimpleNotification(
-//             Text(_notificationInfo.title),
-//             leading: NotificationBadge(totalNotifications: _totalNotifications),
-//             subtitle: Text(_notificationInfo.body),
-//             background: Colors.cyan.shade700,
-//             duration: Duration(seconds: 2),
-//           );
-//         }
-//       });
-//     } else {
-//       print('User declined or has not accepted permission');
-//     }
-//   }
-//
-//   // For handling notification when the app is in terminated state
-//   checkForInitialMessage() async {
-//     await Firebase.initializeApp();
-//     RemoteMessage initialMessage =
-//     await FirebaseMessaging.instance.getInitialMessage();
-//
-//     if (initialMessage != null) {
-//       PushNotification notification = PushNotification(
-//         title: initialMessage.notification?.title,
-//         body: initialMessage.notification?.body,
-//         dataTitle: initialMessage.data['title'],
-//         dataBody: initialMessage.data['body'],
-//       );
-//
-//       setState(() {
-//         _notificationInfo = notification;
-//         _totalNotifications++;
-//       });
-//     }
-//   }
-//
-//   @override
-//   void initState() {
-//     _totalNotifications = 0;
-//     registerNotification();
-//     checkForInitialMessage();
-//
-//     // For handling notification when the app is in background
-//     // but not terminated
-//     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-//       PushNotification notification = PushNotification(
-//         title: message.notification?.title,
-//         body: message.notification?.body,
-//         dataTitle: message.data['title'],
-//         dataBody: message.data['body'],
-//       );
-//
-//       setState(() {
-//         _notificationInfo = notification;
-//         _totalNotifications++;
-//       });
-//     });
-//
-//     super.initState();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Notify'),
-//         brightness: Brightness.dark,
-//       ),
-//       body: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Text(
-//             'App for capturing Firebase Push Notifications',
-//             textAlign: TextAlign.center,
-//             style: TextStyle(
-//               color: Colors.black,
-//               fontSize: 20,
-//             ),
-//           ),
-//           SizedBox(height: 16.0),
-//           NotificationBadge(totalNotifications: _totalNotifications),
-//           SizedBox(height: 16.0),
-//           _notificationInfo != null
-//               ? Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Text(
-//                 'TITLE: ${_notificationInfo.dataTitle ?? _notificationInfo.title}',
-//                 style: TextStyle(
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 16.0,
-//                 ),
-//               ),
-//               SizedBox(height: 8.0),
-//               Text(
-//                 'BODY: ${_notificationInfo.dataBody ?? _notificationInfo.body}',
-//                 style: TextStyle(
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 16.0,
-//                 ),
-//               ),
-//             ],
-//           )
-//               : Container(),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-// class NotificationBadge extends StatelessWidget {
-//   final int totalNotifications;
-//
-//   const NotificationBadge({@required this.totalNotifications});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: 40.0,
-//       height: 40.0,
-//       decoration: new BoxDecoration(
-//         color: Colors.red,
-//         shape: BoxShape.circle,
-//       ),
-//       child: Center(
-//         child: Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: Text(
-//             '$totalNotifications',
-//             style: TextStyle(color: Colors.white, fontSize: 20),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }

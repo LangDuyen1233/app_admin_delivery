@@ -47,12 +47,12 @@ class MyApp extends StatelessWidget {
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
         initialBinding: InstanceBinding(),
-        // home: SignIn(),
+        home: SignIn(),
         // home: CheckLogin(),
         // initialRoute: "/",
         // getPages: routes(),
         // home: handleAuth(),
-        home: MyHomePage(),
+        // home: MyHomePage(),
         builder: EasyLoading.init(),
       ),
     );

@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:app_delivery/models/Food.dart';
 import 'package:app_delivery/models/Topping.dart';
 import 'package:app_delivery/screen/products/admin/edit_food.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -93,183 +95,225 @@ class _ListProduct extends State<ListProduct>
                 child: Container(
                   child: TabBarView(children: [
                     // list product food
-                    Obx(
-                      () => ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: food.length,
-                        itemBuilder: (context, index) {
-                          return Slidable(
-                            actionPane: SlidableDrawerActionPane(),
-                            actionExtentRatio: 0.12,
-                            child: ProductItem(
-                              item: food[index],
-                            ),
-                            secondaryActions: <Widget>[
-                              Container(
-                                child: IconSlideAction(
-                                  caption: 'Edit',
-                                  color: Color(0xFFEEEEEE),
-                                  icon: Icons.edit,
-                                  foregroundColor: Colors.blue,
-                                  onTap: () async {
-                                    var result = await Get.to(() => EditFood(),
-                                        arguments: {
-                                          'category_id': category_id,
-                                          'food_id': food.value[index].id
-                                        });
-                                    // final result = await Get.arguments['food'];
-                                    // print(result);
-                                    setState(() {
-                                      if (result != null) {
-                                        fetchFood();
-                                        // food.add(result);
-                                        // food.refresh();
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                              Container(
-                                child: IconSlideAction(
-                                  caption: 'Delete',
-                                  color: Color(0xFFEEEEEE),
-                                  icon: Icons.delete,
-                                  foregroundColor: Colors.red,
-                                  onTap: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                              title: Text('Xóa món ăn'),
-                                              content: const Text(
-                                                  'Bạn có chắc chắn muốn xóa không?'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () => Get.back(),
-                                                  child: const Text('Hủy'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await deleteFood(
-                                                        food[index].id);
-
+                    FutureBuilder(
+                        future: fetchFood(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Loading();
+                          } else {
+                            if (snapshot.hasError) {
+                              return EmptyScreen(text: 'Bạn chưa có món ăn nào.');
+                            } else {
+                              // return buildLoading();
+                              return RefreshIndicator(
+                                onRefresh: () => fetchFood(),
+                                child: Obx(
+                                      () => food.length == 0
+                                      ? EmptyScreen(
+                                    text: "Bạn chưa có món ăn nào.",
+                                  )
+                                      : ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: food.length,
+                                        itemBuilder: (context, index) {
+                                          return Slidable(
+                                            actionPane: SlidableDrawerActionPane(),
+                                            actionExtentRatio: 0.12,
+                                            child: ProductItem(
+                                              item: food[index],
+                                            ),
+                                            secondaryActions: <Widget>[
+                                              Container(
+                                                child: IconSlideAction(
+                                                  caption: 'Edit',
+                                                  color: Color(0xFFEEEEEE),
+                                                  icon: Icons.edit,
+                                                  foregroundColor: Colors.blue,
+                                                  onTap: () async {
+                                                    var result = await Get.to(() => EditFood(),
+                                                        arguments: {
+                                                          'category_id': category_id,
+                                                          'food_id': food.value[index].id
+                                                        });
+                                                    // final result = await Get.arguments['food'];
+                                                    // print(result);
                                                     setState(() {
-                                                      food.removeAt(index);
-                                                      food.refresh();
-                                                      Get.back();
-                                                      showToast(
-                                                          "Xóa thành công");
+                                                      if (result != null) {
+                                                        fetchFood();
+                                                        // food.add(result);
+                                                        // food.refresh();
+                                                      }
                                                     });
-
-                                                    // Get.to(ListProduct());
-
-                                                    // food.refresh();
                                                   },
-                                                  child: const Text(
-                                                    'Xóa',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
-                                                  ),
                                                 ),
-                                              ]);
-                                        });
-                                  },
+                                              ),
+                                              Container(
+                                                child: IconSlideAction(
+                                                  caption: 'Delete',
+                                                  color: Color(0xFFEEEEEE),
+                                                  icon: Icons.delete,
+                                                  foregroundColor: Colors.red,
+                                                  onTap: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                              title: Text('Xóa món ăn'),
+                                                              content: const Text(
+                                                                  'Bạn có chắc chắn muốn xóa không?'),
+                                                              actions: <Widget>[
+                                                                TextButton(
+                                                                  onPressed: () => Get.back(),
+                                                                  child: const Text('Hủy'),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed: () async {
+                                                                    await deleteFood(
+                                                                        food[index].id);
+
+                                                                    setState(() {
+                                                                      food.removeAt(index);
+                                                                      food.refresh();
+                                                                      Get.back();
+                                                                      showToast(
+                                                                          "Xóa thành công");
+                                                                    });
+
+                                                                    // Get.to(ListProduct());
+
+                                                                    // food.refresh();
+                                                                  },
+                                                                  child: const Text(
+                                                                    'Xóa',
+                                                                    style: TextStyle(
+                                                                        color: Colors.red),
+                                                                  ),
+                                                                ),
+                                                              ]);
+                                                        });
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      ),
                                 ),
-                              )
-                            ],
-                          );
-                        },
-                      ),
-                    ),
+                              );
+                            }
+                          }
+                        }),
                     // list topping and size food
-                    Obx(() => ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: topping.length,
-                          itemBuilder: (context, index) {
-                            return Slidable(
-                              actionPane: SlidableDrawerActionPane(),
-                              actionExtentRatio: 0.12,
-                              child: ToppingItem(
-                                item: topping[index],
-                              ),
-                              secondaryActions: <Widget>[
-                                Container(
-                                  child: IconSlideAction(
-                                    caption: 'Edit',
-                                    color: Color(0xFFEEEEEE),
-                                    icon: Icons.edit,
-                                    foregroundColor: Colors.blue,
-                                    onTap: () async {
-                                      var result = await Get.to(
-                                          () => EditToppings(),
-                                          arguments: {
-                                            'category_id': category_id,
-                                            'topping_id':
-                                                topping.value[index].id
-                                          });
-                                      // final result =
-                                      //     await Get.arguments['topping'];
-                                      // print(result);
-                                      setState(() {
-                                        if (result != null) {
-                                          fetchTopping();
-                                          // topping.add(result);
-                                          // topping.refresh();
-                                        }
-                                      });
-                                    },
-                                  ),
+                    FutureBuilder(
+                        future: fetchTopping(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Loading();
+                          } else {
+                            if (snapshot.hasError) {
+                              return EmptyScreen(text: 'Bạn chưa có món ăn nào.');
+                            } else {
+                              // return buildLoading();
+                              return RefreshIndicator(
+                                onRefresh: () => fetchTopping(),
+                                child: Obx(
+                                      () => topping.length == 0
+                                      ? EmptyScreen(
+                                    text: "Bạn chưa có món ăn nào.",
+                                  )
+                                      : ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: topping.length,
+                                        itemBuilder: (context, index) {
+                                          return Slidable(
+                                            actionPane: SlidableDrawerActionPane(),
+                                            actionExtentRatio: 0.12,
+                                            child: ToppingItem(
+                                              item: topping[index],
+                                            ),
+                                            secondaryActions: <Widget>[
+                                              Container(
+                                                child: IconSlideAction(
+                                                  caption: 'Edit',
+                                                  color: Color(0xFFEEEEEE),
+                                                  icon: Icons.edit,
+                                                  foregroundColor: Colors.blue,
+                                                  onTap: () async {
+                                                    var result = await Get.to(
+                                                            () => EditToppings(),
+                                                        arguments: {
+                                                          'category_id': category_id,
+                                                          'topping_id':
+                                                          topping.value[index].id
+                                                        });
+                                                    // final result =
+                                                    //     await Get.arguments['topping'];
+                                                    // print(result);
+                                                    setState(() {
+                                                      if (result != null) {
+                                                        fetchTopping();
+                                                        // topping.add(result);
+                                                        // topping.refresh();
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(top: 5),
+                                                child: IconSlideAction(
+                                                  caption: 'Delete',
+                                                  color: Color(0xFFEEEEEE),
+                                                  icon: Icons.delete,
+                                                  foregroundColor: Colors.red,
+                                                  onTap: () {
+                                                    showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                              title: Text('Xóa topping'),
+                                                              content: const Text(
+                                                                  'Bạn có chắc chắn muốn xóa không?'),
+                                                              actions: <Widget>[
+                                                                TextButton(
+                                                                  onPressed: () => Get.back(),
+                                                                  child: const Text('Hủy'),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed: () async {
+                                                                    await deleteTopping(
+                                                                        topping[index].id);
+
+                                                                    setState(() {
+                                                                      topping.removeAt(index);
+                                                                      topping.refresh();
+                                                                      Get.back();
+                                                                    });
+
+                                                                    // Get.to(ListProduct());
+
+                                                                    // food.refresh();
+                                                                  },
+                                                                  child: const Text(
+                                                                    'Xóa',
+                                                                    style: TextStyle(
+                                                                        color: Colors.red),
+                                                                  ),
+                                                                ),
+                                                              ]);
+                                                        });
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      ),
                                 ),
-                                Container(
-                                  margin: EdgeInsets.only(top: 5),
-                                  child: IconSlideAction(
-                                    caption: 'Delete',
-                                    color: Color(0xFFEEEEEE),
-                                    icon: Icons.delete,
-                                    foregroundColor: Colors.red,
-                                    onTap: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                                title: Text('Xóa topping'),
-                                                content: const Text(
-                                                    'Bạn có chắc chắn muốn xóa không?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () => Get.back(),
-                                                    child: const Text('Hủy'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      await deleteTopping(
-                                                          topping[index].id);
-
-                                                      setState(() {
-                                                        topping.removeAt(index);
-                                                        topping.refresh();
-                                                        Get.back();
-                                                      });
-
-                                                      // Get.to(ListProduct());
-
-                                                      // food.refresh();
-                                                    },
-                                                    child: const Text(
-                                                      'Xóa',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ),
-                                                  ),
-                                                ]);
-                                          });
-                                    },
-                                  ),
-                                )
-                              ],
-                            );
-                          },
-                        )),
+                              );
+                            }
+                          }
+                        }),
                   ]),
                 ),
               ),

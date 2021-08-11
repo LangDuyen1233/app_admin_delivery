@@ -4,6 +4,8 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:app_delivery/models/Review.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -36,42 +38,63 @@ class _ReviewScreen extends State<ReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        title: Text("Danh sách đánh giá"),
-      ),
-      body: Container(
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
+          title: Text("Danh sách đánh giá"),
+        ),
+        body: Container(
           color: Color(0xFFEEEEEE),
           height: 834.h,
-          // child: Expanded(
-          child: Obx(
-            () => ListView.builder(
-              shrinkWrap: true,
-              itemCount: review.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  // padding: EdgeInsets.all(10),
-                  child: Card(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ReviewItemTop(item: review[index]),
-                        Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        width: 0.5, color: Colors.grey[300])))),
-                        ReviewBody(item: review[index])
-                      ],
-                    ),
-                  ),
-                );
-              },
-              // ),
-            ),
-          )),
-    );
+          child: FutureBuilder(
+              future: fetchReview(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Loading();
+                } else {
+                  if (snapshot.hasError) {
+                    return EmptyScreen(text: 'Bạn chưa có đánh giá nào.');
+                  } else {
+                    // return buildLoading();
+                    return RefreshIndicator(
+                      onRefresh: () => fetchReview(),
+                      child: Obx(
+                        () => review.length == 0
+                            ? EmptyScreen(
+                                text: "Bạn chưa có đánh giá nào.",
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: review.length,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    // padding: EdgeInsets.all(10),
+                                    child: Card(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          ReviewItemTop(item: review[index]),
+                                          Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      bottom: BorderSide(
+                                                          width: 0.5,
+                                                          color: Colors
+                                                              .grey[300])))),
+                                          ReviewBody(item: review[index])
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                // ),
+                              ),
+                      ),
+                    );
+                  }
+                }
+              }),
+        ));
   }
 
   Future<void> fetchReview() async {
@@ -141,11 +164,8 @@ class ReviewItemTop extends StatelessWidget {
               //img user
               Container(
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1,
-                        color: Colors.black12),
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(50)),
+                    border: Border.all(width: 1, color: Colors.black12),
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
                   //image
                   child: Container(
@@ -153,29 +173,27 @@ class ReviewItemTop extends StatelessWidget {
                       height: 50.h,
                       child: item.user.avatar == null
                           ? Container(
-                        padding: EdgeInsets.only(
-                            right: 10.w,
-                            bottom: 10.h,
-                            left: 10.w,
-                            top: 10.h),
-                        child: ClipRRect(
-                          child: Image.asset(
-                            'assets/images/person.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      )
+                              padding: EdgeInsets.only(
+                                  right: 10.w,
+                                  bottom: 10.h,
+                                  left: 10.w,
+                                  top: 10.h),
+                              child: ClipRRect(
+                                child: Image.asset(
+                                  'assets/images/person.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            )
                           : ClipRRect(
-                          borderRadius:
-                          BorderRadius.all(
-                              Radius.circular(
-                                  50)),
-                          child: Image.network(
-                            Apis.baseURL + item.user.avatar,
-                            width: 100.w,
-                            height: 100.h,
-                            fit: BoxFit.cover,
-                          )))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(50)),
+                              child: Image.network(
+                                Apis.baseURL + item.user.avatar,
+                                width: 100.w,
+                                height: 100.h,
+                                fit: BoxFit.cover,
+                              )))),
               //user name
               Container(
                 padding: EdgeInsets.only(left: 5.w),

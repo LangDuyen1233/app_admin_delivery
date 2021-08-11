@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:app_delivery/models/Discount.dart';
 import 'package:app_delivery/screen/admin_discounts/edit_discount_food.dart';
 import 'package:app_delivery/screen/admin_discounts/edit_discount_voucher.dart';
+import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -47,103 +49,134 @@ class _DiscountScreen extends State<DiscountScreen> {
         ],
       ),
       body: Container(
-          color: Color(0xFFEEEEEE),
-          height: 834.h,
-          width: double.infinity,
-          child: Column(
-            children: [
-              Expanded(
-                  child: Obx(
-                () => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: discount.length,
-                  itemBuilder: (context, index) {
-                    return Slidable(
-                      actionPane: SlidableDrawerActionPane(),
-                      actionExtentRatio: 0.12,
-                      child: DiscountItem(
-                        item: discount[index],
-                      ),
-                      secondaryActions: <Widget>[
-                        Container(
-                          child: IconSlideAction(
-                            caption: 'Edit',
-                            color: Color(0xFFEEEEEE),
-                            icon: Icons.edit,
-                            foregroundColor: Colors.blue,
-                            onTap: () async {
-                              var result = await Get.to(
-                                  () => discount[index].typeDiscountId != 1
-                                      ? EditDiscountVoucher()
-                                      : EditDiscountFood(),
-                                  arguments: {
-                                    'discount_id': discount.value[index].id
-                                  });
-                              setState(() {
-                                if (result != null) {
-                                  fetchDiscount();
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 5),
-                          child: IconSlideAction(
-                            caption: 'Delete',
-                            color: Color(0xFFEEEEEE),
-                            icon: Icons.delete,
-                            foregroundColor: Colors.red,
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                        title: Text('Xóa khuyến mãi'),
-                                        content: const Text(
-                                            'Bạn có chắc chắn muốn xóa không?'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () => Get.back(),
-                                            child: const Text('Hủy'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                               discount[index].typeDiscountId != 1? await deleteDiscountVoucher(
-                                                  discount[index].id): await deleteDiscountFood(discount[index].id);
-
-                                              setState(() {
-                                                discount.removeAt(index);
-                                                discount.refresh();
-                                                Get.back();
-                                                showToast("Xóa thành công");
+        color: Color(0xFFEEEEEE),
+        height: 834.h,
+        width: double.infinity,
+        child: FutureBuilder(
+            future: fetchDiscount(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Loading();
+              } else {
+                if (snapshot.hasError) {
+                  return EmptyScreen(text: 'Bạn chưa có discount nào.');
+                } else {
+                  // return buildLoading();
+                  return RefreshIndicator(
+                    onRefresh: () => fetchDiscount(),
+                    child: Obx(
+                      () => discount.length == 0
+                          ? EmptyScreen(
+                              text: "Bạn chưa có discount nào.",
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: discount.length,
+                              itemBuilder: (context, index) {
+                                return Slidable(
+                                  actionPane: SlidableDrawerActionPane(),
+                                  actionExtentRatio: 0.12,
+                                  child: DiscountItem(
+                                    item: discount[index],
+                                  ),
+                                  secondaryActions: <Widget>[
+                                    Container(
+                                      child: IconSlideAction(
+                                        caption: 'Edit',
+                                        color: Color(0xFFEEEEEE),
+                                        icon: Icons.edit,
+                                        foregroundColor: Colors.blue,
+                                        onTap: () async {
+                                          var result = await Get.to(
+                                              () => discount[index]
+                                                          .typeDiscountId !=
+                                                      1
+                                                  ? EditDiscountVoucher()
+                                                  : EditDiscountFood(),
+                                              arguments: {
+                                                'discount_id':
+                                                    discount.value[index].id
                                               });
+                                          setState(() {
+                                            if (result != null) {
+                                              fetchDiscount();
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(top: 5),
+                                      child: IconSlideAction(
+                                        caption: 'Delete',
+                                        color: Color(0xFFEEEEEE),
+                                        icon: Icons.delete,
+                                        foregroundColor: Colors.red,
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                    title:
+                                                        Text('Xóa khuyến mãi'),
+                                                    content: const Text(
+                                                        'Bạn có chắc chắn muốn xóa không?'),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Get.back(),
+                                                        child:
+                                                            const Text('Hủy'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          discount[index]
+                                                                      .typeDiscountId !=
+                                                                  1
+                                                              ? await deleteDiscountVoucher(
+                                                                  discount[
+                                                                          index]
+                                                                      .id)
+                                                              : await deleteDiscountFood(
+                                                                  discount[
+                                                                          index]
+                                                                      .id);
 
-                                              // Get.to(ListProduct());
+                                                          setState(() {
+                                                            discount.removeAt(
+                                                                index);
+                                                            discount.refresh();
+                                                            Get.back();
+                                                            showToast(
+                                                                "Xóa thành công");
+                                                          });
 
-                                              // food.refresh();
-                                            },
-                                            child: const Text(
-                                              'Xóa',
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ),
-                                          ),
-                                        ]);
-                                  });
-                            },
-                          ),
-                        )
-                      ],
-                    );
-                  },
-                ),
-              )),
-              SizedBox(
-                height: 5.h,
-              )
-            ],
-          )),
+                                                          // Get.to(ListProduct());
+
+                                                          // food.refresh();
+                                                        },
+                                                        child: const Text(
+                                                          'Xóa',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ),
+                                                      ),
+                                                    ]);
+                                              });
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                );
+                              },
+                            ),
+                    ),
+                  );
+                }
+              }
+            }),
+      ),
     );
   }
 

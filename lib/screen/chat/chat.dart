@@ -619,38 +619,38 @@ class ChatScreenState extends State<ChatScreen> {
               ],
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             ),
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi7', 2),
-                  child: Image.asset(
-                    'images/mimi7.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi8', 2),
-                  child: Image.asset(
-                    'images/mimi8.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi9', 2),
-                  child: Image.asset(
-                    'images/mimi9.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            )
+            // Row(
+            //   children: <Widget>[
+            //     TextButton(
+            //       onPressed: () => onSendMessage('mimi7', 2),
+            //       child: Image.asset(
+            //         'images/mimi7.gif',
+            //         width: 50.0,
+            //         height: 50.0,
+            //         fit: BoxFit.cover,
+            //       ),
+            //     ),
+            //     TextButton(
+            //       onPressed: () => onSendMessage('mimi8', 2),
+            //       child: Image.asset(
+            //         'images/mimi8.gif',
+            //         width: 50.0,
+            //         height: 50.0,
+            //         fit: BoxFit.cover,
+            //       ),
+            //     ),
+            //     TextButton(
+            //       onPressed: () => onSendMessage('mimi9', 2),
+            //       child: Image.asset(
+            //         'images/mimi9.gif',
+            //         width: 50.0,
+            //         height: 50.0,
+            //         fit: BoxFit.cover,
+            //       ),
+            //     )
+            //   ],
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // )
           ],
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         ),
@@ -685,17 +685,17 @@ class ChatScreenState extends State<ChatScreen> {
             ),
             color: Colors.white,
           ),
-          Material(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(
-                icon: Icon(Icons.face),
-                onPressed: getSticker,
-                color: primaryColor,
-              ),
-            ),
-            color: Colors.white,
-          ),
+          // Material(
+          //   child: Container(
+          //     margin: EdgeInsets.symmetric(horizontal: 1.0),
+          //     child: IconButton(
+          //       icon: Icon(Icons.face),
+          //       onPressed: getSticker,
+          //       color: primaryColor,
+          //     ),
+          //   ),
+          //   color: Colors.white,
+          // ),
 
           // Edit text
           Flexible(

@@ -9,7 +9,7 @@ class DiscountController extends GetxController {
 
   String startDates = "Chọn ngày";
   String endDates = "Chọn ngày";
-  String dob ="Chọn ngày";
+  String dob = "Chọn ngày";
 
   selectStartDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
@@ -43,7 +43,7 @@ class DiscountController extends GetxController {
     update();
   }
 
-  selectDateDob(BuildContext context) async{
+  selectDateDob(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -60,9 +60,11 @@ class DiscountController extends GetxController {
   }
 
   //select date and rang date for page statistic revenue
+  String formattedDate =DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
+
   String selectedDateMultiPicker = '';
   String dateCount = '';
-  String range = '';
+  RxString range = DateFormat('yyyy-MM-dd').format(DateTime.now()).toString().obs;
   String rangeCount = '';
 
   void onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {
@@ -70,11 +72,11 @@ class DiscountController extends GetxController {
       if (args.value.startDate ==
           (args.value.endDate ?? args.value.startDate)) {
         print('bang');
-        range =
+        range.value =
             DateFormat('yyyy-MM-dd').format(args.value.startDate).toString();
       } else {
         print('khac');
-        range =
+        range.value =
             DateFormat('yyyy-MM-dd').format(args.value.startDate).toString() +
                 ' - ' +
                 DateFormat('yyyy-MM-dd')
