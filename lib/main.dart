@@ -47,87 +47,20 @@ class MyApp extends StatelessWidget {
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
         initialBinding: InstanceBinding(),
-        home: SignIn(),
+        // home: SignIn(),
         // home: CheckLogin(),
         // initialRoute: "/",
         // getPages: routes(),
         // home: handleAuth(),
-        // home: MyHomePage(),
+        home: MyHomePage(),
         builder: EasyLoading.init(),
       ),
     );
   }
 }
 
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: MyHomePage(title: 'Flutter Demo Home Page'),
-//       routes: {
-//         "red": (_) => RedPage(),
-//         "green": (_) => GreenPage(),
-//       },
-//     );
-//   }
-// }
+class MyHomePage extends StatelessWidget {
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, @required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  User user = FirebaseAuth.instance.currentUser;
-
-  _registerOnFirebase() {
-    FirebaseMessaging.instance.subscribeToTopic(user.uid);
-    FirebaseMessaging.instance.getToken().then((token) => print(token));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _registerOnFirebase();
-
-    LocalNotificationService.initialize(context);
-
-    ///gives you the message on which user taps
-    ///and it opened the app from terminated state
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        final routeFromMessage = message.data["route"];
-
-        Navigator.of(context).pushNamed(routeFromMessage);
-      }
-    });
-
-    ///forground work
-    FirebaseMessaging.onMessage.listen((message) {
-      if (message.notification != null) {
-        print(message.notification.body);
-        print(message.notification.title);
-      }
-
-      LocalNotificationService.display(message);
-    });
-
-    ///When the app is in background but opened and user taps
-    ///on the notification
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      final routeFromMessage = message.data["route"];
-
-      Navigator.of(context).pushNamed(routeFromMessage);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

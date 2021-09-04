@@ -224,6 +224,7 @@ class ReviewItemTop extends StatelessWidget {
                           color: Colors.amber,
                         ),
                         ignoreGestures: true,
+                        onRatingUpdate: (double value) {  },
                       ),
                       SizedBox(
                         width: 10.w,

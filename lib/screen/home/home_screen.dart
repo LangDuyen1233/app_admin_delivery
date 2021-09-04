@@ -3,13 +3,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/components/choose_item.dart';
+import 'package:app_delivery/local_notification_service.dart';
 import 'package:app_delivery/models/Order.dart';
+import 'package:app_delivery/models/Restaurant.dart';
 import 'package:app_delivery/screen/restaurant/restaurant_screen.dart';
 import 'package:app_delivery/screen/statistics/chartss.dart';
 import 'package:app_delivery/screen/statistics/statistics_order/statistics_order_screen.dart';
 import 'package:app_delivery/screen/statistics/statistics_revenue/statistics_revenue_screen.dart';
 import 'package:app_delivery/screen/statistics/statistics_screen.dart';
 import 'package:app_delivery/screen/statistics/statistics_warehouse/statistics_warehouse_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,115 +25,232 @@ import 'package:intl/intl.dart';
 import '../../apis.dart';
 import '../../utils.dart';
 import 'notify.dart';
+class Home extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return _Home();
+  }
 
-class Home extends StatelessWidget {
+}
+class _Home extends State<Home> {
+  Rx<Restaurants> restaurant;
+  User user = FirebaseAuth.instance.currentUser;
+
+  _registerOnFirebase() {
+    FirebaseMessaging.instance.subscribeToTopic(user.uid);
+    FirebaseMessaging.instance.getToken().then((token) => print(token));
+  }
+
+
+  @override
+  void initState() {
+
+    print(user);
+    if (user != null) {
+      _registerOnFirebase();
+    }
+
+    LocalNotificationService.initialize(context);
+
+    ///gives you the message on which user taps
+    ///and it opened the app from terminated state
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        final routeFromMessage = message.data["route"];
+
+        Navigator.of(context).pushNamed(routeFromMessage);
+      }
+    });
+
+    ///forground work
+    FirebaseMessaging.onMessage.listen((message) {
+      if (message.notification != null) {
+        print(message.notification.body);
+        print(message.notification.title);
+      }
+
+      LocalNotificationService.display(message);
+    });
+
+    ///When the app is in background but opened and user taps
+    ///on the notification
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      final routeFromMessage = message.data["route"];
+
+      Navigator.of(context).pushNamed(routeFromMessage);
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(270.h),
-        child: AppBar(
-          automaticallyImplyLeading: false,
-          title: Container(
-            padding: EdgeInsets.only(top: 12.h),
-            height: 70.h,
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Text(
-                        "Xin chao Com so 1",
-                        style: TextStyle(fontSize: 22.sp, color: Colors.white),
+    return FutureBuilder(
+        future: fetchRestaurant(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Loading();
+          } else {
+            if (snapshot.hasData) {
+              return Scaffold(
+                appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(270.h),
+                  child: AppBar(
+                    automaticallyImplyLeading: false,
+                    title: Container(
+                      padding: EdgeInsets.only(top: 12.h),
+                      height: 70.h,
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Obx(
+                                () => Container(
+                                  width: 280.w,
+                                  child: Text(
+                                    'Xin chào ${restaurant.value.name}',
+                                    softWrap: true,
+                                    style: TextStyle(
+                                        fontSize: 22.sp, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              Obx(
+                                () => Container(
+                                  width: 280.w,
+                                  child: Text(
+                                    restaurant.value.address,
+                                    softWrap: true,
+                                    style: TextStyle(
+                                        fontSize: 14.sp, color: Colors.white),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          Container(
+                            width: 40.w,
+                            child: IconButton(
+                                onPressed: () {
+                                  Get.to(RestaurantScreen());
+                                },
+                                icon: Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 16.sp,
+                                )),
+                          )
+                        ],
                       ),
                     ),
-                    Container(
-                      width: 140.w,
-                      child: Text(
-                        "Kiot Nong Lam, duong 8, Linh Trung, Thu Duc",
-                        softWrap: true,
-                        style: TextStyle(fontSize: 14.sp, color: Colors.white),
-                      ),
-                    )
-                  ],
-                ),
-                Container(
-                  width: 40.w,
-                  child: IconButton(
-                      onPressed: () {
-                        Get.to(RestaurantScreen());
-                      },
-                      icon: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.sp,
-                      )),
-                )
-              ],
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.notifications),
-              color: Colors.white,
-              tooltip: 'Notifications',
-              onPressed: () {
-                Get.to(NotifyScreen());
-              },
-            )
-          ],
-          elevation: 0,
-          backgroundColor: Colors.white,
-          flexibleSpace: Stack(
-            children: [
-              Container(
-                child: ClipPath(
-                  clipper: CustomShape(),
-                  // this is my own class which extendsCustomClipper
-                  child: Container(
-                    color: Color(0xff0D93E8),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications),
+                        color: Colors.white,
+                        tooltip: 'Notifications',
+                        onPressed: () {
+                          Get.to(NotifyScreen());
+                        },
+                      )
+                    ],
+                    elevation: 0,
+                    backgroundColor: Colors.white,
+                    flexibleSpace: Stack(
+                      children: [
+                        Container(
+                          child: ClipPath(
+                            clipper: CustomShape(),
+                            // this is my own class which extendsCustomClipper
+                            child: Container(
+                              color: Color(0xff0D93E8),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          child: UserCard(),
+                          top: ((270 - 70) / 2).h,
+                          left: 5.w,
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                child: UserCard(),
-                top: ((270 - 70) / 2).h,
-                left: 5.w,
-              )
-            ],
-          ),
-        ),
-      ),
-      body: Container(
-        color: Color(0xFFEEEEEE),
-        height: 634.h,
-        width: double.infinity,
-        child: ListView(
-          children: [
-            BarChartPage2(),
-            ChooseItem(
-              icon: Icons.monetization_on,
-              name: 'Báo cáo doanh thu',
-              content: 'Hiện thị doanh thu của cửa hàng trong kỳ',
-              page: StatisticsRevenueScreen(),
-            ),
-            ChooseItem(
-              icon: Icons.food_bank,
-              name: 'Báo cáo đơn hàng',
-              content: 'Thống kê các dữ liệu tổng hợp về đơn hàng',
-              page: StatisticsOrderScreen(),
-            ),
-            ChooseItem(
-              icon: Icons.house_siding,
-              name: 'Báo cáo kho',
-              content: 'Tổng giá trị và số lượng sản phẩm tồn kho',
-              page: StatisticsWarehouseScreen(),
-            ),
-            SizedBox(height: 10.h)
-          ],
-        ),
-      ),
-    );
+                body: Container(
+                  color: Color(0xFFEEEEEE),
+                  height: 634.h,
+                  width: double.infinity,
+                  child: ListView(
+                    children: [
+                      BarChartPage2(),
+                      ChooseItem(
+                        icon: Icons.monetization_on,
+                        name: 'Báo cáo doanh thu',
+                        content: 'Hiện thị doanh thu của cửa hàng trong kỳ',
+                        page: StatisticsRevenueScreen(),
+                      ),
+                      ChooseItem(
+                        icon: Icons.food_bank,
+                        name: 'Báo cáo đơn hàng',
+                        content: 'Thống kê các dữ liệu tổng hợp về đơn hàng',
+                        page: StatisticsOrderScreen(),
+                      ),
+                      ChooseItem(
+                        icon: Icons.house_siding,
+                        name: 'Báo cáo kho',
+                        content: 'Tổng giá trị và số lượng sản phẩm tồn kho',
+                        page: StatisticsWarehouseScreen(),
+                      ),
+                      SizedBox(height: 10.h)
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          }
+        });
+  }
+
+  Future<bool> fetchRestaurant() async {
+    var u = await getRestaurant();
+    print(u.name);
+    print(u);
+    if (u != null) {
+      restaurant = u.obs;
+    }
+    return restaurant.isBlank;
+  }
+
+  Future<Restaurants> getRestaurant() async {
+    Restaurants restaurants;
+    String token = (await getToken());
+    try {
+      print(Apis.getRestaurantUrl);
+      http.Response response = await http.get(
+        Uri.parse(Apis.getRestaurantUrl),
+        headers: <String, String>{
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        var parsedJson = jsonDecode(response.body);
+        print(parsedJson['restaurants']);
+        restaurants = RestaurantJson.fromJson(parsedJson).restaurants;
+        print(restaurants);
+        return restaurants;
+      }
+      if (response.statusCode == 401) {
+        showToast("Loading faild");
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+      print(e.toString());
+    }
+    return null;
   }
 }
 

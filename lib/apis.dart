@@ -1,5 +1,5 @@
 class Apis {
-  static final String baseURL = 'http://fooddelivery.gtnlu.site';
+  static final String baseURL = 'http://192.168.1.10:8000';
   static final String root = '$baseURL/api';
 
   //auth
@@ -104,4 +104,11 @@ class Apis {
   static String changeRevenueUrl = '$root/changeRevenue';
   static String getWarehouseUrl = '$root/getWarehouse';
   static String changeWarehouseUrl = '$root/changeWarehouse';
+
+  //address
+  static String updateLocationUrl = '$root/updateAddressMap';
+
+  //nofity
+  static String postNotificationUrl = '$root/sendNotification';
+
 }

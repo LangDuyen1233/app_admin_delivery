@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:791882751389:android:abaa019cbfa88a10292374",
+        "mobilesdk_app_id": "1:791882751389:android:717f5b816b66e1df292374",
         "android_client_info": {
-          "package_name": "com.example.app_delivery"
+          "package_name": "com.nlu.app_delivery"
         }
       },
       "oauth_client": [
         {
-          "client_id": "791882751389-pbiag8a8jaeemo0ubmhi8cj2g0fm0qr1.apps.googleusercontent.com",
+          "client_id": "791882751389-4tkju41e1m9u36bj3cq2jutohmjbmhji.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.app_delivery",
+            "package_name": "com.nlu.app_delivery",
             "certificate_hash": "cebe4b49bfe28f2600ff8f8c34a1450de83cd343"
           }
         },
@@ -44,20 +44,12 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:791882751389:android:500f00483c75ecc6292374",
+        "mobilesdk_app_id": "1:791882751389:android:a469c80290bf0e2a292374",
         "android_client_info": {
-          "package_name": "com.example.fooddelivery"
+          "package_name": "com.nlu.fooddelivery"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "791882751389-fuhlaeeb9v2tkj4sm3a5g3ih2pfpb0e1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.fooddelivery",
-            "certificate_hash": "b013c9db76be08e487610aba002bea7126c722bc"
-          }
-        },
         {
           "client_id": "791882751389-e4j3a134ekuvo8fb9e884ro11uo7j91r.apps.googleusercontent.com",
           "client_type": 3

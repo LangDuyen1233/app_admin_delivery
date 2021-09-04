@@ -6,8 +6,6 @@ import 'package:app_delivery/authService.dart';
 import 'package:app_delivery/controllers/auth_controller.dart';
 import 'package:app_delivery/models/User.dart';
 import 'package:app_delivery/screen/auth/widgets/input_field.dart';
-import 'package:app_delivery/screen/chat/chat.dart';
-import 'package:app_delivery/screen/chat/home.dart';
 import 'package:app_delivery/screen/chat/model/user_chat.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
 
@@ -15,8 +13,6 @@ import 'package:app_delivery/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -169,9 +165,8 @@ class _SignIn extends State<SignIn> {
 
           print('token $token');
           await _saveToken(token);
-          setState(() {
-            isLoading = false;
-          });
+
+          isLoading = false;
           // Get.back();
           Get.to(MyStatefulWidgetState());
         }
@@ -252,9 +247,6 @@ class _SignIn extends State<SignIn> {
                               } else
                                 return null;
                             },
-                            // onChanged: (val) {
-                            //   controller.email = val;
-                            // },
                           ),
                           SizedBox(
                             height: 30.h,
@@ -279,16 +271,15 @@ class _SignIn extends State<SignIn> {
                                     showPassword();
                                   });
                                 },
-                                // onTap: () {
-                                //   controller.hidePassword();
-                                // },
                                 child: Icon(passwordvisible.isTrue
                                     ? Icons.visibility
                                     : Icons.visibility_off),
                               ),
                             ),
                           ),
-                          SizedBox(height: 40.h,),
+                          SizedBox(
+                            height: 40.h,
+                          ),
                           // Align(
                           //   alignment: Alignment.centerRight,
                           //   child: TextButton(
@@ -312,10 +303,6 @@ class _SignIn extends State<SignIn> {
                             child: TextButton(
                               onPressed: () {
                                 print(isLoading);
-                                // googleSignIn.signOut();
-                                // setState(() {
-                                //   isLoading = true;
-                                // });
                                 if (isLoading == false) {
                                   login(ctx);
                                 }

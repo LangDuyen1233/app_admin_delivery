@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/screen/auth/login.dart';
@@ -36,11 +37,24 @@ handleAuth() {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
-          return MyStatefulWidgetState();
+          return FutureBuilder(
+              future: checkLogin(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return MyStatefulWidgetState();
+                } else {
+                  return SignIn();
+                }
+              });
         } else {
           return SignIn();
         }
       });
+}
+
+Future<bool> checkLogin() async {
+  var token = await getToken();
+  return token.isNotEmpty;
 }
 
 Future<void> saveToken(String token) async {
@@ -88,4 +102,29 @@ Future<int> uploadAvatar(File file, String filename) async {
   } on SocketException catch (e) {
     showError(e.toString());
   }
+}
+
+Future<bool> notification(String uid, String title, String body) async {
+  try {
+    http.Response response = await http.post(
+      Uri.parse(Apis.postNotificationUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'uid': uid,
+        'title': title,
+        'body': body,
+      }),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return true;
+    }
+  } on TimeoutException catch (e) {
+    showError(e.toString());
+  } on SocketException catch (e) {
+    showError(e.toString());
+  }
+  return false;
 }
