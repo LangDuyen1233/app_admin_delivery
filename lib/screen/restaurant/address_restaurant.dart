@@ -56,123 +56,125 @@ class _AddressRestaurant extends State<AddressRestaurant> {
         elevation: 0,
         title: Text("Địa chỉ quán"),
       ),
-      body: Container(
-        color: Color(0xFFEEEEEE),
-        child: Form(
-          key: formKey,
-          child: Builder(
-            builder: (BuildContext ctx) => Column(
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    await checkPermision();
-                    String address = await getCurrentAddress();
-                    Get.back(result: address);
-                  },
-                  child: Container(
-                    width: 414.w,
-                    height: 60.h,
-                    margin: EdgeInsets.only(
-                        left: 12.w, right: 12.w, top: 12.h, bottom: 12.h),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black26, width: 1),
-                      borderRadius: BorderRadius.all(Radius.circular(5)),
+      body: SingleChildScrollView(
+        child: Container(
+          color: Color(0xFFEEEEEE),
+          child: Form(
+            key: formKey,
+            child: Builder(
+              builder: (BuildContext ctx) => Column(
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      await checkPermision();
+                      String address = await getCurrentAddress();
+                      Get.back(result: address);
+                    },
+                    child: Container(
+                      width: 414.w,
+                      height: 60.h,
+                      margin: EdgeInsets.only(
+                          left: 12.w, right: 12.w, top: 12.h, bottom: 12.h),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.black26, width: 1),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: Colors.red,
+                          ),
+                          Text('Sử dụng vị trí hiện tại')
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          color: Colors.red,
+                  ),
+                  Container(
+                    // height: 290.h,
+                    color: Color(0xFFEEEEEE),
+                    child: FormAddWidget(
+                      widget: Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.only(left: 10.w, right: 10.w),
+                        margin: EdgeInsets.only(top: 5.h),
+                        child: AddressPicker(
+                          onAddressChanged: (address) {
+                            if (address.province.isNotEmpty &&
+                                address.ward.isNotEmpty &&
+                                address.district.isNotEmpty) {
+                              a = address.ward +
+                                  ', ' +
+                                  address.district +
+                                  ', ' +
+                                  address.province;
+                            }
+                            print(address);
+                          },
+                          buildItem: (text) {
+                            return Text(text,
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 16.sp));
+                          },
                         ),
-                        Text('Sử dụng vị trí hiện tại')
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  // height: 290.h,
-                  color: Color(0xFFEEEEEE),
-                  child: FormAddWidget(
-                    widget: Container(
-                      color: Colors.white,
-                      padding: EdgeInsets.only(left: 10.w, right: 10.w),
-                      margin: EdgeInsets.only(top: 5.h),
-                      child: AddressPicker(
-                        onAddressChanged: (address) {
-                          if (address.province.isNotEmpty &&
-                              address.ward.isNotEmpty &&
-                              address.district.isNotEmpty) {
-                            a = address.ward +
-                                ', ' +
-                                address.district +
-                                ', ' +
-                                address.province;
-                          }
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  ItemField(
+                    controller: addressDetail,
+                    hintText: "Địa chỉ cụ thể",
+                    validator: (val) {
+                      if (val.length == 0) {
+                        return 'Vui lòng nhập địa chỉ cụ thể';
+                      } else
+                        return null;
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      if (Form.of(ctx).validate()) {
+                        if (a == '') {
+                          showToast('Vui lòng chọn đầy đủ thông tin');
+                        } else {
+                          String address = addressDetail.text + ', ' + a;
                           print(address);
-                        },
-                        buildItem: (text) {
-                          return Text(text,
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 16.sp));
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                ItemField(
-                  controller: addressDetail,
-                  hintText: "Địa chỉ cụ thể",
-                  validator: (val) {
-                    if (val.length == 0) {
-                      return 'Vui lòng nhập địa chỉ cụ thể';
-                    } else
-                      return null;
-                  },
-                ),
-                GestureDetector(
-                  onTap: () async {
-                    if (Form.of(ctx).validate()) {
-                      if (a == '') {
-                        showToast('Vui lòng chọn đầy đủ thông tin');
-                      } else {
-                        String address = addressDetail.text + ', ' + a;
-                        print(address);
-                        Location location = await transferLocation(address);
+                          Location location = await transferLocation(address);
 
-                        address = address +
-                            '/' +
-                            location.latitude.toString() +
-                            '/' +
-                            location.longitude.toString();
+                          address = address +
+                              '|' +
+                              location.latitude.toString() +
+                              '|' +
+                              location.longitude.toString();
 
-                        print(address);
-                        Get.back(result: address);
+                          print(address);
+                          Get.back(result: address);
+                        }
                       }
-                    }
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(
-                        top: 30.h, bottom: 10.h, left: 12.w, right: 12.w),
-                    height: 45.h,
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Center(
-                      child: Text(
-                        'Hoàn thành'.toUpperCase(),
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          top: 30.h, bottom: 10.h, left: 12.w, right: 12.w),
+                      height: 45.h,
+                      width: MediaQuery.of(context).size.width / 1.1,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                      child: Center(
+                        child: Text(
+                          'Hoàn thành'.toUpperCase(),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

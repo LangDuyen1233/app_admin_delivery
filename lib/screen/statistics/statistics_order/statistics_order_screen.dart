@@ -30,7 +30,7 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
       appBar: AppBar(
         centerTitle: true,
         elevation: 0,
-        title: Text("Báo cáo doanh thu"),
+        title: Text("Báo cáo đơn hàng"),
       ),
       body: Container(
         color: Color(0xFFEEEEEE),
@@ -42,7 +42,6 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // StartDate(),
                   Container(
                     width: 400.w,
                     child: Row(
@@ -66,19 +65,11 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
                                             print('object' +
                                                 controller.range.value);
                                             Navigator.pop(context);
-                                            var list = await changeRevenue();
+                                            var list = await changeOrder();
                                             setState(() {
-                                              price = 0.obs;
                                               count = 0.obs;
                                               order.assignAll(list);
                                               order.refresh();
-                                              for (int i = 0;
-                                                  i < order.length;
-                                                  i++) {
-                                                price =
-                                                    price + (order[i].price);
-                                              }
-                                              print(price);
 
                                               for (int i = 0;
                                                   i < order.length;
@@ -136,25 +127,24 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
                         borderRadius: BorderRadius.circular(5.sp),
                       ),
                       child: Icon(
-                        Icons.monetization_on,
+                        Icons.confirmation_number,
                         size: 35.h,
                         color: Colors.blue,
                       ),
                     ),
                     Text(
-                      'Tổng doanh thu'.toUpperCase(),
+                      'Số Đơn hàng'.toUpperCase(),
                       style: TextStyle(fontSize: 20.sp),
                     ),
                     Obx(
                       () => Text(
-                        NumberFormat.currency(locale: 'vi').format(price.value),
+                        '${count.value} đơn',
                         style: TextStyle(
                             color: Colors.blue,
                             fontSize: 24.sp,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Obx(() => Text('Số đơn hàng: ${count.value} đơn')),
                     SizedBox(
                       height: 10.h,
                     )
@@ -162,15 +152,19 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
                 ),
               ),
             ),
-            Obx(
-              () => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: order.length,
-                  itemBuilder: (context, index) {
-                    return ListDate(
-                      item: order[index],
-                    );
-                  }),
+            Container(
+              width: 414.w,
+              height: 530.h,
+              child: Obx(
+                () => ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: order.length,
+                    itemBuilder: (context, index) {
+                      return ListDate(
+                        item: order[index],
+                      );
+                    }),
+              ),
             )
           ],
         ),
@@ -179,42 +173,35 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
   }
 
   RxList<Order> order;
-  RxInt price;
   RxInt count;
 
   @override
   void initState() {
     order = new RxList<Order>();
     fetch();
-    price = 0.obs;
     count = 0.obs;
     super.initState();
   }
 
   Future<void> fetch() async {
-    var list = await getRevenue();
+    var list = await getOrder();
     if (list != null) {
       order.assignAll(list);
       order.refresh();
     }
-    for (int i = 0; i < order.length; i++) {
-      price = price + (order[i].price);
-    }
-    print(price);
-
     for (int i = 0; i < order.length; i++) {
       count += 1;
     }
     print(count);
   }
 
-  Future<List<Order>> getRevenue() async {
+  Future<List<Order>> getOrder() async {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getRevenueUrl);
+      print(Apis.getOrderUrl);
       http.Response response = await http.get(
-        Uri.parse(Apis.getRevenueUrl),
+        Uri.parse(Apis.getOrderUrl),
         headers: <String, String>{
           'Accept': 'application/json',
           'Authorization': "Bearer $token",
@@ -239,7 +226,7 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
     return null;
   }
 
-  Future<List<Order>> changeRevenue() async {
+  Future<List<Order>> changeOrder() async {
     List<Order> list;
     String token = (await getToken());
     Map<String, String> queryParams = {
@@ -247,9 +234,9 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.changeRevenueUrl);
+      print(Apis.changeOrderUrl);
       http.Response response = await http.get(
-        Uri.parse(Apis.changeRevenueUrl + '?' + queryString),
+        Uri.parse(Apis.changeOrderUrl + '?' + queryString),
         headers: <String, String>{
           'Accept': 'application/json',
           'Authorization': "Bearer $token",
@@ -291,17 +278,40 @@ class ListDate extends StatelessWidget {
             color: Color(0xFFEEEEEE),
           ))),
       height: 80.h,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          Container(
-              margin: EdgeInsets.only(left: 10.w),
-              child: Text(DateFormat('yyyy-MM-dd')
-                  .format(DateTime.parse(item.updatedAt)))),
-          Container(
-              margin: EdgeInsets.only(right: 10.w),
-              child: Text(
-                  'Doanh thu: ${NumberFormat.currency(locale: 'vi').format(item.price)}')),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                  margin: EdgeInsets.only(left: 10.w),
+                  child: Text(DateFormat('yyyy-MM-dd')
+                      .format(DateTime.parse(item.updatedAt)))),
+              Container(
+                child: Text('Đơn hàng: #${item.id}'),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 10.w),
+                child: Text('Trạng thái: ${item.statusOrder.status}'),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 12.h,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                  margin: EdgeInsets.only(left: 10.w),
+                  child: Text('Khách hàng: ${item.user.username}')),
+              Container(
+                margin: EdgeInsets.only(right: 10.w),
+                child: Text(
+                    'Tồng tiền: ${NumberFormat.currency(locale: 'vi').format(item.price)}'),
+              )
+            ],
+          )
         ],
       ),
     );

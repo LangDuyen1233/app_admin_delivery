@@ -595,10 +595,10 @@ class ProductItem extends StatelessWidget {
                             SizedBox(
                               height: 2.h,
                             ),
-                            Text(
+                            tp(item.topping)!=''? Text(
                               'Topping: ' + tp(item.topping),
                               overflow: TextOverflow.ellipsis,
-                            ),
+                            ):Container(),
                           ],
                         ),
                       )
@@ -653,7 +653,7 @@ class ToppingItem extends StatelessWidget {
                   style:
                       TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
                 ),
-                Text('Giá bán : ' + item.price.toString() + ' VNĐ'),
+                Text('Giá : ${NumberFormat.currency(locale: 'vi').format(item.price)}'),
               ],
             ),
           )),

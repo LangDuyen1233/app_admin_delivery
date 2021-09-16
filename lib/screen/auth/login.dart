@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:app_delivery/authService.dart';
 import 'package:app_delivery/controllers/auth_controller.dart';
 import 'package:app_delivery/models/User.dart';
+import 'package:app_delivery/screen/auth/forgot_password.dart';
 import 'package:app_delivery/screen/auth/widgets/input_field.dart';
 import 'package:app_delivery/screen/chat/model/user_chat.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
@@ -123,6 +124,8 @@ class _SignIn extends State<SignIn> {
 
           User user = result.user;
           user.updateDisplayName(u.username);
+          user.updatePhotoURL(Apis.baseURL+ u.avatar);
+
           print(user);
 
           if (user != null) {
@@ -278,20 +281,23 @@ class _SignIn extends State<SignIn> {
                             ),
                           ),
                           SizedBox(
-                            height: 40.h,
+                            height: 10.h,
                           ),
-                          // Align(
-                          //   alignment: Alignment.centerRight,
-                          //   child: TextButton(
-                          //     onPressed: () {
-                          //       // Get.to(ForgotPassword());
-                          //     },
-                          //     child: Text(
-                          //       'Quên mật khẩu ?',
-                          //       style: TextStyle(color: Colors.grey),
-                          //     ),
-                          //   ),
-                          // ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                Get.to(ForgotPassword());
+                              },
+                              child: Text(
+                                'Quên mật khẩu ?',
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10.h,
+                          ),
                           Container(
                             height: 50.h,
                             width: 414.w,

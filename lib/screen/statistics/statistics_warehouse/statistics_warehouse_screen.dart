@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:app_delivery/controllers/discount_controller.dart';
 import 'package:app_delivery/models/Material.dart';
-import 'package:app_delivery/models/Order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -154,15 +153,19 @@ class _StatisticsWarehouseScreen extends State<StatisticsWarehouseScreen> {
                 ),
               ),
             ),
-            Obx(
-              () => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: materials.length,
-                  itemBuilder: (context, index) {
-                    return ListDate(
-                      item: materials[index],
-                    );
-                  }),
+            Container(
+              width: 414.w,
+              height: 530.h,
+              child: Obx(
+                () => ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: materials.length,
+                    itemBuilder: (context, index) {
+                      return ListDate(
+                        item: materials[index],
+                      );
+                    }),
+              ),
             )
           ],
         ),

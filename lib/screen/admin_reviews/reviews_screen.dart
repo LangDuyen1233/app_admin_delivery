@@ -12,6 +12,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../apis.dart';
 import '../../utils.dart';
@@ -245,8 +246,9 @@ class ReviewItemTop extends StatelessWidget {
                 Container(
                   width: 110.w,
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    item.date.toString(),
+                  child: Text(DateFormat('yyyy-MM-dd').format(
+                      DateTime.parse(
+                          item.updatedAt)),
                     style: TextStyle(fontSize: 13, color: Colors.grey),
                   ),
                 )
@@ -316,18 +318,18 @@ class ReviewBody extends StatelessWidget {
                     decoration: BoxDecoration(
                         border: Border(
                             bottom: BorderSide(
-                                width: 0.5, color: Colors.grey[300])))),
-                Container(
-                  height: 45.h,
-                  child: InkWell(
-                    onTap: () {},
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: 190.w,
-                      child: Text('Trả lời'),
-                    ),
-                  ),
-                )
+                                width: 0.5, color: Colors.grey[300]),),),),
+                // Container(
+                //   height: 45.h,
+                //   child: InkWell(
+                //     onTap: () {},
+                //     child: Container(
+                //       alignment: Alignment.center,
+                //       width: 190.w,
+                //       child: Text('Trả lời'),
+                //     ),
+                //   ),
+                // )
               ],
             ),
           ),

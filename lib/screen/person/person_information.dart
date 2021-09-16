@@ -6,6 +6,7 @@ import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/controllers/discount_controller.dart';
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/User.dart';
+import 'package:app_delivery/screen/auth/widgets/input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,6 +31,7 @@ class _PersonInformation extends State<PersonInformation> {
   List listgender = ["Nam", "Nữ", "Khác"];
   String selected = '';
   String avatar;
+  var confirmPass = null;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +125,6 @@ class _PersonInformation extends State<PersonInformation> {
                                 ),
                                 IconButton(
                                     onPressed: () async {
-                                      print('ưefjwefjwehf');
                                       await controller.getImage();
                                       await changeAvatar();
                                     },
@@ -150,12 +151,10 @@ class _PersonInformation extends State<PersonInformation> {
                           // Obx(
                           //   () =>
                           Container(
-                            // margin: EdgeInsets.only(top: 5.h),
+                            margin: EdgeInsets.only(top: 0.2.h),
                             color: defaulColorThem,
                             child: Column(
                               children: [
-                                // Obx(
-                                //   () =>
                                 Container(
                                   margin:
                                       EdgeInsets.only(left: 15.w, right: 10.w),
@@ -169,31 +168,24 @@ class _PersonInformation extends State<PersonInformation> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      // LineDecoration(),
                                       Container(
                                         child: Text(
-                                          'Số điện thoại',
+                                          'Số điện thoại',
                                           style: TextStyle(fontSize: 17.sp),
                                         ),
                                       ),
                                       Container(
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              user.value.phone,
-                                              softWrap: true,
-                                              style: TextStyle(
-                                                fontSize: 16.sp,
-                                                color: Colors.blue,
-                                              ),
+                                        height: 55.h,
+                                        margin: EdgeInsets.only(right: 20.w),
+                                        child: Center(
+                                          child: Text(
+                                            user.value.phone,
+                                            softWrap: true,
+                                            style: TextStyle(
+                                              fontSize: 16.sp,
+                                              color: Colors.grey,
                                             ),
-                                            IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 14,
-                                                ))
-                                          ],
+                                          ),
                                         ),
                                       )
                                     ],
@@ -201,8 +193,7 @@ class _PersonInformation extends State<PersonInformation> {
                                 ),
                               ],
                             ),
-                          )
-                          // ),
+                          ),
                         ],
                       ),
                     ),
@@ -211,8 +202,6 @@ class _PersonInformation extends State<PersonInformation> {
                       color: defaulColorThem,
                       child: Column(
                         children: [
-                          // Obx(
-                          //   () =>
                           Container(
                             margin: EdgeInsets.only(left: 15.w, right: 10.w),
                             decoration: BoxDecoration(
@@ -223,7 +212,6 @@ class _PersonInformation extends State<PersonInformation> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // LineDecoration(),
                                 Container(
                                   child: Text(
                                     'Tên',
@@ -310,10 +298,12 @@ class _PersonInformation extends State<PersonInformation> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 0.2.h),
+                      // margin: EdgeInsets.only(top: 5.h),
                       color: defaulColorThem,
                       child: Column(
                         children: [
+                          // Obx(
+                          //   () =>
                           Container(
                             margin: EdgeInsets.only(left: 15.w, right: 10.w),
                             decoration: BoxDecoration(
@@ -324,6 +314,7 @@ class _PersonInformation extends State<PersonInformation> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                // LineDecoration(),
                                 Container(
                                   child: Text(
                                     'Email',
@@ -331,17 +322,74 @@ class _PersonInformation extends State<PersonInformation> {
                                   ),
                                 ),
                                 Container(
-                                  height: 55.h,
-                                  margin: EdgeInsets.only(right: 20.w),
-                                  child: Center(
-                                    child: Text(
-                                      user.value.email,
-                                      softWrap: true,
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.grey,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        user.value.email,
+                                        softWrap: true,
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          color: Colors.blue,
+                                        ),
                                       ),
-                                    ),
+                                      IconButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                      title: Text('Email'),
+                                                      content:
+                                                          SingleChildScrollView(
+                                                        child: Column(
+                                                          children: [
+                                                            ItemField(
+                                                              controller: email,
+                                                              hintText: "Email",
+                                                              // controller: quantity,
+                                                              type:
+                                                                  TextInputType
+                                                                      .text,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Get.back(),
+                                                          child: const Text(
+                                                            'Hủy',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            await changeEmail();
+                                                            setState(() {
+                                                              user.refresh();
+                                                              Get.back();
+                                                              showToast(
+                                                                  "Cập nhật thành công");
+                                                            });
+                                                          },
+                                                          child: const Text(
+                                                            'Lưu lại',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .blue),
+                                                          ),
+                                                        ),
+                                                      ]);
+                                                });
+                                          },
+                                          icon: Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 14,
+                                          ))
+                                    ],
                                   ),
                                 )
                               ],
@@ -565,6 +613,118 @@ class _PersonInformation extends State<PersonInformation> {
                         ],
                       ),
                     ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Form(
+                                autovalidateMode: AutovalidateMode.always,
+                                child: Builder(builder: (BuildContext ctx) {
+                                  return AlertDialog(
+                                      title: Text('Đổi mật khẩu'),
+                                      content: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            InputField(
+                                              controller: passwordOld,
+                                              hintText: "Mật khẩu cũ",
+                                              icon: Icons.vpn_key,
+                                              obscureText: true,
+                                              validator: (val) {
+                                                if (val.length == 0) {
+                                                  return 'Vui lòng nhập mật khẩu';
+                                                } else
+                                                  return null;
+                                              },
+                                            ),
+                                            InputField(
+                                              controller: passwordNew,
+                                              hintText: "Mật khẩu mới",
+                                              icon: Icons.vpn_key,
+                                              obscureText: true,
+                                              validator: (val) {
+                                                confirmPass = val;
+                                                if (val.length == 0)
+                                                  return "Vui lòng nhập mật khẩu";
+                                                else if (val.length < 8)
+                                                  return "Mật khẩu lớn hơn 8 ký tự";
+                                                else
+                                                  return null;
+                                              },
+                                            ),
+                                            InputField(
+                                              controller: re_passwordNew,
+                                              obscureText: true,
+                                              icon: Icons.vpn_key,
+                                              hintText:
+                                                  "Nhập lại mật khẩu mới",
+                                              validator: (val) {
+                                                if (val.length == 0)
+                                                  return "Vui lòng nhập mật khẩu";
+                                                else if (val.length < 8)
+                                                  return "Mật khẩu lớn hơn 8 ký tự";
+                                                else if (confirmPass != val)
+                                                  return 'Không khớp mật khẩu';
+                                                return null;
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text(
+                                            'Hủy',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            var code = await changePass(ctx);
+                                            if (code == 200) {
+                                              Get.back();
+                                              showToast(
+                                                  "Đổi mật khẩu thành công");
+                                            }
+                                            if (code == 403) {
+                                              showToast(
+                                                  "Mật khẩu cũ không khớp");
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Đổi mật khẩu',
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                        ),
+                                      ]);
+                                }),
+                              );
+                            });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: 30.h, bottom: 10.h, left: 12.w, right: 12.w),
+                        height: 45.h,
+                        width: MediaQuery.of(context).size.width / 1.1,
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                        child: Center(
+                          child: Text(
+                            'Đổi mật khẩu',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -579,6 +739,10 @@ class _PersonInformation extends State<PersonInformation> {
   TextEditingController email;
   TextEditingController phone;
   TextEditingController gender;
+  TextEditingController passwordOld = new TextEditingController();
+  TextEditingController passwordNew = new TextEditingController();
+  TextEditingController re_passwordNew = new TextEditingController();
+
   final ImageController controller = Get.put(ImageController());
 
   // TextEditingController dob;
@@ -586,6 +750,29 @@ class _PersonInformation extends State<PersonInformation> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<int> changePass(BuildContext context) async {
+    String token = (await getToken());
+    print(passwordOld.text);
+    print(passwordNew.text);
+    if (Form.of(context).validate()) {
+      http.Response response = await http.post(
+        Uri.parse(Apis.changePassUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': "Bearer $token",
+        },
+        body: jsonEncode(<String, String>{
+          'passwordOld': passwordOld.text,
+          'passwordNew': passwordNew.text,
+        }),
+      );
+      print(response.statusCode);
+      return response.statusCode;
+    } else {
+      showToast('Vui lòng điền đầy đủ thông tin');
+    }
   }
 
   Future<bool> fetchUsers() async {
@@ -648,6 +835,38 @@ class _PersonInformation extends State<PersonInformation> {
         },
         body: jsonEncode(<String, dynamic>{
           'username': username.text,
+        }),
+      );
+
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        EasyLoading.dismiss();
+        var parsedJson = jsonDecode(response.body);
+        // print(parsedJson['success']);
+        Users users = Users.fromJson(parsedJson['user']);
+        return users;
+      }
+    } on TimeoutException catch (e) {
+      showError(e.toString());
+    } on SocketException catch (e) {
+      showError(e.toString());
+    }
+  }
+
+  Future<Users> changeEmail() async {
+    String token = await getToken();
+    print(token);
+
+    try {
+      EasyLoading.show(status: 'Loading...');
+      http.Response response = await http.post(
+        Uri.parse(Apis.changeEmailUrl),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': "Bearer $token",
+        },
+        body: jsonEncode(<String, dynamic>{
+          'email': email.text,
         }),
       );
 

@@ -162,15 +162,19 @@ class _StatisticsRevenueScreen extends State<StatisticsRevenueScreen> {
                 ),
               ),
             ),
-            Obx(
-              () => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: order.length,
-                  itemBuilder: (context, index) {
-                    return ListDate(
-                      item: order[index],
-                    );
-                  }),
+            Container(
+              height: 530.h,
+              width: 414.w,
+              child: Obx(
+                () => ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: order.length,
+                    itemBuilder: (context, index) {
+                      return ListDate(
+                        item: order[index],
+                      );
+                    }),
+              ),
             )
           ],
         ),

@@ -69,3 +69,23 @@ class Pivot {
     return data;
   }
 }
+
+class CategoryJson {
+  Category category;
+
+  CategoryJson({this.category});
+
+  CategoryJson.fromJson(Map<String, dynamic> json) {
+    category = json['category'] != null
+        ? new Category.fromJson(json['category'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.category != null) {
+      data['category'] = this.category.toJson();
+    }
+    return data;
+  }
+}

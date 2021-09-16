@@ -1,5 +1,4 @@
 import 'package:app_delivery/binding/instance_binding.dart';
-import 'package:app_delivery/red_page.dart';
 import 'package:app_delivery/routes.dart';
 import 'package:app_delivery/screen/auth/check_login.dart';
 import 'package:app_delivery/screen/auth/login.dart';
@@ -14,18 +13,17 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import 'green_page.dart';
 import 'local_notification_service.dart';
 
-Future<void> backgroundHandler(RemoteMessage message) async {
-  print(message.data.toString());
-  print(message.notification.title);
-}
+// Future<void> backgroundHandler(RemoteMessage message) async {
+//   print(message.data.toString());
+//   print(message.notification.title);
+// }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(backgroundHandler);
 
   runApp(MyApp());
 }

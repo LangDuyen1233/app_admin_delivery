@@ -6,7 +6,6 @@ import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Food.dart';
 import 'package:app_delivery/models/Topping.dart';
-import 'package:app_delivery/screen/chat/widget/loading.dart';
 import 'package:app_delivery/screen/products/admin/list_products.dart';
 import 'package:app_delivery/screen/widget/empty_screen.dart';
 import 'package:flutter/material.dart';

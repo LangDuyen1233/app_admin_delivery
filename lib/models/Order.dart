@@ -50,6 +50,8 @@ class Order {
   String updatedAt;
   List<Food> food;
   List<FoodOrder> foodOrder;
+  String latitude;
+  String longitude;
 
   Order(
       {this.id,
@@ -74,7 +76,10 @@ class Order {
       this.createdAt,
       this.updatedAt,
       this.food,
-      this.foodOrder});
+      this.foodOrder,
+        this.latitude,
+        this.longitude,
+      });
 
   Order.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -113,6 +118,8 @@ class Order {
         foodOrder.add(new FoodOrder.fromJson(v));
       });
     }
+    latitude = json['latitude'];
+    longitude = json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
@@ -152,6 +159,8 @@ class Order {
     if (this.foodOrder != null) {
       data['food_order'] = this.foodOrder.map((v) => v.toJson()).toList();
     }
+    data['latitude'] = this.latitude;
+    data['longitude'] = this.longitude;
     return data;
   }
 }

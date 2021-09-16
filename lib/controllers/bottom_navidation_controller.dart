@@ -19,7 +19,7 @@ class BottomNavigationController extends GetxController {
     HomProduct(),
     Home(),
     HomeScreen(),
-    Person(),
+    PersonProfile(),
   ];
 
   void changeTabIndex(int index) {

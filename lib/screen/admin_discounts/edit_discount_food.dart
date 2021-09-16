@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/models/Discount.dart';
 import 'package:app_delivery/models/Food.dart';
-import 'package:app_delivery/screen/chat/widget/loading.dart';
 import 'package:app_delivery/widgets/form_add_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:badges/badges.dart';
 
-class OrderScreen extends StatefulWidget{
+class OrderScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _OrderScreen();
   }
-
 }
 
 class _OrderScreen extends State<OrderScreen> {
+  int tabBarCount = 0;
 
-  int tabBarCount =0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,15 +23,6 @@ class _OrderScreen extends State<OrderScreen> {
         centerTitle: true,
         elevation: 0,
         title: Text("Danh sách hóa đơn"),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.add),
-        //     onPressed: () {
-        //       print("mày có vô đây không???");
-        //       // Get.to(ChooseDiscount());
-        //     },
-        //   ),
-        // ],
       ),
       body: Container(
         color: Color(0xFFEEEEEE),
@@ -50,20 +40,8 @@ class _OrderScreen extends State<OrderScreen> {
                   tabs: [
                     Tab(text: "Mới"),
                     Tab(
-                        icon: Badge(
-                      shape: BadgeShape.square,
-                      borderRadius: BorderRadius.circular(5),
-                      position: BadgePosition.topEnd(),
-                      padding: EdgeInsets.all(2),
-                      badgeContent: Text(
-                        '2',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      child: Text('Đã nhận'),
-                    )),
+                      text: 'Đã nhận',
+                    ),
                     Tab(text: "Lịch sử"),
                   ],
                   indicatorColor: Colors.blue,

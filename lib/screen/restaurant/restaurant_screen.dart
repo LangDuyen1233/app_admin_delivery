@@ -4,11 +4,12 @@ import 'dart:io';
 
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Restaurant.dart';
+import 'package:app_delivery/models/User.dart';
+import 'package:app_delivery/screen/auth/widgets/input_field.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -28,8 +29,9 @@ class RestaurantScreen extends StatefulWidget {
 class _RestaurantScreen extends State<RestaurantScreen> {
   final ImageController controller = Get.put(ImageController());
 
-  // Restaurants l;
   Rx<Restaurants> restaurant;
+
+  TextEditingController phone;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +153,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // LineDecoration(),
                                 Container(
                                   child: Text(
                                     'Địa chỉ quán',
@@ -166,7 +167,7 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                                           print(address);
                                           if (address != null) {
                                             var listAddress =
-                                                address.split('/');
+                                                address.split('|');
                                             await updateLocationAddress(
                                                 listAddress[0],
                                                 listAddress[1],
@@ -179,7 +180,7 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                                         icon: Icon(
                                           Icons.arrow_forward_ios,
                                           size: 14,
-                                        )))
+                                        ),),),
                               ],
                             ),
                             Container(
@@ -203,9 +204,116 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                           ],
                         ),
                       ),
-                      PhoneRes(
-                        phone: restaurant.value.phone,
+                      Container(
+                        color: Colors.white,
+                        margin: EdgeInsets.only(top: 10.h),
+                        padding: EdgeInsets.only(left: 15.w),
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    'Số điện thoại quán',
+                                    style: TextStyle(fontSize: 17.sp),
+                                  ),
+                                ),
+                                Container(
+                                  child: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Form(
+                                              autovalidateMode: AutovalidateMode.always,
+                                              child: Builder(builder: (BuildContext ctx) {
+                                                return AlertDialog(
+                                                    title: Text('Đổi số điện thoại'),
+                                                    content: SingleChildScrollView(
+                                                      child: Column(
+                                                        children: [
+                                                          InputField(
+                                                            controller: phone,
+                                                            hintText: "Số điện thoại",
+                                                            icon: Icons.phone,
+                                                            validator: (val) {
+                                                              if (val.length == 0) {
+                                                                return 'Vui lòng nhập số điện thoại!';
+                                                              } else if(val.length<10){
+                                                                return 'Vui lòng nhập đủ số điện thoại!';
+                                                              }else
+                                                                return null;
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    actions: <Widget>[
+                                                      TextButton(
+                                                        onPressed: () => Get.back(),
+                                                        child: const Text(
+                                                          'Hủy',
+                                                          style: TextStyle(color: Colors.red),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          var code = await changePhoneRestaurant(ctx);
+                                                          if (code == 200) {
+                                                            Get.back();
+                                                            setState(() {
+                                                              fetchRestaurant();
+                                                            });
+                                                            showToast(
+                                                                "Đổi số điện thoại thành công!");
+                                                          }
+                                                          if (code == 401) {
+                                                            showToast(
+                                                                "Đổi số điện thoại không thành công!");
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          'Đổi số điện thoại',
+                                                          style:
+                                                          TextStyle(color: Colors.blue),
+                                                        ),
+                                                      ),
+                                                    ]);
+                                              }),
+                                            );
+                                          });
+                                    },
+                                    icon: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 14,
+                                    ),),),
+                              ],
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(width: 0.3, color: Colors.black12))),
+                            ),
+                            Container(
+                              height: 50.h,
+                              alignment: Alignment.centerLeft,
+                              child: Obx(()=>
+                                 Text(
+                                  restaurant.value.phone,
+                                  style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       )
+
+
+                      // PhoneRes(
+                      //   phone: restaurant.value.phone,
+                      // )
                     ],
                   ),
                 ),
@@ -275,6 +383,7 @@ class _RestaurantScreen extends State<RestaurantScreen> {
     if (u != null) {
       restaurant = u.obs;
     }
+    phone = new TextEditingController(text: restaurant.value.phone);
     return restaurant.isBlank;
   }
 
@@ -314,7 +423,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
     String token = await getToken();
     print(token);
     String nameImage;
-    // print(l.image);
     if (restaurant.value.image != null) {
       if (controller.imagePath != null) {
         int code = await uploadAvatar(controller.image, controller.imagePath);
@@ -363,114 +471,146 @@ class _RestaurantScreen extends State<RestaurantScreen> {
     }
     return null;
   }
-}
 
-class AddressRes extends StatelessWidget {
-  final RxString address;
+  Future<int> changePhoneRestaurant( BuildContext context) async {
+    String token = await getToken();
+    print(token);
+    print(phone.text);
+    if(Form.of(context).validate()){
+      try {
+        http.Response response = await http.post(
+          Uri.parse(Apis.changePhoneRestaurantUrl),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': "Bearer $token",
+          },
+          body: jsonEncode(<String, dynamic>{
+            'phone': phone.text,
+          }),
+        );
 
-  AddressRes({Key key, this.address}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      margin: EdgeInsets.only(top: 10.h),
-      padding: EdgeInsets.only(left: 15.w),
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // LineDecoration(),
-              Container(
-                child: Text(
-                  'Địa chỉ quán',
-                  style: TextStyle(fontSize: 17.sp),
-                ),
-              ),
-              Container(
-                  child: IconButton(
-                      onPressed: () async {
-                        String address = await Get.to(AddressRestaurant());
-                        var listAddress = address.split('/');
-                      },
-                      icon: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 14,
-                      )))
-            ],
-          ),
-          Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(width: 0.3, color: Colors.black12))),
-          ),
-          Container(
-            height: 50.h,
-            alignment: Alignment.centerLeft,
-            child: Obx(
-              () => Text(
-                address.value,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
+        print(response.statusCode);
+        // if (response.statusCode == 200) {
+        //   var parsedJson = jsonDecode(response.body);
+        //   Users users = Users.fromJson(parsedJson['user']);
+        //   return users;
+        // }
+        return response.statusCode;
+      } on TimeoutException catch (e) {
+        showError(e.toString());
+      } on SocketException catch (e) {
+        showError(e.toString());
+      }
+    }
   }
 }
 
-class PhoneRes extends StatelessWidget {
-  final String phone;
+// class AddressRes extends StatelessWidget {
+//   final RxString address;
+//
+//   AddressRes({Key key, this.address}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Colors.white,
+//       margin: EdgeInsets.only(top: 10.h),
+//       padding: EdgeInsets.only(left: 15.w),
+//       width: MediaQuery.of(context).size.width,
+//       child: Column(
+//         children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               // LineDecoration(),
+//               Container(
+//                 child: Text(
+//                   'Địa chỉ quán',
+//                   style: TextStyle(fontSize: 17.sp),
+//                 ),
+//               ),
+//               Container(
+//                   child: IconButton(
+//                       onPressed: () async {
+//                         String address = await Get.to(AddressRestaurant());
+//                         var listAddress = address.split('/');
+//                         print('đia chỉ $listAddress');
+//                       },
+//                       icon: Icon(
+//                         Icons.arrow_forward_ios,
+//                         size: 14,
+//                       ),),),
+//             ],
+//           ),
+//           Container(
+//             decoration: BoxDecoration(
+//                 border: Border(
+//                     bottom: BorderSide(width: 0.3, color: Colors.black12))),
+//           ),
+//           Container(
+//             height: 50.h,
+//             alignment: Alignment.centerLeft,
+//             child: Obx(
+//               () => Text(
+//                 address.value,
+//                 overflow: TextOverflow.ellipsis,
+//                 style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+//               ),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-  const PhoneRes({Key key, this.phone}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      margin: EdgeInsets.only(top: 10.h),
-      padding: EdgeInsets.only(left: 15.w),
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // LineDecoration(),
-              Container(
-                child: Text(
-                  'Số điện thoại quán',
-                  style: TextStyle(fontSize: 17.sp),
-                ),
-              ),
-              Container(
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 14,
-                      )))
-            ],
-          ),
-          Container(
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(width: 0.3, color: Colors.black12))),
-          ),
-          Container(
-            height: 50.h,
-            alignment: Alignment.centerLeft,
-            child: Text(
-              phone,
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
+// class PhoneRes extends StatelessWidget {
+//   final String phone;
+//
+//   const PhoneRes({Key key, this.phone}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Colors.white,
+//       margin: EdgeInsets.only(top: 10.h),
+//       padding: EdgeInsets.only(left: 15.w),
+//       width: MediaQuery.of(context).size.width,
+//       child: Column(
+//         children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               Container(
+//                 child: Text(
+//                   'Số điện thoại quán',
+//                   style: TextStyle(fontSize: 17.sp),
+//                 ),
+//               ),
+//               Container(
+//                   child: IconButton(
+//                       onPressed: () {},
+//                       icon: Icon(
+//                         Icons.arrow_forward_ios,
+//                         size: 14,
+//                       ),),),
+//             ],
+//           ),
+//           Container(
+//             decoration: BoxDecoration(
+//                 border: Border(
+//                     bottom: BorderSide(width: 0.3, color: Colors.black12))),
+//           ),
+//           Container(
+//             height: 50.h,
+//             alignment: Alignment.centerLeft,
+//             child: Text(
+//               phone,
+//               style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+//             ),
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }

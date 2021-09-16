@@ -26,6 +26,7 @@ RxList<Order> listOrder;
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class _HistoryScreen extends State<HistoryScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,6 +49,7 @@ class _HistoryScreen extends State<HistoryScreen> {
                         shrinkWrap: true,
                         itemCount: listOrder.length,
                         itemBuilder: (context, index) {
+                          // distanceRes(index);
                           return Container(
                             alignment: FractionalOffset.topCenter,
                             margin: new EdgeInsets.only(top: 1.h),
@@ -64,7 +66,7 @@ class _HistoryScreen extends State<HistoryScreen> {
                                       // children: [Text(formatter.format(listOrder[index].updatedAt.)),
                                       // children: [Text(new DateFormat('yyyy-MM-dd').parse(listOrder[index].updatedAt).toString()),
                                       children: [
-                                        Text(DateFormat('yyyy-MM-dd HH:mm').format(
+                                        Text(DateFormat('yyyy-MM-dd').format(
                                             DateTime.parse(
                                                 listOrder[index].updatedAt))),
                                         listOrder[index].orderStatusId == 5
@@ -317,7 +319,9 @@ class _HistoryScreen extends State<HistoryScreen> {
                                                       style:
                                                       TextStyle(color: Colors.grey),
                                                     ),
-                                                    Text("20:57")
+                                                    Text(DateFormat('HH:mm').format(
+                                                        DateTime.parse(
+                                                            listOrder[index].updatedAt))),
                                                   ],
                                                 ),
                                               ),
@@ -332,7 +336,7 @@ class _HistoryScreen extends State<HistoryScreen> {
                                                       style:
                                                       TextStyle(color: Colors.grey),
                                                     ),
-                                                    Text("2")
+                                                    Text("${listOrder[index].foodOrder.length}")
                                                   ],
                                                 ),
                                               ),
@@ -347,7 +351,19 @@ class _HistoryScreen extends State<HistoryScreen> {
                                                       style:
                                                       TextStyle(color: Colors.grey),
                                                     ),
-                                                    Text("1.7km")
+                                                    FutureBuilder(
+                                                      future: distanceRestaurant(
+                                                          double.parse(listOrder[index].latitude),
+                                                          double.parse(listOrder[index].longitude),
+                                                          double.parse(listOrder[index].foodOrder[0].food.restaurant.lattitude),
+                                                          double.parse(listOrder[index].foodOrder[0].food.restaurant.longtitude)),
+                                                      builder: (context, AsyncSnapshot<double> snapshot) {
+                                                        if (snapshot.hasError) return Text('0.0km');
+                                                        if (snapshot.hasData) return Text('${snapshot.data}km'); else{
+                                                          return Text('0.0km');
+                                                        }
+                                                      },
+                                                    )
                                                   ],
                                                 ),
                                               )
@@ -358,7 +374,6 @@ class _HistoryScreen extends State<HistoryScreen> {
                                     ),
                                   ),
                                   Container(
-                                    // color: Colors.blue,
                                       height: 40.h,
                                       padding: EdgeInsets.only(right: 15.w),
                                       alignment: Alignment.centerRight,
@@ -370,7 +385,8 @@ class _HistoryScreen extends State<HistoryScreen> {
                                             size: 20.sp,
                                             color: Colors.grey[700],
                                           ),
-                                          Text('169.500đ'),
+                                          SizedBox(width: 6.w,),
+                                          Text('${NumberFormat.currency(locale: 'vi').format(listOrder[index].price)}'),
                                         ],
                                       )),
                                 ],
@@ -392,6 +408,7 @@ class _HistoryScreen extends State<HistoryScreen> {
     fetch();
     super.initState();
   }
+
 
   Future<void> fetch() async {
     var list = await getHistoryCard();

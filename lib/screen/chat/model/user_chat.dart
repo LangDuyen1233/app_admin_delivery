@@ -29,4 +29,9 @@ class UserChat {
       aboutMe: aboutMe,
     );
   }
+
+  @override
+  String toString() {
+    return 'UserChat{id: $id, photoUrl: $photoUrl, nickname: $nickname, aboutMe: $aboutMe}';
+  }
 }

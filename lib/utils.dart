@@ -11,6 +11,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'apis.dart';
+import 'networking.dart';
 
 showError(String s) {
   EasyLoading.dismiss();
@@ -127,4 +128,23 @@ Future<bool> notification(String uid, String title, String body) async {
     showError(e.toString());
   }
   return false;
+}
+
+Future<double> distanceRestaurant(
+    double startLat, double startLng, double endLat, double endLng) async {
+  Distance distance = new Distance(
+    startLat: startLat,
+    startLng: startLng,
+    endLat: endLat,
+    endLng: endLng,
+  );
+  var data = await distance.postData();
+  // print(data);
+
+  if (data != 404) {
+    var arrarDistance = data['distances'][0];
+    print(arrarDistance);
+    return arrarDistance[1];
+  }
+  return 0.0;
 }

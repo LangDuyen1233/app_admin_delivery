@@ -70,6 +70,8 @@ dependencies:
 
   google_maps_flutter: ^2.0.6
 
+  url_launcher: ^6.0.10
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

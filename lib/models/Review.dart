@@ -30,31 +30,31 @@ class Review {
   int id;
   String review;
   String rate;
-  String date;
   int restaurantId;
   int userId;
   String status;
   Users user;
   Restaurants restaurant;
   List<Image> image;
+  String updatedAt;
 
   Review(
       {this.id,
       this.review,
       this.rate,
-      this.date,
       this.restaurantId,
       this.userId,
       this.status,
       this.user,
       this.restaurant,
-      this.image});
+      this.image,
+        this.updatedAt,
+      });
 
   Review.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     review = json['review'];
     rate = json['rate'];
-    date = json['date'];
     restaurantId = json['restaurant_id'];
     userId = json['user_id'];
     status = json['status'];
@@ -68,6 +68,7 @@ class Review {
         image.add(new Image.fromJson(v));
       });
     }
+    updatedAt = json['updated_at'];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,7 +76,6 @@ class Review {
     data['id'] = this.id;
     data['review'] = this.review;
     data['rate'] = this.rate;
-    data['date'] = this.date;
     data['restaurant_id'] = this.restaurantId;
     data['user_id'] = this.userId;
     data['status'] = this.status;
@@ -88,6 +88,7 @@ class Review {
     if (this.image != null) {
       data['image'] = this.image.map((v) => v.toJson()).toList();
     }
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }

@@ -52,6 +52,7 @@ flutter {
 }
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
+    implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'com.google.firebase:firebase-messaging:20.1.0'

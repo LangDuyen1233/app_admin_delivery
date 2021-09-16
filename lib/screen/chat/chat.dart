@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:app_delivery/screen/chat/widget/full_photo.dart';
-import 'package:app_delivery/screen/chat/widget/loading.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -13,48 +13,59 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'const.dart';
 
-class Chat extends StatelessWidget {
+// class Chat extends StatelessWidget {
+//   final String peerId;
+//   final String peerAvatar;
+//
+//   Chat({Key key, @required this.peerId, @required this.peerAvatar})
+//       : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           'CHAT',
+//           style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+//         ),
+//         centerTitle: true,
+//       ),
+//       body: ChatScreen(
+//         peerId: peerId,
+//         peerAvatar: peerAvatar,
+//       ),
+//     );
+//   }
+// }
+
+class Chat extends StatefulWidget {
   final String peerId;
+  final String peerNickname;
   final String peerAvatar;
 
-  Chat({Key key, @required this.peerId, @required this.peerAvatar})
+  Chat(
+      {Key key,
+      @required this.peerId,
+      @required this.peerNickname,
+      @required this.peerAvatar})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'CHAT',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: ChatScreen(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
-      ),
-    );
-  }
+  State createState() => ChatScreenState(
+      peerId: peerId, peerNickname: peerNickname, peerAvatar: peerAvatar);
 }
 
-class ChatScreen extends StatefulWidget {
+class ChatScreenState extends State<Chat> {
   final String peerId;
+  final String peerNickname;
   final String peerAvatar;
 
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar})
-      : super(key: key);
+  ChatScreenState(
+      {Key key,
+      @required this.peerId,
+      @required this.peerNickname,
+      @required this.peerAvatar});
 
-  @override
-  State createState() =>
-      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
-}
-
-class ChatScreenState extends State<ChatScreen> {
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar});
-
-  String peerId;
-  String peerAvatar;
   String id;
 
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
@@ -133,7 +144,6 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void getSticker() {
-    // Hide keyboard when sticker appear
     focusNode.unfocus();
     setState(() {
       isShowSticker = !isShowSticker;
@@ -526,142 +536,151 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              // List of messages
-              buildListMessage(),
-
-              // Sticker
-              isShowSticker ? buildSticker() : Container(),
-
-              // Input content
-              buildInput(),
-            ],
-          ),
-
-          // Loading
-          buildLoading()
-        ],
-      ),
-      onWillPop: onBackPress,
-    );
-  }
-
-  Widget buildSticker() {
-    return Expanded(
-      child: Container(
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi1', 2),
-                  child: Image.asset(
-                    'images/mimi1.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi2', 2),
-                  child: Image.asset(
-                    'images/mimi2.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi3', 2),
-                  child: Image.asset(
-                    'images/mimi3.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            ),
-            Row(
-              children: <Widget>[
-                TextButton(
-                  onPressed: () => onSendMessage('mimi4', 2),
-                  child: Image.asset(
-                    'images/mimi4.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi5', 2),
-                  child: Image.asset(
-                    'images/mimi5.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => onSendMessage('mimi6', 2),
-                  child: Image.asset(
-                    'images/mimi6.gif',
-                    width: 50.0,
-                    height: 50.0,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            ),
-            // Row(
-            //   children: <Widget>[
-            //     TextButton(
-            //       onPressed: () => onSendMessage('mimi7', 2),
-            //       child: Image.asset(
-            //         'images/mimi7.gif',
-            //         width: 50.0,
-            //         height: 50.0,
-            //         fit: BoxFit.cover,
-            //       ),
-            //     ),
-            //     TextButton(
-            //       onPressed: () => onSendMessage('mimi8', 2),
-            //       child: Image.asset(
-            //         'images/mimi8.gif',
-            //         width: 50.0,
-            //         height: 50.0,
-            //         fit: BoxFit.cover,
-            //       ),
-            //     ),
-            //     TextButton(
-            //       onPressed: () => onSendMessage('mimi9', 2),
-            //       child: Image.asset(
-            //         'images/mimi9.gif',
-            //         width: 50.0,
-            //         height: 50.0,
-            //         fit: BoxFit.cover,
-            //       ),
-            //     )
-            //   ],
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            // )
-          ],
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${peerNickname}',
+          style: TextStyle(color: Colors.white),
         ),
-        decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
-            color: Colors.white),
-        padding: EdgeInsets.all(5.0),
-        height: 180.0,
+        // centerTitle: true,
+      ),
+      body: WillPopScope(
+        child: Stack(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                // List of messages
+                buildListMessage(),
+
+                // Sticker
+                // isShowSticker ? buildSticker() : Container(),
+
+                // Input content
+                buildInput(),
+              ],
+            ),
+
+            // Loading
+            buildLoading()
+          ],
+        ),
+        onWillPop: onBackPress,
       ),
     );
   }
+
+  // Widget buildSticker() {
+  //   return Expanded(
+  //     child: Container(
+  //       child: Column(
+  //         children: <Widget>[
+  //           Row(
+  //             children: <Widget>[
+  //               TextButton(
+  //                 onPressed: () => onSendMessage('mimi1', 2),
+  //                 child: Image.asset(
+  //                   'images/mimi1.gif',
+  //                   width: 50.0,
+  //                   height: 50.0,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () => onSendMessage('mimi2', 2),
+  //                 child: Image.asset(
+  //                   'images/mimi2.gif',
+  //                   width: 50.0,
+  //                   height: 50.0,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () => onSendMessage('mimi3', 2),
+  //                 child: Image.asset(
+  //                   'images/mimi3.gif',
+  //                   width: 50.0,
+  //                   height: 50.0,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               )
+  //             ],
+  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           ),
+  //           Row(
+  //             children: <Widget>[
+  //               TextButton(
+  //                 onPressed: () => onSendMessage('mimi4', 2),
+  //                 child: Image.asset(
+  //                   'images/mimi4.gif',
+  //                   width: 50.0,
+  //                   height: 50.0,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () => onSendMessage('mimi5', 2),
+  //                 child: Image.asset(
+  //                   'images/mimi5.gif',
+  //                   width: 50.0,
+  //                   height: 50.0,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //               TextButton(
+  //                 onPressed: () => onSendMessage('mimi6', 2),
+  //                 child: Image.asset(
+  //                   'images/mimi6.gif',
+  //                   width: 50.0,
+  //                   height: 50.0,
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               )
+  //             ],
+  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           ),
+  //           // Row(
+  //           //   children: <Widget>[
+  //           //     TextButton(
+  //           //       onPressed: () => onSendMessage('mimi7', 2),
+  //           //       child: Image.asset(
+  //           //         'images/mimi7.gif',
+  //           //         width: 50.0,
+  //           //         height: 50.0,
+  //           //         fit: BoxFit.cover,
+  //           //       ),
+  //           //     ),
+  //           //     TextButton(
+  //           //       onPressed: () => onSendMessage('mimi8', 2),
+  //           //       child: Image.asset(
+  //           //         'images/mimi8.gif',
+  //           //         width: 50.0,
+  //           //         height: 50.0,
+  //           //         fit: BoxFit.cover,
+  //           //       ),
+  //           //     ),
+  //           //     TextButton(
+  //           //       onPressed: () => onSendMessage('mimi9', 2),
+  //           //       child: Image.asset(
+  //           //         'images/mimi9.gif',
+  //           //         width: 50.0,
+  //           //         height: 50.0,
+  //           //         fit: BoxFit.cover,
+  //           //       ),
+  //           //     )
+  //           //   ],
+  //           //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           // )
+  //         ],
+  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //       ),
+  //       decoration: BoxDecoration(
+  //           border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
+  //           color: Colors.white),
+  //       padding: EdgeInsets.all(5.0),
+  //       height: 180.0,
+  //     ),
+  //   );
+  // }
 
   Widget buildLoading() {
     return Positioned(

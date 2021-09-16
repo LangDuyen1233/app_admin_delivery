@@ -3,13 +3,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/models/Order.dart';
+import 'package:app_delivery/screen/chat/chat.dart';
+import 'package:app_delivery/screen/chat/model/user_chat.dart';
 import 'package:app_delivery/screen/widget/empty_screen.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../apis.dart';
 import '../../../../utils.dart';
@@ -122,14 +129,99 @@ class _DeliveringScreen extends State<DeliveringScreen> {
                                             MainAxisAlignment.spaceEvenly,
                                             children: [
                                               IconButton(
-                                                  onPressed: () {},
+                                                  onPressed: () {
+                                                    launch("tel: ${listOrder[index].user.phone}");
+                                                  },
                                                   icon: Icon(
                                                     Icons.call,
                                                     size: 20,
                                                     color: Colors.grey,
                                                   )),
                                               IconButton(
-                                                  onPressed: () {},
+                                                  onPressed: () async {
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                        .getInstance();
+                                                    print('chát');
+                                                    User user = FirebaseAuth
+                                                        .instance.currentUser;
+                                                    print(user);
+                                                    if (user != null) {
+                                                      // Check is already sign up
+                                                      final querySnapshotresult =
+                                                          await FirebaseFirestore
+                                                          .instance
+                                                          .collection('users')
+                                                          .where('id',
+                                                          isEqualTo:
+                                                          user.uid)
+                                                          .get();
+                                                      print(querySnapshotresult
+                                                          .docs);
+                                                      // final List<DocumentSnapshot>documents = result.docs;
+                                                      if (querySnapshotresult
+                                                          .docs.length ==
+                                                          0) {
+                                                        // Update data to server if new user
+                                                        FirebaseFirestore.instance
+                                                            .collection('users')
+                                                            .doc(user.uid)
+                                                            .set({
+                                                          'nickname':
+                                                          user.displayName,
+                                                          'photoUrl':
+                                                          user.photoURL,
+                                                          'id': user.uid,
+                                                          'createdAt': DateTime
+                                                              .now()
+                                                              .millisecondsSinceEpoch
+                                                              .toString(),
+                                                          'chattingWith':
+                                                          listOrder[index].user.uid,
+                                                        });
+
+                                                        // Write data to local
+                                                        // currentUser = user;
+                                                        // print(currentUser.uid);
+                                                        await prefs.setString(
+                                                            'id', user.uid);
+                                                        await prefs.setString(
+                                                            'nickname',
+                                                            user.displayName ??
+                                                                "");
+                                                        await prefs.setString(
+                                                            'photoUrl',
+                                                            user.photoURL ?? "");
+                                                      } else {
+                                                        DocumentSnapshot
+                                                        documentSnapshot =
+                                                        querySnapshotresult
+                                                            .docs[0];
+                                                        UserChat userChat =
+                                                        UserChat.fromDocument(
+                                                            documentSnapshot);
+                                                        // Write data to local
+                                                        print(userChat.toString());
+                                                        await prefs.setString(
+                                                            'id', userChat.id);
+                                                        await prefs.setString(
+                                                            'nickname',
+                                                            userChat.nickname);
+                                                        await prefs.setString(
+                                                            'photoUrl',
+                                                            userChat.photoUrl ??
+                                                                "");
+                                                      }
+                                                      String avatar =
+                                                          Apis.baseURL +
+                                                              listOrder[index].user.avatar;
+                                                      Get.to(Chat(
+                                                        peerId: listOrder[index].user.uid,
+                                                        peerNickname: listOrder[index].user.username,
+                                                        peerAvatar: avatar,
+                                                      ));
+                                                    }
+                                                  },
                                                   icon: Icon(Icons.message,
                                                       size: 20, color: Colors.grey)),
                                             ],
@@ -340,12 +432,9 @@ class _DeliveringScreen extends State<DeliveringScreen> {
                                                           ),
                                                         ),
                                                         Container(
-                                                          width: 70.w,
-                                                          child: Text(
-                                                            listOrder[index]
-                                                                .foodOrder[ind]
-                                                                .price
-                                                                .toString(),
+                                                          child: Text('${NumberFormat.currency(locale: 'vi').format(listOrder[index]
+                                                              .foodOrder[ind]
+                                                              .price)}',
                                                             textAlign: TextAlign.right,
                                                           ),
                                                         ),
@@ -358,8 +447,8 @@ class _DeliveringScreen extends State<DeliveringScreen> {
                                               Container(
                                                 margin: EdgeInsets.only(right: 7.w),
                                                 alignment: Alignment.centerRight,
-                                                child: Text('Tổng: ' +
-                                                    listOrder[index].price.toString()),
+                                                child: Text('Tổng: ${NumberFormat.currency(locale: 'vi').format(listOrder[index].price)}'
+                                                ),
                                               ),
                                               SizedBox(
                                                 height: 10.h,
