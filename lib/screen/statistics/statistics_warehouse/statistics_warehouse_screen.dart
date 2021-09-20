@@ -155,7 +155,7 @@ class _StatisticsWarehouseScreen extends State<StatisticsWarehouseScreen> {
             ),
             Container(
               width: 414.w,
-              height: 530.h,
+              height: 520.h,
               child: Obx(
                 () => ListView.builder(
                     shrinkWrap: true,

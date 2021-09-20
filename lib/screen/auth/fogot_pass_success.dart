@@ -52,7 +52,7 @@ class ForgotPassSuccess extends StatelessWidget {
                   Get.offAll(SignIn());
                 },
                 child: Text(
-                  'Đăng nhập'.toUpperCase(),
+                  'Về đăng nhập'.toUpperCase(),
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),

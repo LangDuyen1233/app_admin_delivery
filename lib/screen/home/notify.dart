@@ -4,10 +4,12 @@ import 'dart:io';
 
 import 'package:app_delivery/models/Notify.dart';
 import 'package:app_delivery/screen/widget/empty_screen.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../apis.dart';
 import '../../utils.dart';
@@ -19,9 +21,16 @@ class NotifyScreen extends StatefulWidget {
   }
 }
 
-RxList<Notify> notify;
-
 class _Notify extends State<NotifyScreen> {
+  RxList<Notify> notify;
+
+  @override
+  void initState() {
+    notify = new RxList<Notify>();
+    // fetch();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,46 +39,52 @@ class _Notify extends State<NotifyScreen> {
           elevation: 0,
           title: Text("Thông báo"),
         ),
-        body: Container(
-            padding: EdgeInsets.only(top: 5.h),
-            color: Color(0xFFEEEEEE),
-            height: 834.h,
-            child: notify.length>0? RefreshIndicator(
-              onRefresh: () => fetch(),
-              child: Obx(
-                () => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: notify.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      child: NotifyCard(
-                        item: notify[index],
+        body: FutureBuilder(
+          future: fetch(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Loading();
+            } else {
+              if (snapshot.hasData) {
+                return Container(
+                    padding: EdgeInsets.only(top: 5.h),
+                    color: Color(0xFFEEEEEE),
+                    height: 834.h,
+                    child: RefreshIndicator(
+                      onRefresh: () => fetch(),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: notify.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            child: NotifyCard(
+                              item: notify[index],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
-            ):EmptyScreen(text: 'Bạn chưa có thông báo',)));
+                    ));
+              } else {
+                return EmptyScreen(
+                  text: 'Bạn chưa có thông báo',
+                );
+              }
+            }
+          },
+        ));
   }
 
-  @override
-  void initState() {
-    notify = new RxList<Notify>();
-    fetch();
-    super.initState();
-  }
-
-  Future<void> fetch() async {
+  Future<bool> fetch() async {
     var list = await getNotify();
     if (list != null) {
       print(list);
       notify.assignAll(list);
       notify.refresh();
     }
+    return notify.isNotEmpty;
   }
 
   Future<List<Notify>> getNotify() async {
-    List<Notify> list;
     String token = (await getToken());
     print(token);
     try {
@@ -85,7 +100,7 @@ class _Notify extends State<NotifyScreen> {
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         print(parsedJson['notify']);
-        list = ListNotifyJson.fromJson(parsedJson).notify;
+        var list = ListNotifyJson.fromJson(parsedJson).notify;
         print(list);
         return list;
       }
@@ -100,7 +115,6 @@ class _Notify extends State<NotifyScreen> {
     }
     return null;
   }
-
 }
 
 class NotifyCard extends StatelessWidget {
@@ -132,19 +146,27 @@ class NotifyCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      Icons.notifications,
-                      color: Colors.grey,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.notifications,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 4.w,
+                        ),
+                        Text(
+                          item.title,
+                          style: TextStyle(
+                              fontSize: 18.sp, fontWeight: FontWeight.w500),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      width: 5.w,
-                    ),
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                          fontSize: 20.sp, fontWeight: FontWeight.w600),
-                    ),
+                    Text(DateFormat('yyyy-MM-dd hh:mm').format(
+                        DateTime.parse(
+                            item.updatedAt)),style: TextStyle(color: Colors.black54),)
                   ],
                 ),
                 Container(
@@ -154,9 +176,11 @@ class NotifyCard extends StatelessWidget {
                                 width: 0.5, color: Colors.grey[300])))),
                 Container(
                   width: 400.w,
+                  padding: EdgeInsets.only(bottom: 20.h, top: 5.h),
                   child: Text(
-                    item.description,
+                    item.body,
                     softWrap: true,
+                    style: TextStyle(fontSize: 16.sp),
                   ),
                 )
               ],

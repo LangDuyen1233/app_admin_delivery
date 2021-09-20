@@ -308,7 +308,7 @@ class _UserCard extends State<UserCard> {
                         ),
                       ],
                     ),
-                    InkWell(
+                    GestureDetector(
                       onTap: () {
                         Get.to(() => StatisticsScreen());
                       },

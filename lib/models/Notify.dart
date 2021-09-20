@@ -26,23 +26,29 @@ class Notify {
   String title;
   int notificationTypeId;
   int userId;
-  String description;
+  String body;
+  String createdAt;
+  String updatedAt;
   NotifyType notifyType;
 
   Notify(
       {this.id,
-      this.title,
-      this.notificationTypeId,
-      this.userId,
-      this.description,
-      this.notifyType});
+        this.title,
+        this.notificationTypeId,
+        this.userId,
+        this.body,
+        this.createdAt,
+        this.updatedAt,
+        this.notifyType});
 
   Notify.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     notificationTypeId = json['notification_type_id'];
     userId = json['user_id'];
-    description = json['description'];
+    body = json['body'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
     notifyType = json['notify_type'] != null
         ? new NotifyType.fromJson(json['notify_type'])
         : null;
@@ -54,7 +60,9 @@ class Notify {
     data['title'] = this.title;
     data['notification_type_id'] = this.notificationTypeId;
     data['user_id'] = this.userId;
-    data['description'] = this.description;
+    data['body'] = this.body;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     if (this.notifyType != null) {
       data['notify_type'] = this.notifyType.toJson();
     }

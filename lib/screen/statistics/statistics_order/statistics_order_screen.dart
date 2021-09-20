@@ -154,7 +154,7 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
             ),
             Container(
               width: 414.w,
-              height: 530.h,
+              height: 520.h,
               child: Obx(
                 () => ListView.builder(
                     shrinkWrap: true,

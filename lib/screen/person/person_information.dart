@@ -641,6 +641,7 @@ class _PersonInformation extends State<PersonInformation> {
                                                   return null;
                                               },
                                             ),
+                                            SizedBox(height: 5.h,),
                                             InputField(
                                               controller: passwordNew,
                                               hintText: "Mật khẩu mới",
@@ -656,6 +657,7 @@ class _PersonInformation extends State<PersonInformation> {
                                                   return null;
                                               },
                                             ),
+                                            SizedBox(height: 5,),
                                             InputField(
                                               controller: re_passwordNew,
                                               obscureText: true,

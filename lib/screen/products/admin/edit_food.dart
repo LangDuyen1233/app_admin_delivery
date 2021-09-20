@@ -66,11 +66,6 @@ class _EditFood extends State<EditFood> {
                               Column(
                                 children: [
                                   ItemField(
-                                    // onChanged: (val) {
-                                    //   setState(() {
-                                    //     val = f.name;
-                                    //   });
-                                    // },
                                     hintText: "Tên món ăn",
                                     controller: name,
                                     type: TextInputType.text,
@@ -116,17 +111,13 @@ class _EditFood extends State<EditFood> {
                           ),
                         ),
                       ),
-                      // ),
-                      // ),
-                    )),
+                    ),),
           );
         } else
           return Container();
       },
     );
   }
-
-  final _multiSelectKey = GlobalKey<FormFieldState>();
 
   TextEditingController name;
   TextEditingController size;

@@ -163,7 +163,7 @@ class _StatisticsRevenueScreen extends State<StatisticsRevenueScreen> {
               ),
             ),
             Container(
-              height: 530.h,
+              height: 520.h,
               width: 414.w,
               child: Obx(
                 () => ListView.builder(

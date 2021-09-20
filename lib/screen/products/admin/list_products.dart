@@ -244,7 +244,7 @@ class _ListProduct extends State<ListProduct>
                                                         arguments: {
                                                           'category_id': category_id,
                                                           'topping_id':
-                                                          topping.value[index].id
+                                                          topping[index].id
                                                         });
                                                     // final result =
                                                     //     await Get.arguments['topping'];

@@ -6,6 +6,7 @@ import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/models/Food.dart';
 import 'package:app_delivery/models/Topping.dart';
 import 'package:app_delivery/screen/products/admin/edit_food.dart';
+import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:app_delivery/widgets/form_add_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -18,7 +19,6 @@ import 'package:http/http.dart' as http;
 
 import '../../../apis.dart';
 import '../../../utils.dart';
-import 'list_products.dart';
 
 class EditToppings extends StatefulWidget {
   @override
@@ -33,75 +33,77 @@ class _EditToppings extends State<EditToppings> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchTopping(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Form(
-            autovalidate: true,
-            child: Builder(
-              builder: (BuildContext ctx) => Scaffold(
-                appBar: AppBar(
-                  centerTitle: true,
-                  elevation: 0,
-                  title: Text("Sửa topping"),
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.check_outlined),
-                      onPressed: () {
-                        updateTopping(ctx);
-                      },
-                    ),
-                  ],
-                ),
-                body: Container(
-                  color: Color(0xFFEEEEEE),
-                  height: 834.h,
-                  child: Container(
-                    child: Column(
-                      children: [
-                        FormAddWidget(
-                          widget: Column(
-                            children: [
-                              // Avatar(icon: Icons.add_a_photo,name: "Image",),
-                              ItemField(
-                                hintText: "Tên topping",
-                                controller: name,
-                                type: TextInputType.text,
-                                validator: (val) {
-                                  print(val);
-                                  if (val.length == 0) {
-                                    return 'Vui lòng nhập tên topping';
-                                  } else
-                                    return null;
-                                },
-                              ),
-                              ItemField(
-                                hintText: "Giá bán",
-                                controller: price,
-                                type: TextInputType.number,
-                                validator: (val) {
-                                  print(val);
-                                  if (val.length == 0) {
-                                    return 'Vui lòng nhập giá bán';
-                                  } else
-                                    return null;
-                                },
-                              ),
-                              ChooseFood()
-                            ],
-                          ),
-                        )
+        future: fetchTopping(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Loading();
+          } else {
+            if (snapshot.hasData) {
+              return Form(
+                autovalidate: true,
+                child: Builder(
+                  builder: (BuildContext ctx) => Scaffold(
+                    appBar: AppBar(
+                      centerTitle: true,
+                      elevation: 0,
+                      title: Text("Sửa topping"),
+                      actions: [
+                        IconButton(
+                          icon: Icon(Icons.check_outlined),
+                          onPressed: () {
+                            updateTopping(ctx);
+                          },
+                        ),
                       ],
+                    ),
+                    body: Container(
+                      color: Color(0xFFEEEEEE),
+                      height: 834.h,
+                      child: Container(
+                        child: Column(
+                          children: [
+                            FormAddWidget(
+                              widget: Column(
+                                children: [
+                                  ItemField(
+                                    hintText: "Tên topping",
+                                    controller: name,
+                                    type: TextInputType.text,
+                                    validator: (val) {
+                                      print(val);
+                                      if (val.length == 0) {
+                                        return 'Vui lòng nhập tên topping';
+                                      } else
+                                        return null;
+                                    },
+                                  ),
+                                  ItemField(
+                                    hintText: "Giá bán",
+                                    controller: price,
+                                    type: TextInputType.number,
+                                    validator: (val) {
+                                      print(val);
+                                      if (val.length == 0) {
+                                        return 'Vui lòng nhập giá bán';
+                                      } else
+                                        return null;
+                                    },
+                                  ),
+                                 new ChooseFood()
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          );
-        } else
-          return Container();
-      },
-    );
+              );
+            } else
+              return Container(child: Text('djbsa,bd,sandmsandm'));
+          }
+        });
   }
 
   TextEditingController name;
@@ -112,8 +114,10 @@ class _EditToppings extends State<EditToppings> {
 
   @override
   void initState() {
-    print(Get.arguments['category_id']);
-    getCategory();
+    // print(Get.arguments['category_id']);
+    category_id = Get.arguments['category_id'];
+    // getCategory();
+    fetchTopping();
     // name = TextEditingController();
     // price = TextEditingController();
     foodId = '';
@@ -121,30 +125,31 @@ class _EditToppings extends State<EditToppings> {
     lf = new List<Food>();
   }
 
-  void getCategory() async {
-    category_id = await Get.arguments['category_id'];
-  }
+  // void getCategory() async {
+  //   category_id = await Get.arguments['category_id'];
+  // }
 
   Topping tp;
 
   Future<bool> fetchTopping() async {
     var topping = await editTopping();
+    print(topping);
     if (topping != null) {
-      print(topping);
       tp = topping;
     }
-    print('hjghwehgbwegb ${tp.food.length}');
-    name = TextEditingController(text: tp.name);
-    price = TextEditingController(text: tp.price.toString());
+    print('hjghwehgbwegb ${tp.name}');
+    name = new TextEditingController(text: tp.name);
+    price = new TextEditingController(text: tp.price.toString());
 
-    lf.addAll(tp.food);
-    print('leng ${lf.length}');
+    lf = tp.food;
+    // print('leng ${lf.length}');
 
     var tps = await getFood();
+    print('đồ ăn nè ${tps}');
     food.assignAll(tps);
     food.refresh();
 
-    return topping.isBlank;
+    return tp.isBlank;
   }
 
   Future<Topping> editTopping() async {
@@ -249,10 +254,10 @@ class _EditToppings extends State<EditToppings> {
   Future<List<Food>> getFood() async {
     List<Food> list;
     String token = (await getToken());
-    int categoryId = Get.arguments['category_id'];
-    print(categoryId.toString() + " dduj mas m");
+    // int categoryId = Get.arguments['category_id'];
+    print(category_id.toString() + " dâu rôi");
     Map<String, String> queryParams = {
-      'category_id': categoryId.toString(),
+      'category_id': category_id.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
@@ -286,8 +291,7 @@ class _EditToppings extends State<EditToppings> {
 }
 
 List<Food> selectedAnimals3;
-RxList<Food> food;
-final _multiSelectKey = GlobalKey<FormFieldState>();
+RxList<Food> food = new RxList<Food>();
 
 class ChooseFood extends StatefulWidget {
   @override
@@ -295,10 +299,10 @@ class ChooseFood extends StatefulWidget {
 }
 
 class _ChooseFood extends State<ChooseFood> {
+  final _multiSelectKey = GlobalKey<FormFieldState>();
   @override
   void initState() {
     selectedAnimals3 = [];
-    food = new RxList<Food>();
     for (int i = 0; i < lf.length; i++) {
       selectedAnimals3.add(lf[i]);
       for (int j = 0; j < food.length; j++) {
@@ -310,13 +314,13 @@ class _ChooseFood extends State<ChooseFood> {
       }
       food.add(lf[i]);
     }
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child:
-          Container(
+      child: Container(
         color: Colors.white,
         margin: EdgeInsets.only(top: 5.h, left: 10.w, right: 10.w),
         child: MultiSelectBottomSheetField<Food>(
@@ -336,7 +340,6 @@ class _ChooseFood extends State<ChooseFood> {
             setState(() {
               selectedAnimals3 = values;
             });
-            _multiSelectKey.currentState.validate();
           },
           initialValue: selectedAnimals3,
           chipDisplay: MultiSelectChipDisplay(
@@ -344,7 +347,6 @@ class _ChooseFood extends State<ChooseFood> {
               setState(() {
                 selectedAnimals3.remove(item);
               });
-              _multiSelectKey.currentState.validate();
             },
             icon: Icon(
               Icons.close,

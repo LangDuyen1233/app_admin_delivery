@@ -139,7 +139,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidgetState> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: 'Home',
+              label: 'Trang chủ',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.message),

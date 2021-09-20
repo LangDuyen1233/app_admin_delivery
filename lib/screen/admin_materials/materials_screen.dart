@@ -116,7 +116,7 @@ class _MaterialsScreen extends State<MaterialsScreen> {
                                                 context: context,
                                                 builder: (context) {
                                                   return AlertDialog(
-                                                      title: Text('Xóa nhân viên'),
+                                                      title: Text('Xóa nguyên vật liệu'),
                                                       content: const Text(
                                                           'Bạn có chắc chắn muốn xóa không?'),
                                                       actions: <Widget>[
