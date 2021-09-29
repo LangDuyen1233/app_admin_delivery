@@ -42,7 +42,7 @@ handleAuth() {
               future: checkLogin(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return MyStatefulWidgetState();
+                  return MyStatefulWidgetState(selectedIndex: 2,);
                 } else {
                   return SignIn();
                 }
@@ -105,17 +105,19 @@ Future<int> uploadAvatar(File file, String filename) async {
   }
 }
 
-Future<bool> notification(String uid, String title, String body) async {
+Future<bool> notification(
+    String uid, String title, String body, int notification_type_id) async {
   try {
     http.Response response = await http.post(
       Uri.parse(Apis.postNotificationUrl),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         'uid': uid,
         'title': title,
         'body': body,
+        'notification_type_id': notification_type_id,
       }),
     );
     print(response.statusCode);
@@ -128,6 +130,34 @@ Future<bool> notification(String uid, String title, String body) async {
     showError(e.toString());
   }
   return false;
+}
+
+Future<void> saveNotification(
+    String title, String body, String user_id, int notification_type_id) async {
+  var token = await getToken();
+  try {
+    print(title);
+    print(body);
+    http.Response response = await http.post(
+      Uri.parse(Apis.saveNotificationUrl),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': "Bearer $token",
+      },
+      body: jsonEncode(<String, dynamic>{
+        'user_id': user_id,
+        'title': title,
+        'body': body,
+        'notification_type_id': notification_type_id,
+      }),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {}
+  } on TimeoutException catch (e) {
+    showError(e.toString());
+  } on SocketException catch (e) {
+    showError(e.toString());
+  }
 }
 
 Future<double> distanceRestaurant(

@@ -1,4 +1,3 @@
-import 'package:app_delivery/binding/instance_binding.dart';
 import 'package:app_delivery/routes.dart';
 import 'package:app_delivery/screen/auth/check_login.dart';
 import 'package:app_delivery/screen/auth/login.dart';
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(414, 896),
       builder: () => GetMaterialApp(
-        initialBinding: InstanceBinding(),
         // home: SignIn(),
         // home: CheckLogin(),
         // initialRoute: "/",

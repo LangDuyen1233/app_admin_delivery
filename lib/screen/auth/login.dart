@@ -171,7 +171,7 @@ class _SignIn extends State<SignIn> {
 
           isLoading = false;
           // Get.back();
-          Get.to(MyStatefulWidgetState());
+          Get.to(MyStatefulWidgetState(selectedIndex: 2,));
         }
         if (response.statusCode == 401) {
           setState(() {

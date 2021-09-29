@@ -14,15 +14,18 @@ import 'admin_categories/category_product.dart';
 import 'admin_order/order_screen.dart';
 
 class MyStatefulWidgetState extends StatefulWidget {
+  final int selectedIndex;
+
+  const MyStatefulWidgetState({@required this.selectedIndex});
+
   @override
   State<StatefulWidget> createState() {
-    return _MyStatefulWidgetState();
+    return _MyStatefulWidgetState(selectedIndex: selectedIndex);
   }
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidgetState> {
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  int selectedIndex;
 
   List<Widget> _widgetOptions = <Widget>[
     OrderScreen(),
@@ -31,10 +34,14 @@ class _MyStatefulWidgetState extends State<MyStatefulWidgetState> {
     HomeScreen(),
     PersonProfile(),
   ];
-  final Rx<int> tabIndex = 2.obs;
+  // final Rx<int> tabIndex = 2.obs;
+
+  _MyStatefulWidgetState({@required this.selectedIndex});
 
   void changeTabIndex(int index) {
-    tabIndex.value = index;
+    setState(() {
+      selectedIndex = index;
+    });
   }
 
   @override
@@ -123,38 +130,36 @@ class _MyStatefulWidgetState extends State<MyStatefulWidgetState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() => Center(
-            child: _widgetOptions.elementAt(tabIndex.value),
-          )),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.article),
-              label: 'Đơn hàng',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.apps),
-              label: 'Sản phẩm',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Trang chủ',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: 'Tin nhắn',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Tôi',
-            ),
-          ],
-          currentIndex: tabIndex.value,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.blueAccent,
-          onTap: changeTabIndex,
-        ),
+      body:  Center(
+        child: _widgetOptions.elementAt(selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.article),
+            label: 'Đơn hàng',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.apps),
+            label: 'Sản phẩm',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Tin nhắn',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Tôi',
+          ),
+        ],
+        currentIndex: selectedIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.blueAccent,
+        onTap: changeTabIndex,
       ),
     );
   }

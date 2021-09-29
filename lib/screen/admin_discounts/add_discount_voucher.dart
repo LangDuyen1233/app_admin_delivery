@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 
 import '../../apis.dart';
 import '../../utils.dart';
+import 'choose_discounts.dart';
 import 'discount_screen.dart';
 
 class AddDiscountVoucher extends StatefulWidget {
@@ -34,6 +35,11 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
                     centerTitle: true,
                     elevation: 0,
                     title: Text("Thêm khuyến mãi"),
+                    leading: BackButton(
+                      onPressed: () {
+                        Get.off(ChooseDiscount());
+                      },
+                    ),
                     actions: [
                       IconButton(
                         icon: Icon(Icons.check_outlined),
@@ -156,12 +162,8 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            // print(parsedJson['success']);
             Discount discount = Discount.fromJson(parsedJson['discount']);
-            // Get.back(result: food);
-            // Get.back(result: discount);
-            Get.off(DiscountScreen(),
-                arguments: {'discount': discount});
+            Get.off(DiscountScreen(), arguments: {'discount': discount});
             showToast("Tạo thành công");
           }
           if (response.statusCode == 404) {

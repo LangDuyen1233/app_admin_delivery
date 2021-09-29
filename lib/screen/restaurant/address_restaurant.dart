@@ -68,6 +68,7 @@ class _AddressRestaurant extends State<AddressRestaurant> {
                     onTap: () async {
                       await checkPermision();
                       String address = await getCurrentAddress();
+                      print(address);
                       Get.back(result: address);
                     },
                     child: Container(
@@ -198,9 +199,9 @@ class _AddressRestaurant extends State<AddressRestaurant> {
 
     address = street + ', ' + locality + ', ' + a;
     address = address +
-        '/' +
+        '|' +
         latLng.latitude.toString() +
-        '/' +
+        '|' +
         latLng.longitude.toString();
 
     return address;

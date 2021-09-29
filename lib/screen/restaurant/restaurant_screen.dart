@@ -168,6 +168,7 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                                           if (address != null) {
                                             var listAddress =
                                                 address.split('|');
+                                            print(listAddress);
                                             await updateLocationAddress(
                                                 listAddress[0],
                                                 listAddress[1],

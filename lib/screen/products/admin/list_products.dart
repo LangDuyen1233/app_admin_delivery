@@ -27,7 +27,7 @@ class ListProduct extends StatefulWidget {
   }
 }
 
-RxList<Food> food;
+RxList<Food> food = new RxList<Food>();
 RxList<Topping> topping = new RxList<Topping>();
 int food_id;
 
@@ -39,7 +39,7 @@ class _ListProduct extends State<ListProduct>
   void initState() {
     category_id = Get.arguments['category_id'];
     print('lisst product$category_id');
-    food = new RxList<Food>();
+    // food = new RxList<Food>();
     fetchFood();
     fetchTopping();
     super.initState();
@@ -59,8 +59,6 @@ class _ListProduct extends State<ListProduct>
               print("Thêm một món ăn mới");
               Get.to(() => ChooseProducts(),
                   arguments: {'category_id': category_id});
-              // Get.off(() => ChooseProducts(),
-              //     arguments: {'category_id': category_id});
               final result = await Get.arguments['food'];
               print(result);
               if (result != null) {
@@ -98,106 +96,114 @@ class _ListProduct extends State<ListProduct>
                     FutureBuilder(
                         future: fetchFood(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const Loading();
                           } else {
                             if (snapshot.hasError) {
-                              return EmptyScreen(text: 'Bạn chưa có món ăn nào.');
+                              return EmptyScreen(
+                                  text: 'Bạn chưa có món ăn nào.');
                             } else {
-                              // return buildLoading();
                               return RefreshIndicator(
                                 onRefresh: () => fetchFood(),
                                 child: Obx(
-                                      () => food.length == 0
+                                  () => food.length == 0
                                       ? EmptyScreen(
-                                    text: "Bạn chưa có món ăn nào.",
-                                  )
+                                          text: "Bạn chưa có món ăn nào.",
+                                        )
                                       : ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: food.length,
-                                        itemBuilder: (context, index) {
-                                          return Slidable(
-                                            actionPane: SlidableDrawerActionPane(),
-                                            actionExtentRatio: 0.12,
-                                            child: ProductItem(
-                                              item: food[index],
-                                            ),
-                                            secondaryActions: <Widget>[
-                                              Container(
-                                                child: IconSlideAction(
-                                                  caption: 'Edit',
-                                                  color: Color(0xFFEEEEEE),
-                                                  icon: Icons.edit,
-                                                  foregroundColor: Colors.blue,
-                                                  onTap: () async {
-                                                    var result = await Get.to(() => EditFood(),
-                                                        arguments: {
-                                                          'category_id': category_id,
-                                                          'food_id': food.value[index].id
-                                                        });
-                                                    // final result = await Get.arguments['food'];
-                                                    // print(result);
-                                                    setState(() {
-                                                      if (result != null) {
-                                                        fetchFood();
-                                                        // food.add(result);
-                                                        // food.refresh();
-                                                      }
-                                                    });
-                                                  },
-                                                ),
+                                          shrinkWrap: true,
+                                          itemCount: food.length,
+                                          itemBuilder: (context, index) {
+                                            return Slidable(
+                                              actionPane:
+                                                  SlidableDrawerActionPane(),
+                                              actionExtentRatio: 0.12,
+                                              child: ProductItem(
+                                                item: food[index],
                                               ),
-                                              Container(
-                                                child: IconSlideAction(
-                                                  caption: 'Delete',
-                                                  color: Color(0xFFEEEEEE),
-                                                  icon: Icons.delete,
-                                                  foregroundColor: Colors.red,
-                                                  onTap: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                              title: Text('Xóa món ăn'),
-                                                              content: const Text(
-                                                                  'Bạn có chắc chắn muốn xóa không?'),
-                                                              actions: <Widget>[
-                                                                TextButton(
-                                                                  onPressed: () => Get.back(),
-                                                                  child: const Text('Hủy'),
-                                                                ),
-                                                                TextButton(
-                                                                  onPressed: () async {
-                                                                    await deleteFood(
-                                                                        food[index].id);
-
-                                                                    setState(() {
-                                                                      food.removeAt(index);
-                                                                      food.refresh();
-                                                                      Get.back();
-                                                                      showToast(
-                                                                          "Xóa thành công");
-                                                                    });
-
-                                                                    // Get.to(ListProduct());
-
-                                                                    // food.refresh();
-                                                                  },
-                                                                  child: const Text(
-                                                                    'Xóa',
-                                                                    style: TextStyle(
-                                                                        color: Colors.red),
-                                                                  ),
-                                                                ),
-                                                              ]);
-                                                        });
-                                                  },
+                                              secondaryActions: <Widget>[
+                                                Container(
+                                                  child: IconSlideAction(
+                                                    caption: 'Edit',
+                                                    color: Color(0xFFEEEEEE),
+                                                    icon: Icons.edit,
+                                                    foregroundColor:
+                                                        Colors.blue,
+                                                    onTap: () async {
+                                                      var result = await Get.to(
+                                                          () => EditFood(),
+                                                          arguments: {
+                                                            'category_id':
+                                                                category_id,
+                                                            'food_id': food
+                                                                .value[index].id
+                                                          });
+                                                      setState(() {
+                                                        if (result != null) {
+                                                          fetchFood();
+                                                        }
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
+                                                Container(
+                                                  child: IconSlideAction(
+                                                    caption: 'Delete',
+                                                    color: Color(0xFFEEEEEE),
+                                                    icon: Icons.delete,
+                                                    foregroundColor: Colors.red,
+                                                    onTap: () {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                                title: Text(
+                                                                    'Xóa món ăn'),
+                                                                content: const Text(
+                                                                    'Bạn có chắc chắn muốn xóa không?'),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () => Get
+                                                                            .back(),
+                                                                    child: const Text(
+                                                                        'Hủy'),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      print(index);
+                                                                          await deleteFood(
+                                                                              food[index].id);
+                                                                        // setState(
+                                                                        //     () {
+                                                                          food.removeAt(
+                                                                              index);
+                                                                          food.refresh();
+                                                                          Get.back();
+                                                                          showToast(
+                                                                          "Xóa thành công");
+                                                                        // });
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Xóa',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.red),
+                                                                    ),
+                                                                  ),
+                                                                ]);
+                                                          });
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        ),
                                 ),
                               );
                             }
@@ -207,108 +213,129 @@ class _ListProduct extends State<ListProduct>
                     FutureBuilder(
                         future: fetchTopping(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const Loading();
                           } else {
                             if (snapshot.hasError) {
-                              return EmptyScreen(text: 'Bạn chưa có món ăn nào.');
+                              return EmptyScreen(
+                                  text: 'Bạn chưa có món ăn nào.');
                             } else {
                               // return buildLoading();
                               return RefreshIndicator(
                                 onRefresh: () => fetchTopping(),
                                 child: Obx(
-                                      () => topping.length == 0
+                                  () => topping.length == 0
                                       ? EmptyScreen(
-                                    text: "Bạn chưa có món ăn nào.",
-                                  )
+                                          text: "Bạn chưa có món ăn nào.",
+                                        )
                                       : ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: topping.length,
-                                        itemBuilder: (context, index) {
-                                          return Slidable(
-                                            actionPane: SlidableDrawerActionPane(),
-                                            actionExtentRatio: 0.12,
-                                            child: ToppingItem(
-                                              item: topping[index],
-                                            ),
-                                            secondaryActions: <Widget>[
-                                              Container(
-                                                child: IconSlideAction(
-                                                  caption: 'Edit',
-                                                  color: Color(0xFFEEEEEE),
-                                                  icon: Icons.edit,
-                                                  foregroundColor: Colors.blue,
-                                                  onTap: () async {
-                                                    var result = await Get.to(
-                                                            () => EditToppings(),
-                                                        arguments: {
-                                                          'category_id': category_id,
-                                                          'topping_id':
-                                                          topping[index].id
-                                                        });
-                                                    // final result =
-                                                    //     await Get.arguments['topping'];
-                                                    // print(result);
-                                                    setState(() {
-                                                      if (result != null) {
-                                                        fetchTopping();
-                                                        // topping.add(result);
-                                                        // topping.refresh();
-                                                      }
-                                                    });
-                                                  },
-                                                ),
+                                          shrinkWrap: true,
+                                          itemCount: topping.length,
+                                          itemBuilder: (context, index) {
+                                            return Slidable(
+                                              actionPane:
+                                                  SlidableDrawerActionPane(),
+                                              actionExtentRatio: 0.12,
+                                              child: ToppingItem(
+                                                item: topping[index],
                                               ),
-                                              Container(
-                                                margin: EdgeInsets.only(top: 5),
-                                                child: IconSlideAction(
-                                                  caption: 'Delete',
-                                                  color: Color(0xFFEEEEEE),
-                                                  icon: Icons.delete,
-                                                  foregroundColor: Colors.red,
-                                                  onTap: () {
-                                                    showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                              title: Text('Xóa topping'),
-                                                              content: const Text(
-                                                                  'Bạn có chắc chắn muốn xóa không?'),
-                                                              actions: <Widget>[
-                                                                TextButton(
-                                                                  onPressed: () => Get.back(),
-                                                                  child: const Text('Hủy'),
-                                                                ),
-                                                                TextButton(
-                                                                  onPressed: () async {
-                                                                    await deleteTopping(
-                                                                        topping[index].id);
-
-                                                                    setState(() {
-                                                                      topping.removeAt(index);
-                                                                      topping.refresh();
-                                                                      Get.back();
-                                                                    });
-
-                                                                    // Get.to(ListProduct());
-
-                                                                    // food.refresh();
-                                                                  },
-                                                                  child: const Text(
-                                                                    'Xóa',
-                                                                    style: TextStyle(
-                                                                        color: Colors.red),
-                                                                  ),
-                                                                ),
-                                                              ]);
-                                                        });
-                                                  },
+                                              secondaryActions: <Widget>[
+                                                Container(
+                                                  child: IconSlideAction(
+                                                    caption: 'Edit',
+                                                    color: Color(0xFFEEEEEE),
+                                                    icon: Icons.edit,
+                                                    foregroundColor:
+                                                        Colors.blue,
+                                                    onTap: () async {
+                                                      var result = await Get.to(
+                                                          () => EditToppings(),
+                                                          arguments: {
+                                                            'category_id':
+                                                                category_id,
+                                                            'topping_id':
+                                                                topping[index]
+                                                                    .id
+                                                          });
+                                                      // final result =
+                                                      //     await Get.arguments['topping'];
+                                                      // print(result);
+                                                      setState(() {
+                                                        if (result != null) {
+                                                          fetchTopping();
+                                                          // topping.add(result);
+                                                          // topping.refresh();
+                                                        }
+                                                      });
+                                                    },
+                                                  ),
                                                 ),
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      ),
+                                                Container(
+                                                  margin:
+                                                      EdgeInsets.only(top: 5),
+                                                  child: IconSlideAction(
+                                                    caption: 'Delete',
+                                                    color: Color(0xFFEEEEEE),
+                                                    icon: Icons.delete,
+                                                    foregroundColor: Colors.red,
+                                                    onTap: () {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                                title: Text(
+                                                                    'Xóa topping'),
+                                                                content: const Text(
+                                                                    'Bạn có chắc chắn muốn xóa không?'),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () => Get
+                                                                            .back(),
+                                                                    child: const Text(
+                                                                        'Hủy'),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      await deleteTopping(
+                                                                          topping[index]
+                                                                              .id);
+
+                                                                      setState(
+                                                                          () {
+                                                                        topping.removeAt(
+                                                                            index);
+                                                                        topping
+                                                                            .refresh();
+                                                                        Get.back();
+                                                                        showToast(
+                                                                            'Xóa thành công');
+                                                                      });
+
+                                                                      // Get.to(ListProduct());
+
+                                                                      // food.refresh();
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Xóa',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.red),
+                                                                    ),
+                                                                  ),
+                                                                ]);
+                                                          });
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        ),
                                 ),
                               );
                             }
@@ -334,7 +361,7 @@ class _ListProduct extends State<ListProduct>
       // print(listFood.length);
       food.assignAll(listFood);
       food.refresh();
-      
+
       // print(food.length);
     }
   }
@@ -343,7 +370,6 @@ class _ListProduct extends State<ListProduct>
     List<Food> list;
     String token = (await getToken());
     int categoryId = Get.arguments['category_id'];
-    print(categoryId.toString() + " dduj mas m");
     Map<String, String> queryParams = {
       'category_id': categoryId.toString(),
     };
@@ -441,14 +467,8 @@ class _ListProduct extends State<ListProduct>
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Food f = Food.fromJson(parsedJson['food']);
         return f;
-        // food.remove(f);
-        // food.refresh();
-        // Get.off(ListProduct(),
-        //     arguments: {'food': food, 'category_id': category_id});
-        // showToast("Sửa thành công");
       }
       if (response.statusCode == 404) {
         EasyLoading.dismiss();
@@ -485,14 +505,8 @@ class _ListProduct extends State<ListProduct>
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Topping tp = Topping.fromJson(parsedJson['topping']);
         return tp;
-        // food.remove(f);
-        // food.refresh();
-        // Get.off(ListProduct(),
-        //     arguments: {'food': food, 'category_id': category_id});
-        // showToast("Sửa thành công");
       }
       if (response.statusCode == 404) {
         EasyLoading.dismiss();
@@ -514,101 +528,98 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-        padding: EdgeInsets.only(top: 12.h, bottom: 12.h),
-        margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(8.sp)),
-          color: Colors.white,
-        ),
-        // height: 120.h,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: EdgeInsets.only(left: 10.w),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    child: Image.network(
-                      Apis.baseURL + item.image[0].url,
-                      width: 100.w,
-                      height: 100.h,
-                      fit: BoxFit.cover,
-                    ),
+    return Container(
+      padding: EdgeInsets.only(top: 12.h, bottom: 12.h),
+      margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(8.sp)),
+        color: Colors.white,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 10.w),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  child: Image.network(
+                    Apis.baseURL + item.image[0].url,
+                    width: 100.w,
+                    height: 100.h,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 15.w, right: 10.w),
-                  // height: 92.h,
-                  width: 275.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        item.size == null
-                            ? item.name
-                            : item.name + " Size " + item.size,
-                        style: TextStyle(
-                            fontSize: 20.sp, fontWeight: FontWeight.w600),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            item.discountId == null
-                                ? Text(
-                                    'Giá : ${NumberFormat.currency(locale: 'vi').format(item.price)}',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w500),
-                                  )
-                                : Row(
-                                    children: [
-                                      Text(
-                                          'Giá :  ${NumberFormat.currency(locale: 'vi').format((item.price - item.price * (double.parse(item.discount.percent) / 100)).round())}',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500)),
-                                      SizedBox(
-                                        width: 5.w,
-                                      ),
-                                      Text(
-                                        '${NumberFormat.currency(locale: 'vi').format(item.price)}',
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 15.w, right: 10.w),
+                // height: 92.h,
+                width: 275.w,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      item.size == null
+                          ? item.name
+                          : item.name + " Size " + item.size,
+                      style: TextStyle(
+                          fontSize: 20.sp, fontWeight: FontWeight.w600),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 10.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          item.discountId == null
+                              ? Text(
+                                  'Giá : ${NumberFormat.currency(locale: 'vi').format(item.price)}',
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                )
+                              : Row(
+                                  children: [
+                                    Text(
+                                        'Giá :  ${NumberFormat.currency(locale: 'vi').format((item.price - item.price * (double.parse(item.discount.percent) / 100)).round())}',
                                         style: TextStyle(
-                                            decoration:
-                                                TextDecoration.lineThrough),
-                                      )
-                                    ],
-                                  ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            Text(
-                              'Thành phần: ' + item.ingredients.toString(),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            tp(item.topping)!=''? Text(
-                              'Topping: ' + tp(item.topping),
-                              overflow: TextOverflow.ellipsis,
-                            ):Container(),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
+                                            fontWeight: FontWeight.w500)),
+                                    SizedBox(
+                                      width: 5.w,
+                                    ),
+                                    Text(
+                                      '${NumberFormat.currency(locale: 'vi').format(item.price)}',
+                                      style: TextStyle(
+                                          decoration:
+                                              TextDecoration.lineThrough),
+                                    )
+                                  ],
+                                ),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Text(
+                            'Thành phần: ' + item.ingredients.toString(),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          tp(item.topping) != ''
+                              ? Text(
+                                  'Topping: ' + tp(item.topping),
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : Container(),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
@@ -632,31 +643,28 @@ class ToppingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {},
-      child: Container(
-          margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(8.sp)),
-            color: Colors.white,
+    return Container(
+        margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(8.sp)),
+          color: Colors.white,
+        ),
+        height: 70.h,
+        width: double.infinity,
+        child: Container(
+          padding: EdgeInsets.only(left: 15.w, right: 10.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                item.name,
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                  'Giá : ${NumberFormat.currency(locale: 'vi').format(item.price)}'),
+            ],
           ),
-          height: 70.h,
-          width: double.infinity,
-          child: Container(
-            padding: EdgeInsets.only(left: 15.w, right: 10.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  item.name,
-                  style:
-                      TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
-                ),
-                Text('Giá : ${NumberFormat.currency(locale: 'vi').format(item.price)}'),
-              ],
-            ),
-          )),
-    );
+        ));
   }
 }

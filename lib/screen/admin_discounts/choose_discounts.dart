@@ -1,5 +1,6 @@
 import 'package:app_delivery/components/choose_item.dart';
 import 'package:app_delivery/screen/admin_discounts/add_discount_voucher.dart';
+import 'package:app_delivery/screen/admin_discounts/discount_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,11 @@ class ChooseDiscount extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         title: Text("Chọn loại khuyến mãi"),
+        leading: BackButton(
+          onPressed: (){
+            Get.off(DiscountScreen());
+          },
+        ),
       ),
       body: Container(
         color: Color(0xFFEEEEEE),
@@ -61,9 +67,9 @@ class ChooseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
-        Get.to(page, arguments: {'type_discount_id': type_discount_id});
+        Get.off(page, arguments: {'type_discount_id': type_discount_id});
       },
       child: Container(
         margin: EdgeInsets.only(top: 10.h, left: 15, right: 10),

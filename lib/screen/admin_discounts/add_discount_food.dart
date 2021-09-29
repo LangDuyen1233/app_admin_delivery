@@ -17,6 +17,7 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 
 import '../../apis.dart';
 import '../../utils.dart';
+import 'choose_discounts.dart';
 import 'discount_screen.dart';
 
 class AddDiscountFood extends StatefulWidget {
@@ -37,6 +38,11 @@ class _AddDiscountFood extends State<AddDiscountFood> {
                     centerTitle: true,
                     elevation: 0,
                     title: Text("Thêm khuyến mãi"),
+                    leading: BackButton(
+                      onPressed: () {
+                        Get.off(ChooseDiscount());
+                      },
+                    ),
                     actions: [
                       IconButton(
                         icon: Icon(Icons.check_outlined),
@@ -56,7 +62,6 @@ class _AddDiscountFood extends State<AddDiscountFood> {
                             FormAddWidget(
                               widget: Column(
                                 children: [
-                                  // Avatar(icon: Icons.add_a_photo,name: "Image",),
                                   ItemField(
                                     hintText: "Tên khuyễn mãi",
                                     controller: name,
@@ -90,16 +95,15 @@ class _AddDiscountFood extends State<AddDiscountFood> {
                       )),
                 )));
   }
+
   TextEditingController name;
   TextEditingController percent;
   int typeId;
   String foodId;
 
-
   @override
   void initState() {
     typeId = Get.arguments['type_discount_id'];
-    print("hahahah $typeId");
     name = TextEditingController();
     percent = TextEditingController();
     foodId = '';
@@ -142,12 +146,8 @@ class _AddDiscountFood extends State<AddDiscountFood> {
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            // print(parsedJson['success']);
             Discount discount = Discount.fromJson(parsedJson['discount']);
-            // Get.back(result: food);
-            // Get.back(result: discount);
-            Get.off(DiscountScreen(),
-                arguments: {'discount': discount});
+            Get.off(DiscountScreen(), arguments: {'discount': discount});
             showToast("Tạo thành công");
           }
           if (response.statusCode == 404) {

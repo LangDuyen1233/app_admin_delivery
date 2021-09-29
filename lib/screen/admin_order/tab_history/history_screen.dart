@@ -321,7 +321,7 @@ class _HistoryScreen extends State<HistoryScreen> {
                                                     ),
                                                     Text(DateFormat('HH:mm').format(
                                                         DateTime.parse(
-                                                            listOrder[index].updatedAt))),
+                                                            listOrder[index].updatedAt).toLocal())),
                                                   ],
                                                 ),
                                               ),

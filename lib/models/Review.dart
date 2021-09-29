@@ -32,7 +32,7 @@ class Review {
   String rate;
   int restaurantId;
   int userId;
-  String status;
+  int status;
   Users user;
   Restaurants restaurant;
   List<Image> image;

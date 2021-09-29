@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:app_delivery/models/Discount.dart';
 import 'package:app_delivery/screen/admin_discounts/edit_discount_food.dart';
 import 'package:app_delivery/screen/admin_discounts/edit_discount_voucher.dart';
+import 'package:app_delivery/screen/index.dart';
 import 'package:app_delivery/screen/widget/empty_screen.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,6 @@ class DiscountScreen extends StatefulWidget {
 }
 
 RxList<Discount> discount;
-// RxList<Discount> topping = new RxList<Discount>();
 
 class _DiscountScreen extends State<DiscountScreen> {
   int type_discount_id;
@@ -38,12 +38,18 @@ class _DiscountScreen extends State<DiscountScreen> {
         centerTitle: true,
         elevation: 0,
         title: Text("Danh sách khuyến mãi"),
+        leading: BackButton(
+          onPressed: () {
+            Get.off(MyStatefulWidgetState(
+              selectedIndex: 4,
+            ));
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              print("mày có vô đây không???");
-              Get.to(ChooseDiscount());
+              Get.off(ChooseDiscount());
             },
           ),
         ],
