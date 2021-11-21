@@ -62,13 +62,11 @@ class _AddStaff extends State<AddStaff> {
                           FormAddWidget(
                             widget: Column(
                               children: [
-                                // Avatar(icon: Icons.add_a_photo,name: "Image",),
                                 ItemField(
                                   hintText: "Tên nhân viên",
                                   controller: name,
                                   type: TextInputType.text,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập tên nhân viên';
                                     } else
@@ -80,7 +78,6 @@ class _AddStaff extends State<AddStaff> {
                                   controller: address,
                                   type: TextInputType.text,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập địa chỉ nhân viên';
                                     } else
@@ -92,7 +89,6 @@ class _AddStaff extends State<AddStaff> {
                                   controller: phone,
                                   type: TextInputType.number,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập tên số điện thoại nhân viên';
                                     } else
@@ -104,7 +100,6 @@ class _AddStaff extends State<AddStaff> {
                                   controller: salary,
                                   type: TextInputType.number,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập tiền lương tính theo giờ';
                                     } else
@@ -138,7 +133,6 @@ class _AddStaff extends State<AddStaff> {
 
   Future<void> addStaff(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       String nameImage;
       String startDate = date.startDates;
@@ -173,20 +167,16 @@ class _AddStaff extends State<AddStaff> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            // print(parsedJson['success']);
             Staff staff = Staff.fromJson(parsedJson['staff']);
-            // Get.back(result: food);
             Get.back(result: staff);
             showToast("Tạo thành công");
           }
           if (response.statusCode == 404) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
           showError(e.toString());
@@ -197,9 +187,6 @@ class _AddStaff extends State<AddStaff> {
         showToast('Vui lòng điền đầy đủ các trường');
       }
     } else {
-      // controller.imagePath == ''
-      //     ? validateImage = ''
-      //     : validateImage = 'Vui lòng chọn hình ảnh cho món ăn';
       showToast('Vui lòng điền đầy đủ các trường');
     }
   }
@@ -220,7 +207,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(
@@ -284,7 +270,6 @@ class StartDate extends StatelessWidget {
               }),
               IconButton(
                 onPressed: () {
-                  print('dduj mas m');
                   controller.selectStartDate(context);
                 },
                 icon: Icon(
@@ -325,7 +310,6 @@ class EndDate extends StatelessWidget {
               }),
               IconButton(
                 onPressed: () {
-                  print('dduj mas m');
                   controller.selectEndDate(context);
                 },
                 icon: Icon(

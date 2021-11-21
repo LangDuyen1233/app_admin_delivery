@@ -10,7 +10,6 @@ import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -43,7 +42,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
               if (snapshot.hasError) {
                 return EmptyScreen(text: 'Bạn chưa có đơn hàng nào.');
               } else {
-                // return buildLoading();
                 return RefreshIndicator(
                   onRefresh: () => fetch(),
                   child: Obx(
@@ -72,7 +70,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                       children: [
                                         Row(
                                           children: [
-                                            //img user
                                             Container(
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
@@ -80,7 +77,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(50)),
                                                 ),
-                                                //image
                                                 child: Container(
                                                     width: 50.w,
                                                     height: 50.h,
@@ -115,7 +111,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                                           height: 100.h,
                                                           fit: BoxFit.cover,
                                                         )))),
-                                            //user name
                                             Container(
                                               padding: EdgeInsets.only(left: 5.w),
                                               child:
@@ -142,12 +137,9 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                                     SharedPreferences prefs =
                                                         await SharedPreferences
                                                         .getInstance();
-                                                    print('chát');
                                                     User user = FirebaseAuth
                                                         .instance.currentUser;
-                                                    print(user);
                                                     if (user != null) {
-                                                      // Check is already sign up
                                                       final querySnapshotresult =
                                                           await FirebaseFirestore
                                                           .instance
@@ -156,13 +148,9 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                                           isEqualTo:
                                                           user.uid)
                                                           .get();
-                                                      print(querySnapshotresult
-                                                          .docs);
-                                                      // final List<DocumentSnapshot>documents = result.docs;
                                                       if (querySnapshotresult
                                                           .docs.length ==
                                                           0) {
-                                                        // Update data to server if new user
                                                         FirebaseFirestore.instance
                                                             .collection('users')
                                                             .doc(user.uid)
@@ -180,9 +168,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                                           listOrder[index].user.uid,
                                                         });
 
-                                                        // Write data to local
-                                                        // currentUser = user;
-                                                        // print(currentUser.uid);
                                                         await prefs.setString(
                                                             'id', user.uid);
                                                         await prefs.setString(
@@ -200,8 +185,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
                                                         UserChat userChat =
                                                         UserChat.fromDocument(
                                                             documentSnapshot);
-                                                        // Write data to local
-                                                        print(userChat.toString());
                                                         await prefs.setString(
                                                             'id', userChat.id);
                                                         await prefs.setString(
@@ -524,7 +507,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getDeliveredCardUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getDeliveredCardUrl),
         headers: <String, String>{
@@ -532,12 +514,9 @@ class _DeliveredScreen extends State<DeliveredScreen> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
         list = ListOrderJson.fromJson(parsedJson).order;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -547,7 +526,6 @@ class _DeliveredScreen extends State<DeliveredScreen> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }

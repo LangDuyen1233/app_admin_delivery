@@ -32,7 +32,6 @@ class _ReviewScreen extends State<ReviewScreen> {
   void initState() {
     review = new RxList<Review>();
     fetchReview();
-    // image = review.
     super.initState();
   }
 
@@ -56,7 +55,6 @@ class _ReviewScreen extends State<ReviewScreen> {
                   if (snapshot.hasError) {
                     return EmptyScreen(text: 'Bạn chưa có đánh giá nào.');
                   } else {
-                    // return buildLoading();
                     return RefreshIndicator(
                       onRefresh: () => fetchReview(),
                       child: Obx(
@@ -69,7 +67,6 @@ class _ReviewScreen extends State<ReviewScreen> {
                                 itemCount: review.length,
                                 itemBuilder: (context, index) {
                                   return Container(
-                                    // padding: EdgeInsets.all(10),
                                     child: Card(
                                       child: Column(
                                         mainAxisSize: MainAxisSize.min,
@@ -88,7 +85,6 @@ class _ReviewScreen extends State<ReviewScreen> {
                                     ),
                                   );
                                 },
-                                // ),
                               ),
                       ),
                     );
@@ -101,11 +97,8 @@ class _ReviewScreen extends State<ReviewScreen> {
   Future<void> fetchReview() async {
     var list = await getReview();
     if (list != null) {
-      // printInfo(info: listFood.length.toString());
-      // print(listFood.length);
       review.assignAll(list);
       review.refresh();
-      // print(food.length);
     }
   }
 
@@ -124,9 +117,7 @@ class _ReviewScreen extends State<ReviewScreen> {
       print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
         list = ListReviewJson.fromJson(parsedJson).review;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -136,7 +127,6 @@ class _ReviewScreen extends State<ReviewScreen> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
@@ -144,7 +134,6 @@ class _ReviewScreen extends State<ReviewScreen> {
 
 class ReviewItemTop extends StatelessWidget {
   final Review item;
-  double _rating = 3;
 
   ReviewItemTop({Key key, this.item}) : super(key: key);
 
@@ -162,13 +151,11 @@ class ReviewItemTop extends StatelessWidget {
         children: [
           Row(
             children: [
-              //img user
               Container(
                   decoration: BoxDecoration(
                     border: Border.all(width: 1, color: Colors.black12),
                     borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
-                  //image
                   child: Container(
                       width: 50.w,
                       height: 50.h,
@@ -195,7 +182,6 @@ class ReviewItemTop extends StatelessWidget {
                                 height: 100.h,
                                 fit: BoxFit.cover,
                               )))),
-              //user name
               Container(
                 padding: EdgeInsets.only(left: 5.w),
                 child: Text(item.user.username),
@@ -207,7 +193,6 @@ class ReviewItemTop extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                //RAting
                 Container(
                   alignment: Alignment.centerRight,
                   child: Row(
@@ -225,7 +210,7 @@ class ReviewItemTop extends StatelessWidget {
                           color: Colors.amber,
                         ),
                         ignoreGestures: true,
-                        onRatingUpdate: (double value) {  },
+                        onRatingUpdate: (double value) {},
                       ),
                       SizedBox(
                         width: 10.w,
@@ -242,13 +227,12 @@ class ReviewItemTop extends StatelessWidget {
                 SizedBox(
                   height: 1.h,
                 ),
-                // date time
                 Container(
                   width: 110.w,
                   alignment: Alignment.centerRight,
-                  child: Text(DateFormat('yyyy-MM-dd').format(
-                      DateTime.parse(
-                          item.updatedAt)),
+                  child: Text(
+                    DateFormat('yyyy-MM-dd')
+                        .format(DateTime.parse(item.updatedAt)),
                     style: TextStyle(fontSize: 13, color: Colors.grey),
                   ),
                 )
@@ -264,7 +248,6 @@ class ReviewItemTop extends StatelessWidget {
 class ReviewBody extends StatelessWidget {
   final Review item;
 
-// List<Image> image;
   const ReviewBody({Key key, this.item}) : super(key: key);
 
   @override
@@ -283,7 +266,6 @@ class ReviewBody extends StatelessWidget {
             ),
           ),
           Container(
-            // height: 140.h,
             child: Column(
               children: [
                 item.image.length != 0
@@ -315,21 +297,12 @@ class ReviewBody extends StatelessWidget {
                   height: 10.h,
                 ),
                 Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 0.5, color: Colors.grey[300]),),),),
-                // Container(
-                //   height: 45.h,
-                //   child: InkWell(
-                //     onTap: () {},
-                //     child: Container(
-                //       alignment: Alignment.center,
-                //       width: 190.w,
-                //       child: Text('Trả lời'),
-                //     ),
-                //   ),
-                // )
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 0.5, color: Colors.grey[300]),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

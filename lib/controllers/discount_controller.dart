@@ -18,11 +18,8 @@ class DiscountController extends GetxController {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
-      print('vo dday ah');
-      print(picked);
       selectedDate = picked;
       startDates = DateFormat('yyyy-MM-dd').format(picked);
-      print('vo dday ah ' + selectedDate.toString());
     }
     update();
   }
@@ -34,11 +31,8 @@ class DiscountController extends GetxController {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
-      print('vo dday ah');
-      print(picked);
       selectedDate = picked;
       endDates = DateFormat('yyyy-MM-dd').format(picked);
-      print('vo dday ah ' + selectedDate.toString());
     }
     update();
   }
@@ -50,16 +44,12 @@ class DiscountController extends GetxController {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
-      print('vo dday ah');
-      print(picked);
       selectedDate = picked;
       dob = DateFormat('yyyy-MM-dd').format(picked);
-      print('vo dday ah ' + selectedDate.toString());
     }
     update();
   }
 
-  //select date and rang date for page statistic revenue
   String formattedDate =DateFormat('yyyy-MM-dd').format(DateTime.now()).toString();
 
   String selectedDateMultiPicker = '';
@@ -71,11 +61,9 @@ class DiscountController extends GetxController {
     if (args.value is PickerDateRange) {
       if (args.value.startDate ==
           (args.value.endDate ?? args.value.startDate)) {
-        print('bang');
         range.value =
             DateFormat('yyyy-MM-dd').format(args.value.startDate).toString();
       } else {
-        print('khac');
         range.value =
             DateFormat('yyyy-MM-dd').format(args.value.startDate).toString() +
                 ' - ' +
@@ -84,7 +72,6 @@ class DiscountController extends GetxController {
                     .toString();
       }
     } else if (args.value is DateTime) {
-      print('dgasj');
       selectedDateMultiPicker =
           DateFormat('yyyy-MM-dd').format(args.value.startDates).toString();
     } else if (args.value is List<DateTime>) {

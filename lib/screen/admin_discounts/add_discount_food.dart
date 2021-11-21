@@ -67,7 +67,6 @@ class _AddDiscountFood extends State<AddDiscountFood> {
                                     controller: name,
                                     type: TextInputType.text,
                                     validator: (val) {
-                                      print(val);
                                       if (val.length == 0) {
                                         return 'Vui lòng nhập tên khuyến mãi';
                                       } else
@@ -79,7 +78,6 @@ class _AddDiscountFood extends State<AddDiscountFood> {
                                     controller: percent,
                                     type: TextInputType.number,
                                     validator: (val) {
-                                      print(val);
                                       if (val.length == 0) {
                                         return 'Vui lòng nhập giảm giá theo %';
                                       } else
@@ -112,14 +110,12 @@ class _AddDiscountFood extends State<AddDiscountFood> {
 
   Future<void> addDiscountFood(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       if (name.text.isNotEmpty && percent.text.isNotEmpty) {
         try {
           EasyLoading.show(status: 'Loading...');
 
           List<Food> tp = _selectedAnimals3;
-          print(tp);
           for (int i = 0; i < tp.length; i++) {
             if (i == tp.length - 1) {
               foodId += tp[i].id.toString();
@@ -127,7 +123,6 @@ class _AddDiscountFood extends State<AddDiscountFood> {
               foodId += tp[i].id.toString() + ",";
             }
           }
-          print(foodId);
           http.Response response = await http.post(
             Uri.parse(Apis.addDiscountFoodUrl),
             headers: <String, String>{
@@ -142,7 +137,6 @@ class _AddDiscountFood extends State<AddDiscountFood> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
@@ -179,15 +173,12 @@ class ChooseFood extends StatefulWidget {
 class _ChooseFood extends State<ChooseFood> {
   static RxList<Food> food = new RxList<Food>();
 
-  var _items = food.map((f) => MultiSelectItem<Food>(f, f.name)).toList();
-
   final _multiSelectKey = GlobalKey<FormFieldState>();
 
   @override
   void initState() {
     fetchFood();
     _selectedAnimals3 = [];
-    // print(_items);
     super.initState();
   }
 
@@ -237,11 +228,8 @@ class _ChooseFood extends State<ChooseFood> {
 
   Future<void> fetchFood() async {
     var listFood = await getFood();
-    print(listFood.length);
     if (listFood != null) {
-      printInfo(info: listFood.length.toString());
       food.assignAll(listFood);
-      print(food);
       food.refresh();
     }
   }
@@ -250,7 +238,6 @@ class _ChooseFood extends State<ChooseFood> {
     List<Food> list;
     String token = (await getToken());
     try {
-      print(Apis.getDiscountFoodUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getDiscountFoodUrl),
         headers: <String, String>{
@@ -258,12 +245,9 @@ class _ChooseFood extends State<ChooseFood> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['food']);
         list = ListFoodJson.fromJson(parsedJson).food;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {

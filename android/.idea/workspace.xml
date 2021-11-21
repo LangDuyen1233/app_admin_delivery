@@ -22,26 +22,16 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1fa8b82c-c9bd-463c-b8ba-1583839e6f72" name="Default Changelist" comment="">
+    <list default="true" id="ba3c2ec8-4b33-4da6-96f3-6e9f27613bc2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/../.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/apis.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/apis.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/binding/instance_binding.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/models/Review.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/models/Review.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_discounts/add_discount_food.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_discounts/add_discount_food.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_discounts/add_discount_voucher.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_discounts/add_discount_voucher.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_discounts/choose_discounts.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_discounts/choose_discounts.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_discounts/discount_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_discounts/discount_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_order/tab_history/history_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_order/tab_history/history_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_order/tab_new/tab_new_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_order/tab_new/tab_new_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/auth/login.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/auth/login.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/components/barchart.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/components/barchart.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_order/tab_received/widget/delivering_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_order/tab_received/widget/delivering_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screen/admin_order/tab_received/widget/prepare_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/admin_order/tab_received/widget/prepare_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screen/home/notify.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/home/notify.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lib/screen/index.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/index.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/products/admin/list_products.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/products/admin/list_products.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/products/product_screen.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/restaurant/address_restaurant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/restaurant/address_restaurant.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/screen/restaurant/restaurant_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/restaurant/restaurant_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lib/utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lib/screen/products/admin/add_product.dart" beforeDir="false" afterPath="$PROJECT_DIR$/../lib/screen/products/admin/add_product.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +52,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="1yi0bjEkXq0VTwIEXmt7qJgvwHg" />
+  <component name="ProjectId" id="1yrivE6JSEntnKYoGsj0CwCOVZO" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -148,11 +138,11 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="1fa8b82c-c9bd-463c-b8ba-1583839e6f72" name="Default Changelist" comment="" />
-      <created>1632719174680</created>
+      <changelist id="ba3c2ec8-4b33-4da6-96f3-6e9f27613bc2" name="Default Changelist" comment="" />
+      <created>1633016335892</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1632719174680</updated>
+      <updated>1633016335892</updated>
     </task>
     <servers />
   </component>
@@ -168,9 +158,9 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="522" y="119" key="FileChooserDialogImpl" timestamp="1632719841612">
+    <state x="522" y="119" key="FileChooserDialogImpl" timestamp="1633016446842">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="522" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1632719841612" />
+    <state x="522" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1633016446842" />
   </component>
 </project>

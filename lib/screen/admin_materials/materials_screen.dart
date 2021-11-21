@@ -38,10 +38,7 @@ class _MaterialsScreen extends State<MaterialsScreen> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () async {
-                print("mày có vô đây không???");
                 final result = await Get.to(AddMaterials());
-                // final result = await Get.arguments['staff'];
-                // print(result);
                 if (result != null) {
                   materials.add(result);
                   materials.refresh();
@@ -62,7 +59,6 @@ class _MaterialsScreen extends State<MaterialsScreen> {
                     if (snapshot.hasError) {
                       return EmptyScreen(text: 'Bạn chưa có nguyên liệu nào.');
                     } else {
-                      // return buildLoading();
                       return RefreshIndicator(
                         onRefresh: () => fetchMaterials(),
                         child: Obx(
@@ -92,13 +88,9 @@ class _MaterialsScreen extends State<MaterialsScreen> {
                                                 arguments: {
                                                   'materials_id': materials.value[index].id
                                                 });
-                                            // final result = await Get.arguments['materials'];
-                                            // print(result);
                                             setState(() {
                                               if (result != null) {
                                                 fetchMaterials();
-                                                // materials.add(result);
-                                                // materials.refresh();
                                               }
                                             });
                                           },
@@ -134,10 +126,6 @@ class _MaterialsScreen extends State<MaterialsScreen> {
                                                               Get.back();
                                                               showToast("Xóa thành công");
                                                             });
-
-                                                            // Get.to(ListProduct());
-
-                                                            // food.refresh();
                                                           },
                                                           child: const Text(
                                                             'Xóa',
@@ -170,11 +158,8 @@ class _MaterialsScreen extends State<MaterialsScreen> {
   Future<void> fetchMaterials() async {
     var list = await getMaterials();
     if (list != null) {
-      // printInfo(info: listFood.length.toString());
-      // print(listFood.length);
       materials.assignAll(list);
       materials.refresh();
-      // print(food.length);
     }
   }
 
@@ -182,7 +167,6 @@ class _MaterialsScreen extends State<MaterialsScreen> {
     List<Materials> list;
     String token = (await getToken());
     try {
-      print(Apis.getMaterialsUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getMaterialsUrl),
         headers: <String, String>{
@@ -190,12 +174,9 @@ class _MaterialsScreen extends State<MaterialsScreen> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
         list = ListMaterialsJson.fromJson(parsedJson).materials;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -205,14 +186,12 @@ class _MaterialsScreen extends State<MaterialsScreen> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
 
   Future<Materials> deleteMaterials(int materials_id) async {
     String token = await getToken();
-    print(token);
 
     try {
       EasyLoading.show(status: 'Loading...');
@@ -227,18 +206,15 @@ class _MaterialsScreen extends State<MaterialsScreen> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Materials materials = Materials.fromJson(parsedJson['materials']);
         return materials;
       }
       if (response.statusCode == 404) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['error']);
       }
     } on TimeoutException catch (e) {
       showError(e.toString());

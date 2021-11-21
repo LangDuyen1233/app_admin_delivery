@@ -16,7 +16,6 @@ import 'package:http/http.dart' as http;
 
 import '../../../apis.dart';
 import '../../../utils.dart';
-import 'list_products.dart';
 
 class EditFood extends StatefulWidget {
   @override
@@ -37,81 +36,82 @@ class _EditFood extends State<EditFood> {
           return Form(
             autovalidate: true,
             child: Builder(
-                builder: (BuildContext ctx) => Scaffold(
-                      appBar: AppBar(
-                        centerTitle: true,
-                        elevation: 0,
-                        title: Text("Sửa món ăn"),
-                        actions: [
-                          IconButton(
-                            icon: Icon(Icons.check_outlined),
-                            onPressed: () {
-                              updateFood(ctx);
-                            },
-                          ),
-                        ],
-                      ),
-                      body: Container(
-                        color: Color(0xFFEEEEEE),
-                        height: 834.h,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              ListImages(
-                                url: f.image[0].url,
-                              ),
-                              SizedBox(
-                                height: 15.h,
-                              ),
-                              Column(
-                                children: [
-                                  ItemField(
-                                    hintText: "Tên món ăn",
-                                    controller: name,
-                                    type: TextInputType.text,
-                                    validator: (val) {
-                                      print(val);
-                                      if (val.length == 0) {
-                                        return 'Vui lòng nhập tên món ăn';
-                                      } else
-                                        return null;
-                                    },
-                                  ),
-                                  ItemField(
-                                    hintText: "Size",
-                                    controller: size,
-                                    type: TextInputType.text,
-                                  ),
-                                  ItemField(
-                                    hintText: "Giá bán",
-                                    controller: price,
-                                    type: TextInputType.number,
-                                    validator: (val) {
-                                      print(val);
-                                      if (val.length == 0) {
-                                        return 'Vui lòng nhập giá bán';
-                                      } else
-                                        return null;
-                                    },
-                                  ),
-                                  ItemField(
-                                    hintText: "Khối lượng",
-                                    controller: weight,
-                                    type: TextInputType.number,
-                                  ),
-                                  ItemField(
-                                    hintText: "Thành phần",
-                                    controller: ingredients,
-                                    type: TextInputType.text,
-                                  ),
-                                  new ChooseTopping()
-                                ],
-                              ),
-                            ],
-                          ),
+              builder: (BuildContext ctx) => Scaffold(
+                appBar: AppBar(
+                  centerTitle: true,
+                  elevation: 0,
+                  title: Text("Sửa món ăn"),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.check_outlined),
+                      onPressed: () {
+                        updateFood(ctx);
+                      },
+                    ),
+                  ],
+                ),
+                body: Container(
+                  color: Color(0xFFEEEEEE),
+                  height: 834.h,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ListImages(
+                          url: f.image[0].url,
                         ),
-                      ),
-                    ),),
+                        SizedBox(
+                          height: 15.h,
+                        ),
+                        Column(
+                          children: [
+                            ItemField(
+                              hintText: "Tên món ăn",
+                              controller: name,
+                              type: TextInputType.text,
+                              validator: (val) {
+                                print(val);
+                                if (val.length == 0) {
+                                  return 'Vui lòng nhập tên món ăn';
+                                } else
+                                  return null;
+                              },
+                            ),
+                            ItemField(
+                              hintText: "Size",
+                              controller: size,
+                              type: TextInputType.text,
+                            ),
+                            ItemField(
+                              hintText: "Giá bán",
+                              controller: price,
+                              type: TextInputType.number,
+                              validator: (val) {
+                                print(val);
+                                if (val.length == 0) {
+                                  return 'Vui lòng nhập giá bán';
+                                } else
+                                  return null;
+                              },
+                            ),
+                            ItemField(
+                              hintText: "Khối lượng",
+                              controller: weight,
+                              type: TextInputType.number,
+                            ),
+                            ItemField(
+                              hintText: "Thành phần",
+                              controller: ingredients,
+                              type: TextInputType.text,
+                            ),
+                            new ChooseTopping()
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           );
         } else
           return Container();
@@ -134,18 +134,10 @@ class _EditFood extends State<EditFood> {
 
   @override
   void initState() {
-    // getCategory();
     print(Get.arguments['category_id']);
     category_id = Get.arguments['category_id'];
     food_id = Get.arguments['food_id'];
-    print('lo ma mmmmm $category_id');
-    print('lo ma mmmmm $food_id');
     fetchFood();
-    // name = TextEditingController();
-    // size = TextEditingController();
-    // price = TextEditingController();
-    // weight = TextEditingController();
-    // ingredients = TextEditingController();
     toppingId = '';
 
     validateImage = '';
@@ -154,12 +146,9 @@ class _EditFood extends State<EditFood> {
 
   Future<bool> fetchFood() async {
     var food = await editFood();
-    print(food.name);
     if (food != null) {
-      printInfo(info: food.toString());
       f = food;
     }
-    print(f.name);
     name = TextEditingController(text: f.name);
     size = TextEditingController(text: f.size);
     price = TextEditingController(text: f.price.toString());
@@ -179,14 +168,11 @@ class _EditFood extends State<EditFood> {
     Food food;
     String token = (await getToken());
     int categoryId = Get.arguments['category_id'];
-    print(categoryId.toString() + " dduj mas m");
-    print(food_id.toString() + " dduj mas mwsssssssssssssssssssssss");
     Map<String, String> queryParams = {
       'category_id': categoryId.toString(),
       'food_id': food_id.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
-    print(queryString);
     try {
       print(Apis.editFoodUrl);
       http.Response response = await http.get(
@@ -196,12 +182,9 @@ class _EditFood extends State<EditFood> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['food']);
         food = FoodJson.fromJson(parsedJson).food;
-        print(food);
         return food;
       }
       if (response.statusCode == 401) {
@@ -218,8 +201,6 @@ class _EditFood extends State<EditFood> {
 
   Future<void> updateFood(BuildContext context) async {
     String token = await getToken();
-    print(token);
-    print(selectedAnimals3);
     if (Form.of(context).validate()) {
       String nameImage;
       if (f.image[0] != null) {
@@ -232,14 +213,12 @@ class _EditFood extends State<EditFood> {
           nameImage = f.image[0].url.split('/').last;
         }
       }
-      print(nameImage);
       if (name.text.isNotEmpty &&
           nameImage.isNotEmpty &&
           price.text.isNotEmpty) {
         try {
           EasyLoading.show(status: 'Loading...');
           List<Topping> tp = selectedAnimals3;
-          // print(_selectedAnimals3[0].name);
           for (int i = 0; i < tp.length; i++) {
             if (i == tp.length - 1) {
               toppingId += tp[i].id.toString();
@@ -247,7 +226,6 @@ class _EditFood extends State<EditFood> {
               toppingId += tp[i].id.toString() + ",";
             }
           }
-          print(toppingId);
 
           http.Response response = await http.post(
             Uri.parse(Apis.updateFoodUrl),
@@ -268,7 +246,6 @@ class _EditFood extends State<EditFood> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
@@ -296,7 +273,6 @@ class _EditFood extends State<EditFood> {
     List<Topping> list;
     String token = (await getToken());
     try {
-      print(Apis.getToppingUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getToppingUrl),
         headers: <String, String>{
@@ -304,19 +280,15 @@ class _EditFood extends State<EditFood> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['topping']);
         list = ListTopping.fromJson(parsedJson).topping;
-        print(list);
         return list;
       }
     } on TimeoutException catch (e) {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
@@ -345,7 +317,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(
@@ -408,7 +379,6 @@ class _ChooseTopping extends State<ChooseTopping> {
       selectedAnimals3.add(ltp[i]);
       for (int j = 0; j < topping.length; j++) {
         if (ltp[i].name == topping[j].name) {
-          print('vao day');
           topping.remove(topping[j]);
         }
       }
@@ -466,7 +436,6 @@ class _ChooseTopping extends State<ChooseTopping> {
           ),
         ),
       ),
-      // ),
     );
   }
 }

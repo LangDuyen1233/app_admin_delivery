@@ -192,7 +192,6 @@ class _StatisticsOrderScreen extends State<StatisticsOrderScreen> {
     for (int i = 0; i < order.length; i++) {
       count += 1;
     }
-    print(count);
   }
 
   Future<List<Order>> getOrder() async {

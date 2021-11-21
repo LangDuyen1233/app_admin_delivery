@@ -1,4 +1,3 @@
-import 'package:app_delivery/screen/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -11,12 +10,6 @@ class FormAddWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 15.h, left: 10.w, right: 10.w),
-      // decoration: BoxDecoration(
-      //
-      //   color: Colors.white,
-      //   // border: Border.all(width: 1, color: Colors.black12),
-      //   borderRadius: BorderRadius.all(Radius.circular(5)),
-      // ),
       child: widget,
     );
   }

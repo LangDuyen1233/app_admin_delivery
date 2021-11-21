@@ -1,4 +1,3 @@
-import 'package:app_delivery/screen/admin_discounts/add_discount_voucher.dart';
 import 'package:app_delivery/screen/products/admin/add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +18,6 @@ class _ChooseProducts extends State<ChooseProducts> {
   @override
   void initState() {
     categoryId = Get.arguments['category_id'];
-    print("choos $categoryId");
     super.initState();
   }
 
@@ -77,8 +75,6 @@ class ChooseItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print(category_id);
-        // Get.to(page, arguments: {'category_id': category_id});
         Get.off(page, arguments: {'category_id': category_id});
       },
       child: Container(

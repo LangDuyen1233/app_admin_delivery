@@ -59,13 +59,11 @@ class _EditStaff extends State<EditStaff> {
                         FormAddWidget(
                           widget: Column(
                             children: [
-                              // Avatar(icon: Icons.add_a_photo,name: "Image",),
                               ItemField(
                                 hintText: "Tên nhân viên",
                                 controller: name,
                                 type: TextInputType.text,
                                 validator: (val) {
-                                  print(val);
                                   if (val.length == 0) {
                                     return 'Vui lòng nhập tên nhân viên';
                                   } else
@@ -77,7 +75,6 @@ class _EditStaff extends State<EditStaff> {
                                 controller: address,
                                 type: TextInputType.text,
                                 validator: (val) {
-                                  print(val);
                                   if (val.length == 0) {
                                     return 'Vui lòng nhập địa chỉ nhân viên';
                                   } else
@@ -89,7 +86,6 @@ class _EditStaff extends State<EditStaff> {
                                 controller: phone,
                                 type: TextInputType.number,
                                 validator: (val) {
-                                  print(val);
                                   if (val.length == 0) {
                                     return 'Vui lòng nhập tên số điện thoại nhân viên';
                                   } else
@@ -101,7 +97,6 @@ class _EditStaff extends State<EditStaff> {
                                 controller: salary,
                                 type: TextInputType.number,
                                 validator: (val) {
-                                  print(val);
                                   if (val.length == 0) {
                                     return 'Vui lòng nhập tiền lương tính theo giờ';
                                   } else
@@ -143,18 +138,14 @@ class _EditStaff extends State<EditStaff> {
 
   @override
   void initState() {
-    // staffId = Get.arguments['staff_id'];
-    // print(staffId);
     super.initState();
   }
 
   Future<bool> fetchStaff() async {
     var staff = await editStaff();
     if (staff != null) {
-      printInfo(info: staff.toString());
       s = staff;
     }
-    print(s.name);
     name = TextEditingController(text: s.name);
     salary = TextEditingController(text: s.salary.toString());
     address = TextEditingController(text: s.address);
@@ -169,13 +160,11 @@ class _EditStaff extends State<EditStaff> {
     Staff staff;
     String token = (await getToken());
     staffId = Get.arguments['staff_id'];
-    print(staffId);
     Map<String, String> queryParams = {
       'staffId': staffId.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.editStaffUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.editStaffUrl + '?' + queryString),
         headers: <String, String>{
@@ -183,12 +172,9 @@ class _EditStaff extends State<EditStaff> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['staff']);
         staff = StaffJson.fromJson(parsedJson).staff;
-        print(staff);
         return staff;
       }
       if (response.statusCode == 401) {
@@ -205,7 +191,6 @@ class _EditStaff extends State<EditStaff> {
 
   Future<void> updateStaff(BuildContext context) async {
     String token = await getToken();
-    print(token);
     String startDate = date.startDates;
     String endDate = date.endDates;
     String nameImage;
@@ -254,13 +239,10 @@ class _EditStaff extends State<EditStaff> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            // print(parsedJson['success']);
             Staff staff = Staff.fromJson(parsedJson['staff']);
-            print(staff.name);
             Get.back(result: staff);
             showToast("Sửa thành công");
           }
@@ -296,7 +278,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(
@@ -321,8 +302,6 @@ class ListImages extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5)),
                                   child: Image.file(
                                     controller.image,
-                                    // width: 90.w,
-                                    // height: 90.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -344,8 +323,6 @@ class ListImages extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5)),
                                   child: Image.file(
                                     controller.image,
-                                    // width: 90.w,
-                                    // height: 90.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

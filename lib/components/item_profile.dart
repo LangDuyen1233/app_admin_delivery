@@ -17,10 +17,8 @@ class ItemProfile extends StatelessWidget {
           border: Border(bottom: BorderSide(width: 0.3, color: Colors.black12))),
       width: MediaQuery.of(context).size.width,
       child: Row(
-
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // LineDecoration(),
           Container(
             child: Text(
               title,

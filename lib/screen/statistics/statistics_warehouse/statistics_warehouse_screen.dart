@@ -42,7 +42,6 @@ class _StatisticsWarehouseScreen extends State<StatisticsWarehouseScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  // StartDate(),
                   Container(
                     width: 400.w,
                     child: Row(

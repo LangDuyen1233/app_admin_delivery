@@ -25,13 +25,14 @@ import 'package:intl/intl.dart';
 import '../../apis.dart';
 import '../../utils.dart';
 import 'notify.dart';
-class Home extends StatefulWidget{
+
+class Home extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _Home();
   }
-
 }
+
 class _Home extends State<Home> {
   Rx<Restaurants> restaurant;
   User user = FirebaseAuth.instance.currentUser;
@@ -41,10 +42,8 @@ class _Home extends State<Home> {
     FirebaseMessaging.instance.getToken().then((token) => print(token));
   }
 
-
   @override
   void initState() {
-
     print(user);
     if (user != null) {
       _registerOnFirebase();
@@ -52,8 +51,6 @@ class _Home extends State<Home> {
 
     LocalNotificationService.initialize(context);
 
-    ///gives you the message on which user taps
-    ///and it opened the app from terminated state
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
         final routeFromMessage = message.data["route"];
@@ -62,18 +59,12 @@ class _Home extends State<Home> {
       }
     });
 
-    ///forground work
     FirebaseMessaging.onMessage.listen((message) {
-      if (message.notification != null) {
-        print(message.notification.body);
-        print(message.notification.title);
-      }
+      if (message.notification != null) {}
 
       LocalNotificationService.display(message);
     });
 
-    ///When the app is in background but opened and user taps
-    ///on the notification
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       final routeFromMessage = message.data["route"];
 
@@ -213,8 +204,6 @@ class _Home extends State<Home> {
 
   Future<bool> fetchRestaurant() async {
     var u = await getRestaurant();
-    print(u.name);
-    print(u);
     if (u != null) {
       restaurant = u.obs;
     }
@@ -225,7 +214,6 @@ class _Home extends State<Home> {
     Restaurants restaurants;
     String token = (await getToken());
     try {
-      print(Apis.getRestaurantUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getRestaurantUrl),
         headers: <String, String>{
@@ -233,12 +221,9 @@ class _Home extends State<Home> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['restaurants']);
         restaurants = RestaurantJson.fromJson(parsedJson).restaurants;
-        print(restaurants);
         return restaurants;
       }
       if (response.statusCode == 401) {
@@ -248,7 +233,6 @@ class _Home extends State<Home> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
@@ -441,29 +425,24 @@ class _UserCard extends State<UserCard> {
     for (int i = 0; i < order.length; i++) {
       price = price + (order[i].price);
     }
-    print(price);
 
     for (int i = 0; i < orderNew.length; i++) {
       countNew += 1;
     }
-    print(countNew);
 
     for (int i = 0; i < orderCancel.length; i++) {
       countCancel += 1;
     }
-    print(countCancel);
 
     for (int i = 0; i < orderSum.length; i++) {
       countSum += 1;
     }
-    print(countSum);
   }
 
   Future<List<Order>> getOder() async {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getSalesUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getSalesUrl),
         headers: <String, String>{
@@ -471,12 +450,9 @@ class _UserCard extends State<UserCard> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
         list = ListOrderJson.fromJson(parsedJson).order;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -495,7 +471,6 @@ class _UserCard extends State<UserCard> {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getNewCardUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getNewCardUrl),
         headers: <String, String>{
@@ -503,11 +478,9 @@ class _UserCard extends State<UserCard> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         list = ListOrderJson.fromJson(parsedJson).order;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -526,7 +499,6 @@ class _UserCard extends State<UserCard> {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getCancelUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getCancelUrl),
         headers: <String, String>{
@@ -534,11 +506,9 @@ class _UserCard extends State<UserCard> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         list = ListOrderJson.fromJson(parsedJson).order;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -548,7 +518,6 @@ class _UserCard extends State<UserCard> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
@@ -557,7 +526,6 @@ class _UserCard extends State<UserCard> {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getSumUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getSumUrl),
         headers: <String, String>{
@@ -565,16 +533,12 @@ class _UserCard extends State<UserCard> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         list = ListOrderJson.fromJson(parsedJson).order;
-        print(list);
         return list;
       }
-      if (response.statusCode == 401) {
-        // showToast("");
-      }
+      if (response.statusCode == 401) {}
     } on TimeoutException catch (e) {
       showError(e.toString());
     } on SocketException catch (e) {

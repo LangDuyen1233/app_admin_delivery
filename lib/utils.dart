@@ -42,7 +42,9 @@ handleAuth() {
               future: checkLogin(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return MyStatefulWidgetState(selectedIndex: 2,);
+                  return MyStatefulWidgetState(
+                    selectedIndex: 2,
+                  );
                 } else {
                   return SignIn();
                 }
@@ -67,8 +69,6 @@ Future<int> uploadImage(File file, String filename) async {
   String token = await getToken();
   print(token);
   try {
-    // EasyLoading.show(status: 'Loading...');
-    // var bytes = controller.image.readAsBytesSync();
     var request =
         await http.MultipartRequest('POST', Uri.parse(Apis.uploadImage));
     request.files.add(http.MultipartFile.fromBytes(
@@ -88,8 +88,6 @@ Future<int> uploadAvatar(File file, String filename) async {
   String token = await getToken();
   print(token);
   try {
-    // EasyLoading.show(status: 'Loading...');
-    // var bytes = controller.image.readAsBytesSync();
     var request =
         await http.MultipartRequest('POST', Uri.parse(Apis.uploadAvatar));
     request.files.add(http.MultipartFile.fromBytes(
@@ -169,7 +167,6 @@ Future<double> distanceRestaurant(
     endLng: endLng,
   );
   var data = await distance.postData();
-  // print(data);
 
   if (data != 404) {
     var arrarDistance = data['distances'][0];

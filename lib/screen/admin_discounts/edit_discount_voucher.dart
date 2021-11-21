@@ -57,13 +57,11 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
                           FormAddWidget(
                             widget: Column(
                               children: [
-                                // Avatar(icon: Icons.add_a_photo,name: "Image",),
                                 ItemField(
                                   hintText: "Tên",
                                   controller: name,
                                   type: TextInputType.text,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập tên khuyến mãi';
                                     } else
@@ -75,7 +73,6 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
                                   controller: code,
                                   type: TextInputType.text,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập mã khuyến mãi';
                                     } else
@@ -87,7 +84,6 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
                                   controller: percent,
                                   type: TextInputType.text,
                                   validator: (val) {
-                                    print(val);
                                     if (val.length == 0) {
                                       return 'Vui lòng nhập giảm giá theo %';
                                     } else
@@ -133,10 +129,8 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
   Future<bool> fetchDiscount() async {
     var discount = await editDiscountVoucher();
     if (discount != null) {
-      printInfo(info: discount.toString());
       d = discount;
     }
-    print(d.name);
     name = TextEditingController(text: d.name);
     code = TextEditingController(text: d.code);
     percent = TextEditingController(text: d.percent.toString());
@@ -150,13 +144,11 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
     Discount discount;
     String token = (await getToken());
     discountId = Get.arguments['discount_id'];
-    print(discountId);
     Map<String, String> queryParams = {
       'discountId': discountId.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.editDiscountVoucherUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.editDiscountVoucherUrl + '?' + queryString),
         headers: <String, String>{
@@ -164,10 +156,8 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['discount']);
         discount = DiscountJson.fromJson(parsedJson).discount;
         print(discount);
         return discount;
@@ -179,14 +169,12 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
 
   Future<void> updateDiscountVoucher(BuildContext context) async {
     String token = await getToken();
-    print(token);
     String startDate = date.startDates;
     String endDate = date.endDates;
 
@@ -211,14 +199,10 @@ class _EditDiscountVoucher extends State<EditDiscountVoucher> {
           }),
         );
 
-        print(response.statusCode);
         if (response.statusCode == 200) {
           EasyLoading.dismiss();
           var parsedJson = jsonDecode(response.body);
-          // print(parsedJson['success']);
           Discount discount = Discount.fromJson(parsedJson['discount']);
-          print(discount.name);
-          // Get.back(result: discount);
           Get.off(DiscountScreen(), arguments: {'discount': discount});
           showToast("Sửa thành công");
         }
@@ -262,7 +246,6 @@ class StartDate extends StatelessWidget {
               }),
               IconButton(
                 onPressed: () {
-                  print('dduj mas m');
                   controller.selectStartDate(context);
                 },
                 icon: Icon(
@@ -306,7 +289,6 @@ class EndDate extends StatelessWidget {
               }),
               IconButton(
                 onPressed: () {
-                  print('dduj mas m');
                   controller.selectEndDate(context);
                 },
                 icon: Icon(

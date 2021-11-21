@@ -58,13 +58,11 @@ class _EditDiscountFood extends State<EditDiscountFood> {
                       FormAddWidget(
                         widget: Column(
                           children: [
-                            // Avatar(icon: Icons.add_a_photo,name: "Image",),
                             ItemField(
                               hintText: "Tên khuyễn mãi",
                               controller: name,
                               type: TextInputType.text,
                               validator: (val) {
-                                print(val);
                                 if (val.length == 0) {
                                   return 'Vui lòng nhập tên khuyến mãi';
                                 } else
@@ -76,7 +74,6 @@ class _EditDiscountFood extends State<EditDiscountFood> {
                               controller: percent,
                               type: TextInputType.number,
                               validator: (val) {
-                                print(val);
                                 if (val.length == 0) {
                                   return 'Vui lòng nhập giảm giá theo %';
                                 } else
@@ -108,7 +105,6 @@ class _EditDiscountFood extends State<EditDiscountFood> {
   void initState() {
     foodId = '';
     discountId = Get.arguments['discount_id'];
-    print('twefwgef j3fhw3 $discountId');
     lf = new List<Food>();
     fetch();
   }
@@ -117,21 +113,15 @@ class _EditDiscountFood extends State<EditDiscountFood> {
 
   Future<bool> fetch() async {
     var discount = await editDiscount();
-    // print(discount);
     if (discount != null) {
       d = discount;
     }
-    print(d.name);
-    // // print('hjghwehgbwegb ${tp.food.length}');
     name = TextEditingController(text: d.name);
     percent = TextEditingController(text: d.percent.toString());
 
     lf.addAll(d.food);
-    print('leng ${lf.length}');
-    print(d.food);
 
     var tps = await getFood();
-    print(tps.length);
     food.assignAll(tps);
     food.refresh();
    return d.isBlank;
@@ -140,14 +130,12 @@ class _EditDiscountFood extends State<EditDiscountFood> {
   Future<Discount> editDiscount() async {
     Discount discount;
     String token = (await getToken());
-    print(discountId.toString() + " topppingsefhebfef");
 
     Map<String, String> queryParams = {
       'discount_id': discountId.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.editDiscountFoodUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.editDiscountFoodUrl + '?' + queryString),
         headers: <String, String>{
@@ -155,7 +143,6 @@ class _EditDiscountFood extends State<EditDiscountFood> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         discount = Discount.fromJson(parsedJson['discount']);
@@ -168,18 +155,15 @@ class _EditDiscountFood extends State<EditDiscountFood> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
 
   Future<void> updateTopping(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       if (name.text.isNotEmpty && percent.text.isNotEmpty) {
         try {
-          // EasyLoading.show(status: 'Loading...');
           List<Food> f = selectedAnimals3;
           for (int i = 0; i < f.length; i++) {
             if (i == f.length - 1) {
@@ -188,8 +172,6 @@ class _EditDiscountFood extends State<EditDiscountFood> {
               foodId += f[i].id.toString() + ",";
             }
           }
-          print(foodId);
-          print('twefwgef j3fhw3 $discountId');
 
           http.Response response = await http.post(
             Uri.parse(Apis.updateDiscountFoodUrl),
@@ -204,26 +186,15 @@ class _EditDiscountFood extends State<EditDiscountFood> {
               'discountId': discountId.toString(),
             }),
           );
-          print(response.statusCode);
           if (response.statusCode == 200) {
-            // EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            print(parsedJson['success']);
             Discount discount = Discount.fromJson(parsedJson['discount']);
             Get.back(result: discount);
-            // Get.off(ListProduct(),
-            //     arguments: {'topping': topping, 'category_id': category_id});
             showToast("Chỉnh sửa thành công");
           }
           if (response.statusCode == 404) {
-            // EasyLoading.dismiss();
-            var parsedJson = jsonDecode(response.body);
-            print(parsedJson['error']);
           }
           if (response.statusCode == 500) {
-            // EasyLoading.dismiss();
-            // var parsedJson = jsonDecode(response.body);
-            // print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
           showError(e.toString());
@@ -242,7 +213,6 @@ class _EditDiscountFood extends State<EditDiscountFood> {
     List<Food> list;
     String token = (await getToken());
     try {
-      print(Apis.getDiscountFoodUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getDiscountFoodUrl),
         headers: <String, String>{
@@ -250,12 +220,9 @@ class _EditDiscountFood extends State<EditDiscountFood> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['food']);
         list = ListFoodJson.fromJson(parsedJson).food;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -289,12 +256,10 @@ class _ChooseFood extends State<ChooseFood> {
       selectedAnimals3.add(lf[i]);
       for (int j = 0; j < food.length; j++) {
         if (lf[i].name == food[j].name) {
-          print('vao day');
           food.remove(food[j]);
         }
       }
       food.add(lf[i]);
-      print(food);
     }
   }
 
@@ -321,7 +286,6 @@ class _ChooseFood extends State<ChooseFood> {
             setState(() {
               selectedAnimals3 = values;
             });
-            // _multiSelectKey.currentState.validate();
           },
           initialValue: selectedAnimals3,
           chipDisplay: MultiSelectChipDisplay(
@@ -329,7 +293,6 @@ class _ChooseFood extends State<ChooseFood> {
               setState(() {
                 selectedAnimals3.remove(item);
               });
-              // _multiSelectKey.currentState.validate();
             },
             icon: Icon(
               Icons.close,
@@ -338,7 +301,6 @@ class _ChooseFood extends State<ChooseFood> {
           ),
         ),
       ),
-      // ),
     );
   }
 }

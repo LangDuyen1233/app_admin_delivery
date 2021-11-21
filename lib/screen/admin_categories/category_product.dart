@@ -57,7 +57,6 @@ class _HomProduct extends State<HomProduct> {
                 if (snapshot.hasError) {
                   return EmptyScreen(text: 'Bạn chưa có danh mục nào.');
                 } else {
-                  // return buildLoading();
                   return RefreshIndicator(
                     onRefresh: () => controller.fetchCategory(),
                     child: Obx(
@@ -89,13 +88,9 @@ class _HomProduct extends State<HomProduct> {
                                                 'category_id': controller
                                                     .category[index].id
                                               });
-                                          // // final result = await Get.arguments['materials'];
-                                          // // print(result);
                                           setState(() {
                                             if (result != null) {
                                               controller.fetchCategory();
-                                              // materials.add(result);
-                                              // materials.refresh();
                                             }
                                           });
                                         },
@@ -139,10 +134,6 @@ class _HomProduct extends State<HomProduct> {
                                                             showToast(
                                                                 "Xóa thành công");
                                                           });
-
-                                                          // Get.to(ListProduct());
-
-                                                          // food.refresh();
                                                         },
                                                         child: const Text(
                                                           'Xóa',
@@ -171,7 +162,6 @@ class _HomProduct extends State<HomProduct> {
 
   Future<Category> deleteCategory(int category_id) async {
     String token = await getToken();
-    print(token);
 
     try {
       EasyLoading.show(status: 'Loading...');
@@ -186,18 +176,14 @@ class _HomProduct extends State<HomProduct> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Category category = CategoryJson.fromJson(parsedJson).category;
         return category;
       }
       if (response.statusCode == 401) {
         EasyLoading.dismiss();
-        var parsedJson = jsonDecode(response.body);
-        print(parsedJson['error']);
       }
     } on TimeoutException catch (e) {
       showError(e.toString());

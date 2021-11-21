@@ -5,11 +5,6 @@ import 'package:app_delivery/screen/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Avatar extends StatefulWidget {
-  // final String defaultImage;
-  // final String name;
-  //
-  // const Avatar({Key key, this.defaultImage, this.name}) : super(key: key);
-
   @override
   _AvatarState createState() => new _AvatarState();
 }
@@ -41,20 +36,18 @@ class _AvatarState extends State<Avatar> {
         child: Column(
           children: [
             Container(
-              // height: 100.h,
-              // width: 100.w,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(50))),
               child: InkWell(
                 onTap: () {
-                  print("vô đây nèo");
                   getImage();
                 },
                 child: _image == null
                     ? Container(
                         width: 90.w,
                         height: 90.h,
-                        padding: EdgeInsets.only(right: 12, bottom: 12,left: 12,top: 10),
+                        padding: EdgeInsets.only(
+                            right: 12, bottom: 12, left: 12, top: 10),
                         decoration: BoxDecoration(
                           border: Border.all(width: 1, color: Colors.black12),
                           borderRadius: BorderRadius.all(Radius.circular(50)),
@@ -86,14 +79,6 @@ class _AvatarState extends State<Avatar> {
           ],
         ),
       ),
-      // child: _image == null
-      //     ? Text('No image selected.')
-      //     : Image.file(_image),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: getImage,
-      //   tooltip: 'Pick Image',
-      //   child: Icon(Icons.add_a_photo),
-      // ),
     );
   }
 }

@@ -56,7 +56,6 @@ class _Person extends State<PersonProfile> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Loading();
                     } else {
-                      // return buildLoading();
                       return RefreshIndicator(
                         onRefresh: () => fetchUsers(),
                         child: ListView(
@@ -67,7 +66,6 @@ class _Person extends State<PersonProfile> {
                               height: 210.h,
                               child: InkWell(
                                 onTap: () async {
-                                  print('voo ddaay nafo');
                                   await Get.to(PersonInformation());
                                   setState(() {
                                     fetchUsers();
@@ -77,8 +75,6 @@ class _Person extends State<PersonProfile> {
                                   Container(
                                     width: 90.w,
                                     height: 90.h,
-                                    // padding: EdgeInsets.only(
-                                    //     right: 12.w, bottom: 12.h, left: 12.w, top: 12.h),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                           width: 1, color: Colors.black12),
@@ -106,7 +102,6 @@ class _Person extends State<PersonProfile> {
                                     height: 5.h,
                                   ),
                                   Container(
-                                    // padding: EdgeInsets.only(top: 20.h),
                                     child: Text(
                                       lu.username,
                                       style: TextStyle(
@@ -122,7 +117,6 @@ class _Person extends State<PersonProfile> {
                               color: defaulColorThem,
                               child: Column(
                                 children: [
-                                  // ColorLineBottom(),
                                   ItemProfile(
                                     title: 'Quản lý thực đơn',
                                     description: '',
@@ -161,20 +155,11 @@ class _Person extends State<PersonProfile> {
                               color: defaulColorThem,
                               child: Column(
                                 children: [
-                                  // ColorLineBottom(),
-                                  // ItemProfile(
-                                  //   title: 'Trung tâm hỗ trợ',
-                                  //   description: '',
-                                  // ),
                                   ItemProfile(
                                     title: 'Chính sách và quy định',
                                     description: '',
                                     page: Policy(),
                                   ),
-                                  // ItemProfile(
-                                  //   title: 'Cài đặt',
-                                  //   description: '',
-                                  // ),
                                 ],
                               ),
                             ),
@@ -219,19 +204,14 @@ class _Person extends State<PersonProfile> {
 
   @override
   void initState() {
-    // lu.avatar= null;
     fetchUsers();
     super.initState();
   }
 
   Future<bool> fetchUsers() async {
     var u = await getUser();
-    print(u);
     if (u != null) {
-      // user = u.obs;
       lu = u;
-      print(lu.avatar);
-      print(lu.username);
     }
     return lu.isBlank;
   }
@@ -247,12 +227,9 @@ class _Person extends State<PersonProfile> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['users']);
         users = UsersJson.fromJson(parsedJson).users;
-        print(users);
         return users;
       }
       if (response.statusCode == 401) {

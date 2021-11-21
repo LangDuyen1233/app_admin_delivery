@@ -3,11 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_delivery/components/item_field.dart';
-import 'package:app_delivery/controllers/category/add_category_controller.dart';
-import 'package:app_delivery/controllers/category/category_controller.dart';
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Category.dart';
-import 'package:app_delivery/widgets/form_add_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,7 +20,9 @@ class AddCategory extends StatefulWidget {
     return _AddCategory();
   }
 }
+
 String validateImage;
+
 class _AddCategory extends State<AddCategory> {
   @override
   Widget build(BuildContext context) {
@@ -39,7 +38,6 @@ class _AddCategory extends State<AddCategory> {
                 icon: Icon(Icons.check_outlined),
                 onPressed: () {
                   addCategory(ctx);
-                  // controller.dispose();
                 },
               ),
             ],
@@ -97,11 +95,7 @@ class _AddCategory extends State<AddCategory> {
 
   Future<void> addCategory(BuildContext context) async {
     String token = await getToken();
-    print(token);
-    print(name.text);
-    print(description.text);
     if (Form.of(context).validate()) {
-      print(name.text);
       String nameImage;
       if (controller.imagePath != null) {
         int code = await uploadImage(controller.image, controller.imagePath);
@@ -112,8 +106,6 @@ class _AddCategory extends State<AddCategory> {
       if (name.text.isNotEmpty && nameImage.isNotEmpty) {
         try {
           EasyLoading.show(status: 'Loading...');
-          print(name.text);
-          print(controller.imagePath);
           http.Response response = await http.post(
             Uri.parse(Apis.addCategoryUrl),
             headers: <String, String>{
@@ -126,19 +118,15 @@ class _AddCategory extends State<AddCategory> {
               'description': description.text,
             }),
           );
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            print(parsedJson['success']);
             Category category = Category.fromJson(parsedJson['category']);
             Get.back(result: category);
             showToast("Tạo thành công");
           }
           if (response.statusCode == 404) {
             EasyLoading.dismiss();
-            var parsedJson = jsonDecode(response.body);
-            print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
           showError(e.toString());
@@ -172,7 +160,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(

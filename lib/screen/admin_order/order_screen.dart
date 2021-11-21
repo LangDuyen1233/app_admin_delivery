@@ -3,7 +3,6 @@ import 'package:app_delivery/screen/admin_order/tab_new/tab_new_screen.dart';
 import 'package:app_delivery/screen/admin_order/tab_received/tab_received_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:badges/badges.dart';
 
 class OrderScreen extends StatefulWidget {
   @override

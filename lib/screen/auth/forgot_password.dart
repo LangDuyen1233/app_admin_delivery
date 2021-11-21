@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:app_delivery/apis.dart';
 import 'package:app_delivery/screen/auth/fogot_pass_success.dart';
-import 'package:app_delivery/screen/auth/login.dart';
 import 'package:app_delivery/screen/auth/widgets/input_field.dart';
 import 'package:app_delivery/utils.dart';
 import 'package:flutter/material.dart';
@@ -141,7 +140,6 @@ class ForgotPassword extends StatelessWidget {
             'email': email.text,
           }),
         );
-        print(response.statusCode);
         return response.statusCode;
       } on TimeoutException catch (e) {
         showError(e.toString());

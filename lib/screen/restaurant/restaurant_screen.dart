@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:app_delivery/controllers/image_controler.dart';
 import 'package:app_delivery/models/Restaurant.dart';
-import 'package:app_delivery/models/User.dart';
 import 'package:app_delivery/screen/auth/widgets/input_field.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -79,7 +78,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                                 onPressed: () async {
                                   await controller.getImage();
                                   await changeImage();
-                                  // img = controller.imagePath;
                                 },
                                 color: Colors.white,
                                 shape: new RoundedRectangleBorder(
@@ -114,8 +112,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                                                       : ClipRRect(
                                                           child: Image.file(
                                                             controller.image,
-                                                            // width: 90.w,
-                                                            // height: 90.h,
                                                             fit: BoxFit.cover,
                                                           ),
                                                         )
@@ -128,12 +124,8 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                                                       : ClipRRect(
                                                           child: Image.file(
                                                             controller.image,
-                                                            // width: 90.w,
-                                                            // height: 90.h,
                                                             fit: BoxFit.cover,
                                                           ),
-                                                          // ),
-                                                          // ),
                                                         )),
                                         ));
                                   },
@@ -310,11 +302,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
                           ],
                         ),
                       )
-
-
-                      // PhoneRes(
-                      //   phone: restaurant.value.phone,
-                      // )
                     ],
                   ),
                 ),
@@ -379,8 +366,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
 
   Future<bool> fetchRestaurant() async {
     var u = await getRestaurant();
-    print(u.name);
-    print(u);
     if (u != null) {
       restaurant = u.obs;
     }
@@ -403,9 +388,7 @@ class _RestaurantScreen extends State<RestaurantScreen> {
       print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['restaurants']);
         restaurants = RestaurantJson.fromJson(parsedJson).restaurants;
-        print(restaurants);
         return restaurants;
       }
       if (response.statusCode == 401) {
@@ -422,7 +405,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
 
   Future<Restaurants> changeImage() async {
     String token = await getToken();
-    print(token);
     String nameImage;
     if (restaurant.value.image != null) {
       if (controller.imagePath != null) {
@@ -436,7 +418,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
     } else {
       if (controller.imagePath != null) {
         print(controller.imagePath);
-        print('napf dâu k ma');
         int code = await uploadAvatar(controller.image, controller.imagePath);
         if (code == 200) {
           nameImage = controller.imagePath.split('/').last;
@@ -460,7 +441,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Restaurants restaurants =
             Restaurants.fromJson(parsedJson['restaurants']);
         return restaurants;
@@ -475,8 +455,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
 
   Future<int> changePhoneRestaurant( BuildContext context) async {
     String token = await getToken();
-    print(token);
-    print(phone.text);
     if(Form.of(context).validate()){
       try {
         http.Response response = await http.post(
@@ -491,11 +469,6 @@ class _RestaurantScreen extends State<RestaurantScreen> {
         );
 
         print(response.statusCode);
-        // if (response.statusCode == 200) {
-        //   var parsedJson = jsonDecode(response.body);
-        //   Users users = Users.fromJson(parsedJson['user']);
-        //   return users;
-        // }
         return response.statusCode;
       } on TimeoutException catch (e) {
         showError(e.toString());
@@ -505,113 +478,3 @@ class _RestaurantScreen extends State<RestaurantScreen> {
     }
   }
 }
-
-// class AddressRes extends StatelessWidget {
-//   final RxString address;
-//
-//   AddressRes({Key key, this.address}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       color: Colors.white,
-//       margin: EdgeInsets.only(top: 10.h),
-//       padding: EdgeInsets.only(left: 15.w),
-//       width: MediaQuery.of(context).size.width,
-//       child: Column(
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               // LineDecoration(),
-//               Container(
-//                 child: Text(
-//                   'Địa chỉ quán',
-//                   style: TextStyle(fontSize: 17.sp),
-//                 ),
-//               ),
-//               Container(
-//                   child: IconButton(
-//                       onPressed: () async {
-//                         String address = await Get.to(AddressRestaurant());
-//                         var listAddress = address.split('/');
-//                         print('đia chỉ $listAddress');
-//                       },
-//                       icon: Icon(
-//                         Icons.arrow_forward_ios,
-//                         size: 14,
-//                       ),),),
-//             ],
-//           ),
-//           Container(
-//             decoration: BoxDecoration(
-//                 border: Border(
-//                     bottom: BorderSide(width: 0.3, color: Colors.black12))),
-//           ),
-//           Container(
-//             height: 50.h,
-//             alignment: Alignment.centerLeft,
-//             child: Obx(
-//               () => Text(
-//                 address.value,
-//                 overflow: TextOverflow.ellipsis,
-//                 style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-//               ),
-//             ),
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class PhoneRes extends StatelessWidget {
-//   final String phone;
-//
-//   const PhoneRes({Key key, this.phone}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       color: Colors.white,
-//       margin: EdgeInsets.only(top: 10.h),
-//       padding: EdgeInsets.only(left: 15.w),
-//       width: MediaQuery.of(context).size.width,
-//       child: Column(
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               Container(
-//                 child: Text(
-//                   'Số điện thoại quán',
-//                   style: TextStyle(fontSize: 17.sp),
-//                 ),
-//               ),
-//               Container(
-//                   child: IconButton(
-//                       onPressed: () {},
-//                       icon: Icon(
-//                         Icons.arrow_forward_ios,
-//                         size: 14,
-//                       ),),),
-//             ],
-//           ),
-//           Container(
-//             decoration: BoxDecoration(
-//                 border: Border(
-//                     bottom: BorderSide(width: 0.3, color: Colors.black12))),
-//           ),
-//           Container(
-//             height: 50.h,
-//             alignment: Alignment.centerLeft,
-//             child: Text(
-//               phone,
-//               style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-//             ),
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }

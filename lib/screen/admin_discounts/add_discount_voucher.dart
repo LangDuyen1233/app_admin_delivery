@@ -59,13 +59,11 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
                             FormAddWidget(
                               widget: Column(
                                 children: [
-                                  // Avatar(icon: Icons.add_a_photo,name: "Image",),
                                   ItemField(
                                     hintText: "Tên",
                                     controller: name,
                                     type: TextInputType.text,
                                     validator: (val) {
-                                      print(val);
                                       if (val.length == 0) {
                                         return 'Vui lòng nhập tên khuyến mãi';
                                       } else
@@ -77,7 +75,6 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
                                     controller: code,
                                     type: TextInputType.text,
                                     validator: (val) {
-                                      print(val);
                                       if (val.length == 0) {
                                         return 'Vui lòng nhập mã khuyến mãi';
                                       } else
@@ -89,7 +86,6 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
                                     controller: percent,
                                     type: TextInputType.number,
                                     validator: (val) {
-                                      print(val);
                                       if (val.length == 0) {
                                         return 'Vui lòng nhập giảm giá theo %';
                                       } else
@@ -118,7 +114,6 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
   @override
   void initState() {
     typeId = Get.arguments['type_discount_id'];
-    print("hahahah $typeId");
     name = TextEditingController();
     code = TextEditingController();
     percent = TextEditingController();
@@ -132,7 +127,6 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
 
   Future<void> addDiscountVoucher(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       String startDate = date.startDates;
       String endDate = date.endDates;
@@ -158,7 +152,6 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
@@ -169,7 +162,6 @@ class _AddDiscountVoucher extends State<AddDiscountVoucher> {
           if (response.statusCode == 404) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
           showError(e.toString());
@@ -212,7 +204,6 @@ class StartDate extends StatelessWidget {
               }),
               IconButton(
                 onPressed: () {
-                  print('dduj mas m');
                   controller.selectStartDate(context);
                 },
                 icon: Icon(
@@ -254,7 +245,6 @@ class EndDate extends StatelessWidget {
               }),
               IconButton(
                 onPressed: () {
-                  print('dduj mas m');
                   controller.selectEndDate(context);
                 },
                 icon: Icon(

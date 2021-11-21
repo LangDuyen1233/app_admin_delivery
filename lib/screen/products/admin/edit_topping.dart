@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:app_delivery/components/item_field.dart';
 import 'package:app_delivery/models/Food.dart';
 import 'package:app_delivery/models/Topping.dart';
-import 'package:app_delivery/screen/products/admin/edit_food.dart';
 import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:app_delivery/widgets/form_add_widget.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +88,7 @@ class _EditToppings extends State<EditToppings> {
                                         return null;
                                     },
                                   ),
-                                 new ChooseFood()
+                                  new ChooseFood()
                                 ],
                               ),
                             )
@@ -114,38 +113,26 @@ class _EditToppings extends State<EditToppings> {
 
   @override
   void initState() {
-    // print(Get.arguments['category_id']);
     category_id = Get.arguments['category_id'];
-    // getCategory();
     fetchTopping();
-    // name = TextEditingController();
-    // price = TextEditingController();
     foodId = '';
     toppingId = Get.arguments['topping_id'];
     lf = new List<Food>();
   }
 
-  // void getCategory() async {
-  //   category_id = await Get.arguments['category_id'];
-  // }
-
   Topping tp;
 
   Future<bool> fetchTopping() async {
     var topping = await editTopping();
-    print(topping);
     if (topping != null) {
       tp = topping;
     }
-    print('hjghwehgbwegb ${tp.name}');
     name = new TextEditingController(text: tp.name);
     price = new TextEditingController(text: tp.price.toString());
 
     lf = tp.food;
-    // print('leng ${lf.length}');
 
     var tps = await getFood();
-    print('đồ ăn nè ${tps}');
     food.assignAll(tps);
     food.refresh();
 
@@ -156,8 +143,6 @@ class _EditToppings extends State<EditToppings> {
     Topping topping;
     String token = (await getToken());
     int categoryId = Get.arguments['category_id'];
-    print(categoryId.toString() + " topping nn dduj mas m");
-    print(toppingId.toString() + " topppingsefhebfef");
 
     Map<String, String> queryParams = {
       'category_id': categoryId.toString(),
@@ -173,12 +158,9 @@ class _EditToppings extends State<EditToppings> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['topping']);
         topping = ToppingJson.fromJson(parsedJson).topping;
-        print(topping);
         return topping;
       }
       if (response.statusCode == 401) {
@@ -195,7 +177,6 @@ class _EditToppings extends State<EditToppings> {
 
   Future<void> updateTopping(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       if (name.text.isNotEmpty && price.text.isNotEmpty) {
         try {
@@ -208,7 +189,6 @@ class _EditToppings extends State<EditToppings> {
               foodId += f[i].id.toString() + ",";
             }
           }
-          print(foodId);
 
           http.Response response = await http.post(
             Uri.parse(Apis.updateToppingUrl),
@@ -223,14 +203,11 @@ class _EditToppings extends State<EditToppings> {
               'topping': toppingId.toString(),
             }),
           );
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
             Topping topping = Topping.fromJson(parsedJson['topping']);
             Get.back(result: topping);
-            // Get.off(ListProduct(),
-            //     arguments: {'topping': topping, 'category_id': category_id});
             showToast("Tạo thành công");
           }
           if (response.statusCode == 404) {
@@ -254,14 +231,11 @@ class _EditToppings extends State<EditToppings> {
   Future<List<Food>> getFood() async {
     List<Food> list;
     String token = (await getToken());
-    // int categoryId = Get.arguments['category_id'];
-    print(category_id.toString() + " dâu rôi");
     Map<String, String> queryParams = {
       'category_id': category_id.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.getFoodUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getFoodUrl + '?' + queryString),
         headers: <String, String>{
@@ -269,12 +243,9 @@ class _EditToppings extends State<EditToppings> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['food']);
         list = ListFoodJson.fromJson(parsedJson).food;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -284,7 +255,6 @@ class _EditToppings extends State<EditToppings> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
@@ -300,6 +270,7 @@ class ChooseFood extends StatefulWidget {
 
 class _ChooseFood extends State<ChooseFood> {
   final _multiSelectKey = GlobalKey<FormFieldState>();
+
   @override
   void initState() {
     selectedAnimals3 = [];
@@ -307,9 +278,7 @@ class _ChooseFood extends State<ChooseFood> {
       selectedAnimals3.add(lf[i]);
       for (int j = 0; j < food.length; j++) {
         if (lf[i].name == food[j].name) {
-          print('vao day');
           food.remove(food[j]);
-          print(food.length);
         }
       }
       food.add(lf[i]);
@@ -355,17 +324,6 @@ class _ChooseFood extends State<ChooseFood> {
           ),
         ),
       ),
-      // ),
     );
   }
-
-// Future<void> fetchFood() async {
-//   var listFood = await getFood();
-//   if (listFood != null) {
-//     printInfo(info: listFood.length.toString());
-//     food.assignAll(listFood);
-//     food.refresh();
-//   }
-// }
-
 }

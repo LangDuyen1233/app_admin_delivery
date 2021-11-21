@@ -30,7 +30,6 @@ class _EditCategory extends State<EditCategory> {
   @override
   void initState() {
     category_id = Get.arguments['category_id'];
-    print(category_id);
     super.initState();
   }
 
@@ -74,7 +73,6 @@ class _EditCategory extends State<EditCategory> {
                               controller: name,
                               type: TextInputType.text,
                               validator: (val) {
-                                print(val);
                                 if (val.length == 0) {
                                   return 'Vui lòng nhập tên nguyên liệu';
                                 } else
@@ -106,7 +104,6 @@ class _EditCategory extends State<EditCategory> {
     if (c != null) {
       category = c;
     }
-    // print('category nè ${category.name}');
 
     name = TextEditingController(text: category.name);
     description = TextEditingController(text: category.description);
@@ -121,7 +118,6 @@ class _EditCategory extends State<EditCategory> {
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.editCategoryUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.editCategoryUrl + '?' + queryString),
         headers: <String, String>{
@@ -129,7 +125,6 @@ class _EditCategory extends State<EditCategory> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         print(parsedJson['category']);
@@ -148,7 +143,6 @@ class _EditCategory extends State<EditCategory> {
 
   Future<void> updateCategory(BuildContext context) async {
     String token = await getToken();
-    print(token);
     String nameImage;
 
     if (Form.of(context).validate()) {
@@ -187,7 +181,6 @@ class _EditCategory extends State<EditCategory> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             var parsedJson = jsonDecode(response.body);
             Category category = CategoryJson.fromJson(parsedJson).category;
@@ -226,7 +219,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(
@@ -251,8 +243,6 @@ class ListImages extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5)),
                                   child: Image.file(
                                     controller.image,
-                                    // width: 90.w,
-                                    // height: 90.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -274,8 +264,6 @@ class ListImages extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5)),
                                   child: Image.file(
                                     controller.image,
-                                    // width: 90.w,
-                                    // height: 90.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

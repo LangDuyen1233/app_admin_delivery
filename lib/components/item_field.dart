@@ -1,4 +1,3 @@
-import 'package:app_delivery/screen/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -30,7 +29,6 @@ class ItemField extends StatelessWidget {
           contentPadding:
               EdgeInsets.only(top: 20.h, bottom: 20.h, left: 12.w, right: 15.w),
           hintText: hintText,
-          // border: InputBorder.none,
           border: new OutlineInputBorder(
             borderRadius: new BorderRadius.circular(5.0.w),
             borderSide: const BorderSide(color: Colors.black12, width: 0.1),

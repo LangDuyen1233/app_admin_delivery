@@ -44,7 +44,6 @@ class _TabNew extends State<TabNew> {
               if (snapshot.hasError) {
                 return EmptyScreen(text: 'Bạn chưa có đơn hàng nào.');
               } else {
-                // return buildLoading();
                 return RefreshIndicator(
                   onRefresh: () => fetch(),
                   child: Obx(
@@ -88,7 +87,6 @@ class _TabNew extends State<TabNew> {
                                                               Radius.circular(
                                                                   50)),
                                                     ),
-                                                    //image
                                                     child: Container(
                                                         width: 50.w,
                                                         height: 50.h,
@@ -134,7 +132,6 @@ class _TabNew extends State<TabNew> {
                                                                   fit: BoxFit
                                                                       .cover,
                                                                 )))),
-                                                //user name
                                                 Container(
                                                   padding: EdgeInsets.only(
                                                       left: 5.w),
@@ -166,13 +163,11 @@ class _TabNew extends State<TabNew> {
                                                             prefs =
                                                             await SharedPreferences
                                                                 .getInstance();
-                                                        print('chát');
                                                         User user = FirebaseAuth
                                                             .instance
                                                             .currentUser;
                                                         print(user);
                                                         if (user != null) {
-                                                          // Check is already sign up
                                                           final querySnapshotresult =
                                                               await FirebaseFirestore
                                                                   .instance
@@ -182,15 +177,10 @@ class _TabNew extends State<TabNew> {
                                                                       isEqualTo:
                                                                           user.uid)
                                                                   .get();
-                                                          print(
-                                                              querySnapshotresult
-                                                                  .docs);
-                                                          // final List<DocumentSnapshot>documents = result.docs;
                                                           if (querySnapshotresult
                                                                   .docs
                                                                   .length ==
                                                               0) {
-                                                            // Update data to server if new user
                                                             FirebaseFirestore
                                                                 .instance
                                                                 .collection(
@@ -213,9 +203,6 @@ class _TabNew extends State<TabNew> {
                                                                       .uid,
                                                             });
 
-                                                            // Write data to local
-                                                            // currentUser = user;
-                                                            // print(currentUser.uid);
                                                             await prefs
                                                                 .setString('id',
                                                                     user.uid);
@@ -235,9 +222,6 @@ class _TabNew extends State<TabNew> {
                                                             UserChat userChat =
                                                                 UserChat.fromDocument(
                                                                     documentSnapshot);
-                                                            // Write data to local
-                                                            print(userChat
-                                                                .toString());
                                                             await prefs
                                                                 .setString(
                                                                     'id',
@@ -486,7 +470,6 @@ class _TabNew extends State<TabNew> {
                                                                             reason,
                                                                         hintText:
                                                                             "Lý do từ chối",
-                                                                        // controller: quantity,
                                                                         type: TextInputType
                                                                             .text,
                                                                       ),
@@ -574,14 +557,6 @@ class _TabNew extends State<TabNew> {
                                                                           'Đơn hàng',
                                                                           'Đơn hàng của bạn đã bị hủy',
                                                                           4);
-                                                                      // if (isNotify ==
-                                                                      //     true) {
-                                                                      //   await saveNotification(
-                                                                      //       'Đơn hàng',
-                                                                      //       'Đơn hàng của bạn đã bị hủy',
-                                                                      //       '${listOrder[index].user.id}',
-                                                                      //       1);
-                                                                      // }
                                                                     },
                                                                     child: const Text(
                                                                         'Hủy',
@@ -595,10 +570,6 @@ class _TabNew extends State<TabNew> {
                                                                       await prepareOrder(
                                                                           listOrder[index]
                                                                               .id);
-                                                                      print(listOrder[
-                                                                              index]
-                                                                          .user
-                                                                          .uid);
                                                                       await notification(
                                                                           listOrder[index]
                                                                               .user
@@ -606,14 +577,6 @@ class _TabNew extends State<TabNew> {
                                                                           'Đơn hàng',
                                                                           'Đơn hàng của bạn đang được chuẩn bị',
                                                                           2);
-                                                                      // if (isNotify ==
-                                                                      //     true) {
-                                                                      //   await saveNotification(
-                                                                      //       'Đơn hàng',
-                                                                      //       'Đơn hàng của bạn đang được chuẩn bị',
-                                                                      //       '${listOrder[index].user.id}',
-                                                                      //       1);
-                                                                      // }
                                                                       setState(
                                                                           () {
                                                                         listOrder
@@ -672,8 +635,6 @@ class _TabNew extends State<TabNew> {
   @override
   void initState() {
     listOrder = new RxList<Order>();
-    print(listOrder.length);
-    // fetch();
     reason = new TextEditingController();
     super.initState();
   }
@@ -690,7 +651,6 @@ class _TabNew extends State<TabNew> {
     List<Order> list;
     String token = (await getToken());
     try {
-      print(Apis.getNewCardUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getNewCardUrl),
         headers: <String, String>{
@@ -698,12 +658,9 @@ class _TabNew extends State<TabNew> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
         list = ListOrderJson.fromJson(parsedJson).order;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -713,14 +670,12 @@ class _TabNew extends State<TabNew> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
 
   Future<Order> cancelOrder(int id) async {
     String token = await getToken();
-    print(token);
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -735,7 +690,6 @@ class _TabNew extends State<TabNew> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
@@ -751,7 +705,6 @@ class _TabNew extends State<TabNew> {
 
   Future<Order> prepareOrder(int id) async {
     String token = await getToken();
-    print(token);
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -765,7 +718,6 @@ class _TabNew extends State<TabNew> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);

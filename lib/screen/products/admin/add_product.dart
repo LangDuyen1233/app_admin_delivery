@@ -301,9 +301,9 @@ class _AddProduct extends State<AddProduct> {
             print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
-          showError(e.toString());
+          // showError(e.toString());
         } on SocketException catch (e) {
-          showError(e.toString());
+          // showError(e.toString());
         }
       } else {
         showToast('Vui lòng điền đầy đủ các trường');

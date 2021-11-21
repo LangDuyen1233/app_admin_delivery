@@ -3,12 +3,7 @@ import 'dart:async';
 import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chat.dart';
 import 'const.dart';
@@ -29,11 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String currentUserId;
 
-  // _HomeScreenState({@required this.currentUserId});
-
-  // final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  //     FlutterLocalNotificationsPlugin();
   final ScrollController listScrollController = ScrollController();
 
   int _limit = 20;
@@ -44,43 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     getUserUID();
     super.initState();
-    // registerNotification();
-    // configLocalNotification();
     listScrollController.addListener(scrollListener);
-    // showNotification();
   }
-
-  // void registerNotification() {
-  //   firebaseMessaging.requestPermission();
-  //
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //     print('onMessage: $message');
-  //     if (message.notification != null) {
-  //       // showNotification(message.notification);
-  //     }
-  //     return;
-  //   });
-  //
-  //   firebaseMessaging.getToken().then((token) {
-  //     print('token: $token');
-  //     FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(currentUserId)
-  //         .update({'pushToken': token});
-  //   }).catchError((err) {
-  //     Fluttertoast.showToast(msg: err.message.toString());
-  //   });
-  // }
-
-  // void configLocalNotification() {
-  //   AndroidInitializationSettings initializationSettingsAndroid =
-  //       AndroidInitializationSettings('app_icon');
-  //   IOSInitializationSettings initializationSettingsIOS =
-  //       IOSInitializationSettings();
-  //   InitializationSettings initializationSettings = InitializationSettings(
-  //       android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-  //   flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  // }
 
   void scrollListener() {
     if (listScrollController.offset >=
@@ -91,39 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
-  // void showNotification(
-  //     RemoteNotification remoteNotification
-  //     ) async {
-  //   AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //       AndroidNotificationDetails(
-  //     'com.nlu.app_delivery',
-  //     // Platform.isAndroid ? 'com.nlu.app_delivery' : 'com.nlu.app_delivery',
-  //     'Chat',
-  //     'Description',
-  //     playSound: true,
-  //     enableVibration: true,
-  //     importance: Importance.max,
-  //     priority: Priority.high,
-  //   );
-  //   IOSNotificationDetails iOSPlatformChannelSpecifics =
-  //       IOSNotificationDetails();
-  //   NotificationDetails platformChannelSpecifics = NotificationDetails(
-  //       android: androidPlatformChannelSpecifics,
-  //       iOS: iOSPlatformChannelSpecifics);
-  //
-  //   print('remoteNotification: $remoteNotification');
-  //
-  //   await flutterLocalNotificationsPlugin.show(
-  //     0,
-  //     // remoteNotification.title,
-  //     // remoteNotification.body,
-  //     'title',
-  //     'body',
-  //     platformChannelSpecifics,
-  //     payload: null,
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -166,14 +88,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-
-            // Loading
             Positioned(
               child: isLoading ? const Loading() : Container(),
             )
           ],
         ),
-        // onWillPop: onBackPress,
       ),
     );
   }
@@ -251,20 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            onPressed: ()  {
-              print('userChat: ${userChat.toString()} ');
-              // SharedPreferences prefs =
-              // await SharedPreferences
-              //     .getInstance();
-              // await prefs.setString(
-              //     'id', userChat.id);
-              // await prefs.setString(
-              //     'nickname',
-              //     userChat.nickname);
-              // await prefs.setString(
-              //     'photoUrl',
-              //     userChat.photoUrl ??
-              //         "");
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(

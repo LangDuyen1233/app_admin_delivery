@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:address_picker_vn/address_picker.dart';
-import 'package:app_delivery/apis.dart';
 import 'package:app_delivery/components/item_field.dart';
-import 'package:app_delivery/screen/restaurant/address_map.dart';
 import 'package:app_delivery/utils.dart';
 import 'package:app_delivery/widgets/form_add_widget.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +8,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 
 class AddressRestaurant extends StatefulWidget {
   @override
@@ -94,7 +89,6 @@ class _AddressRestaurant extends State<AddressRestaurant> {
                     ),
                   ),
                   Container(
-                    // height: 290.h,
                     color: Color(0xFFEEEEEE),
                     child: FormAddWidget(
                       widget: Container(
@@ -226,7 +220,6 @@ class _AddressRestaurant extends State<AddressRestaurant> {
   }
 
   Future<String> getAddress(List<Placemark> placemarks) async {
-    // List<String> address = [];
     String address = '';
 
     for (int i = 0; i < placemarks.length; i++) {
@@ -246,10 +239,7 @@ class _AddressRestaurant extends State<AddressRestaurant> {
   }
 
   Future<List<Placemark>> getPosition() async {
-    Position position = await Geolocator.getCurrentPosition(
-        // desiredAccuracy: LocationAccuracy.low,
-        // forceAndroidLocationManager: true
-        );
+    Position position = await Geolocator.getCurrentPosition();
 
     latLng = new LatLng(position.latitude, position.longitude);
 

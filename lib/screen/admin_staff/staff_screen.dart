@@ -30,7 +30,6 @@ class _StaffScreen extends State<StaffScreen> {
   @override
   void initState() {
     staff = new RxList<Staff>();
-    // fetchStaff();
     super.initState();
   }
 
@@ -45,12 +44,8 @@ class _StaffScreen extends State<StaffScreen> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () async {
-                print("mày có vô đây không???");
                 final result = await Get.to(AddStaff());
-                // final result = await Get.arguments['staff'];
-                // print(result);
                 setState(() {
-                  print('đahkdja');
                   if (result != null) {
                     staff.assign(result);
                     staff.refresh();
@@ -73,7 +68,6 @@ class _StaffScreen extends State<StaffScreen> {
                   if (snapshot.hasError) {
                     return EmptyScreen(text: 'Bạn chưa có nhân viên nào.');
                   } else {
-                    // return buildLoading();
                     return RefreshIndicator(
                       onRefresh: () => fetchStaff(),
                       child: Obx(
@@ -105,7 +99,6 @@ class _StaffScreen extends State<StaffScreen> {
                                                   'staff_id':
                                                       staff.value[index].id
                                                 });
-                                            print(result);
                                             setState(() {
                                               if (result != null) {
                                                 fetchStaff();
@@ -151,10 +144,6 @@ class _StaffScreen extends State<StaffScreen> {
                                                               showToast(
                                                                   "Xóa thành công");
                                                             });
-
-                                                            // Get.to(ListProduct());
-
-                                                            // food.refresh();
                                                           },
                                                           child: const Text(
                                                             'Xóa',
@@ -192,7 +181,6 @@ class _StaffScreen extends State<StaffScreen> {
     List<Staff> list;
     String token = (await getToken());
     try {
-      print(Apis.getStaffUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getStaffUrl),
         headers: <String, String>{
@@ -200,12 +188,9 @@ class _StaffScreen extends State<StaffScreen> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['food']);
         list = ListStaffJson.fromJson(parsedJson).staff;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -215,14 +200,12 @@ class _StaffScreen extends State<StaffScreen> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
 
   Future<Staff> deleteStaff(int staff_id) async {
     String token = await getToken();
-    print(token);
 
     try {
       EasyLoading.show(status: 'Loading...');
@@ -241,7 +224,6 @@ class _StaffScreen extends State<StaffScreen> {
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Staff staff = Staff.fromJson(parsedJson['staff']);
         return staff;
       }

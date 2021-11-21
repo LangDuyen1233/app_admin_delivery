@@ -28,7 +28,6 @@ class TabReceivedScreen extends StatelessWidget {
                 tabs: [
                   Tab(
                     child: Container(
-                      // padding: EdgeInsets.all(5.sp),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           border: Border.all(color: Colors.blue, width: 1)),

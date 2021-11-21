@@ -47,13 +47,6 @@ class _SignIn extends State<SignIn> {
     print(passwordvisible);
   }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  //   email.dispose();
-  //   password.dispose();
-  // }
-
   Future<void> _saveToken(String token) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     await _prefs.setString('token', token);
@@ -73,7 +66,6 @@ class _SignIn extends State<SignIn> {
           'uid': uid,
         }),
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {}
       if (response.statusCode == 500) {
         showToast("Server error, please try again later!");
@@ -89,16 +81,11 @@ class _SignIn extends State<SignIn> {
   Future<void> login(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Form.of(context).validate();
-    print(email.text);
-    print(password.text);
     if (email.text.isNotEmpty && password.text.isNotEmpty) {
       try {
         setState(() {
           isLoading = true;
         });
-        // showAlertDialog(context);
-        // EasyLoading.show();
-        print(Apis.getSignInUrl);
         http.Response response = await http.post(
           Uri.parse(Apis.getSignInUrl),
           headers: <String, String>{
@@ -109,7 +96,6 @@ class _SignIn extends State<SignIn> {
             'password': password.text,
           }),
         );
-        print(response.statusCode);
         if (response.statusCode == 200) {
           var token = jsonDecode(response.body)["token"];
           var u = UsersJson.fromJson(jsonDecode(response.body)).users;
@@ -124,19 +110,15 @@ class _SignIn extends State<SignIn> {
 
           User user = result.user;
           user.updateDisplayName(u.username);
-          user.updatePhotoURL(Apis.baseURL+ u.avatar);
-
-          print(user);
+          user.updatePhotoURL(Apis.baseURL + u.avatar);
 
           if (user != null) {
-            // Check is already sign up
             final QuerySnapshot result = await FirebaseFirestore.instance
                 .collection('users')
                 .where('id', isEqualTo: user.uid)
                 .get();
             final List<DocumentSnapshot> documents = result.docs;
             if (documents.length == 0) {
-              // Update data to server if new user
               FirebaseFirestore.instance.collection('users').doc(user.uid).set({
                 'nickname': user.displayName,
                 'photoUrl': user.photoURL,
@@ -145,17 +127,13 @@ class _SignIn extends State<SignIn> {
                 'chattingWith': null
               });
 
-              // Write data to local
               currentUser = user;
-              print(currentUser.uid);
               await prefs?.setString('id', currentUser.uid);
               await prefs?.setString('nickname', user.displayName ?? "");
               await prefs?.setString('photoUrl', currentUser.photoURL ?? "");
             } else {
               DocumentSnapshot documentSnapshot = documents[0];
               UserChat userChat = UserChat.fromDocument(documentSnapshot);
-              // Write data to local
-              print(userChat.id);
               await prefs?.setString('id', userChat.id);
               await prefs?.setString('nickname', userChat.nickname ?? "");
               await prefs?.setString('photoUrl', userChat.photoUrl ?? "");
@@ -166,18 +144,17 @@ class _SignIn extends State<SignIn> {
             await updateUid(u.id, user.uid);
           }
 
-          print('token $token');
           await _saveToken(token);
 
           isLoading = false;
-          // Get.back();
-          Get.to(MyStatefulWidgetState(selectedIndex: 2,));
+          Get.to(MyStatefulWidgetState(
+            selectedIndex: 2,
+          ));
         }
         if (response.statusCode == 401) {
           setState(() {
             isLoading = false;
           });
-          // Get.back();
           showToast("Đăng nhập thất bại, tài khoản hoặc mật khẩu không đúng");
         }
         if (response.statusCode == 500) {
@@ -256,7 +233,6 @@ class _SignIn extends State<SignIn> {
                           ),
                           GetBuilder<AuthController>(
                             init: AuthController(),
-                            // INIT IT ONLY THE FIRST TIME
                             builder: (_) => InputField(
                               controller: password,
                               obscureText: passwordvisible.value,
@@ -321,26 +297,6 @@ class _SignIn extends State<SignIn> {
                               ),
                             ),
                           ),
-                          // Align(
-                          //   alignment: Alignment.centerRight,
-                          //   child: TextButton(
-                          //     onPressed: () {
-                          //       handleSignIn().catchError((err) {
-                          //         Fluttertoast.showToast(msg: err.toString());
-                          //         this.setState(() {
-                          //           isLoading = false;
-                          //         });
-                          //       });
-                          //       // google_SignIn();
-                          //       saveToken(
-                          //           'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMGUzOTIyNTRlNGIyZTIwZmQwYjdiNTQ2NDQ0MjBmNmFlOTdmYTk5MzViYTNiNmI5NmJiNWZkOTUxMzgyYTQwNTc4OWI2ZmI5OGNmZjdhZGUiLCJpYXQiOjE2Mjc4MDAwNjMuNzc2MzY0LCJuYmYiOjE2Mjc4MDAwNjMuNzc2MzcsImV4cCI6MTY1OTMzNjA2My43MDQwOSwic3ViIjoiMSIsInNjb3BlcyI6W119.H5QTT4HgxGCGNIXbZPjC5QZ3NJzjVzg80n64TI6XpZgdqzWM6pfm-5BqNRw11MpwLjeDcFZQNZjz4ahMLHXQtWOJsPs9Swfiq_HtgLTTOO6f60CbURxMPV9-pm-Qi8dOcvLc6I7wGc1d1H-Yw9GvvX62gmgcVHNQzPnB4MMqaxci85cpMmoPb_VB-lTBWw3lCfy2pk_xLvAHWRfOsxDwVHcLQ0zHVW1PQq39449L8ie92x38QtIcOCRmS69pCdAYwA69AJgLl_brEqJzAjBcSYjnhxotR4ZqOhSR4-kk4qqiwl7I6vKp04z8lsQJy6mmb8MBgX8hsjFHrXzLjscikqUfujBfPdlW6_JmykECFEyBGwg1IJRxq8RHWE1pp1D6AxScXjxMLo_CgnfjCtr-DHxJLkouC0YeGoXa3G0v5vnDLDiAleaRqC825hk41gUqrX4idoTclz4-Sv7drEN5WbPDzwzH8nCl_iCvVglC2RkMM48qMSz9w6Sy0Av85c9pQzrmjB_y6HjfMRitXFEak3XP9Wc7U6MJMmcuAdnvxSREenjSLzottcP9Zae7N94YWP76Xp3TJNIa_xalQIrjmA_-J_7RTF-bN837N565t23JMaP5RsM0W088JDUnsJgyEsgFK9mpowSGuoiTxwDRuM-J4QJKUAQ0DpFzXc6OOzM');
-                          //     },
-                          //     child: Text(
-                          //       'Signin Google',
-                          //       style: TextStyle(color: Colors.grey),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -371,257 +327,4 @@ class _SignIn extends State<SignIn> {
   bool isLoggedIn = false;
   User currentUser;
   bool isUserSignedIn = false;
-
-// Future<Null> handleSignIn() async {
-//   prefs = await SharedPreferences.getInstance();
-//
-//   this.setState(() {
-//     isLoading = true;
-//   });
-//
-//   GoogleSignInAccount googleUser = await googleSignIn.signIn();
-//   if (googleUser != null) {
-//     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-//     final AuthCredential credential = GoogleAuthProvider.credential(
-//       accessToken: googleAuth.accessToken,
-//       idToken: googleAuth.idToken,
-//     );
-//
-//     User firebaseUser =
-//         (await firebaseAuth.signInWithCredential(credential)).user;
-//
-//     if (firebaseUser != null) {
-//       // Check is already sign up
-//       final QuerySnapshot result = await FirebaseFirestore.instance
-//           .collection('users')
-//           .where('id', isEqualTo: firebaseUser.uid)
-//           .get();
-//       final List<DocumentSnapshot> documents = result.docs;
-//       if (documents.length == 0) {
-//         // Update data to server if new user
-//         FirebaseFirestore.instance
-//             .collection('users')
-//             .doc(firebaseUser.uid)
-//             .set({
-//           'nickname': firebaseUser.displayName,
-//           'photoUrl': firebaseUser.photoURL,
-//           'id': firebaseUser.uid,
-//           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-//           'chattingWith': null
-//         });
-//
-//         // Write data to local
-//         currentUser = firebaseUser;
-//         await prefs?.setString('id', currentUser.uid);
-//         await prefs?.setString('nickname', currentUser.displayName ?? "");
-//         await prefs?.setString('photoUrl', currentUser.photoURL ?? "");
-//       } else {
-//         DocumentSnapshot documentSnapshot = documents[0];
-//         UserChat userChat = UserChat.fromDocument(documentSnapshot);
-//         // Write data to local
-//         await prefs?.setString('id', userChat.id);
-//         await prefs?.setString('nickname', userChat.nickname);
-//         await prefs?.setString('photoUrl', userChat.photoUrl);
-//         await prefs?.setString('aboutMe', userChat.aboutMe);
-//       }
-//       Fluttertoast.showToast(msg: "Sign in success");
-//       this.setState(() {
-//         isLoading = false;
-//       });
-//       Get.to(MyStatefulWidgetState());
-//       // Navigator.push(
-//       //     context,
-//       //     MaterialPageRoute(
-//       //         builder: (context) =>
-//       //             HomeScreen(currentUserId: firebaseUser.uid)));
-//     } else {
-//       Fluttertoast.showToast(msg: "Sign in fail");
-//       this.setState(() {
-//         isLoading = false;
-//       });
-//     }
-//   } else {
-//     Fluttertoast.showToast(msg: "Can not init google sign in");
-//     this.setState(() {
-//       isLoading = false;
-//     });
-//   }
-// }
-
-// Future<User> google_SignIn() async {
-//   User user;
-//   bool isSignedIn = await googleSignIn.isSignedIn();
-//
-//   print(isSignedIn.toString());
-//
-//   if (isSignedIn) {
-//     user = firebaseAuth.currentUser;
-//     print(user.email);
-//     print(user.toString());
-//     Get.off(MyStatefulWidgetState());
-//   } else {
-//     final GoogleSignInAccount googleUser = (await googleSignIn.signIn());
-//     if (googleUser != null) {
-//       final GoogleSignInAuthentication googleAuth =
-//       await googleUser.authentication;
-//       final AuthCredential credential = GoogleAuthProvider.credential(
-//         accessToken: googleAuth.accessToken,
-//         idToken: googleAuth.idToken,
-//       );
-//       // UserCredential result = await firebaseAuth.signInWithCredential(credential);
-//       // user = result.user;
-//       // isUserSignedIn = await googleSignIn.isSignedIn();
-//
-//       User firebaseUser = (await firebaseAuth.signInWithCredential(credential)).user;
-//
-//       print(firebaseUser.displayName);
-//       print(firebaseUser.email);
-//       if (firebaseUser != null) {
-//
-//         String phone = user.phoneNumber;
-//         if (phone == null) {
-//           phone = '0';
-//         }
-//         final QuerySnapshot result =
-//         await FirebaseFirestore.instance.collection('users').where('id', isEqualTo: firebaseUser.uid).get();
-//         final List<DocumentSnapshot> documents = result.docs;
-//         if (documents.length == 0) {
-//           // Update data to server if new user
-//           FirebaseFirestore.instance
-//               .collection('users')
-//               .doc(user.uid)
-//               .set({
-//             'nickname': user.displayName,
-//             'photoUrl': user.photoURL,
-//             'id': user.uid,
-//             'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-//             'chattingWith': null
-//           });
-//
-//           // Write data to local
-//           currentUser = user;
-//           await prefs?.setString('id', currentUser.uid);
-//           await prefs?.setString('nickname', currentUser.displayName ?? "");
-//           await prefs?.setString('photoUrl', currentUser.photoURL ?? "");
-//         } else {
-//           DocumentSnapshot documentSnapshot = documents[0];
-//           UserChat userChat = UserChat.fromDocument(documentSnapshot);
-//           // Write data to local
-//           await prefs?.setString('id', userChat.id);
-//           await prefs?.setString('nickname', userChat.nickname);
-//           await prefs?.setString('photoUrl', userChat.photoUrl);
-//           await prefs?.setString('aboutMe', userChat.aboutMe);
-//         }
-//         print(phone);
-//         Get.to(MyStatefulWidgetState());
-//         // postRegisger(user.displayName, user.email, phone, user.photoURL);
-//
-//         return user;
-//       } else {
-//         Get.to(SignIn());
-//       }
-//     } else {
-//       showToast('Đăng nhập thất bại!');
-//     }
-//   }
-//   return null;
-// }
-
-// void isSignedIn() async {
-//   this.setState(() {
-//     isLoading = true;
-//   });
-//
-//   prefs = await SharedPreferences.getInstance();
-//
-//   isLoggedIn = await googleSignIn.isSignedIn();
-//   if (isLoggedIn && prefs?.getString('id') != null) {
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(
-//           builder: (context) =>
-//               ChatsScreen(currentUserId: prefs.getString('id') ?? "")),
-//     );
-//   }
-//
-//   this.setState(() {
-//     isLoading = false;
-//   });
-// }
-//
-// Future<Null> handleSignIn() async {
-//   prefs = await SharedPreferences.getInstance();
-//
-//   this.setState(() {
-//     isLoading = true;
-//   });
-//
-//   GoogleSignInAccount googleUser = await googleSignIn.signIn();
-//   if (googleUser != null) {
-//     GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-//     final AuthCredential credential = GoogleAuthProvider.credential(
-//       accessToken: googleAuth.accessToken,
-//       idToken: googleAuth.idToken,
-//     );
-//
-//     User firebaseUser =
-//         (await firebaseAuth.signInWithCredential(credential)).user;
-//
-//     if (firebaseUser != null) {
-//       // Check is already sign up
-//       final QuerySnapshot result = await FirebaseFirestore.instance
-//           .collection('users')
-//           .where('id', isEqualTo: firebaseUser.uid)
-//           .get();
-//       final List<DocumentSnapshot> documents = result.docs;
-//       if (documents.length == 0) {
-//         // Update data to server if new user
-//         FirebaseFirestore.instance
-//             .collection('users')
-//             .doc(firebaseUser.uid)
-//             .set({
-//           'nickname': firebaseUser.displayName,
-//           'photoUrl': firebaseUser.photoURL,
-//           'id': firebaseUser.uid,
-//           'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-//           'chattingWith': null
-//         });
-//
-//         // Write data to local
-//         currentUser = firebaseUser;
-//         await prefs?.setString('id', currentUser.uid);
-//         await prefs?.setString('nickname', currentUser.displayName ?? "");
-//         await prefs?.setString('photoUrl', currentUser.photoURL ?? "");
-//       } else {
-//         DocumentSnapshot documentSnapshot = documents[0];
-//         UserChat userChat = UserChat.fromDocument(documentSnapshot);
-//         // Write data to local
-//         await prefs?.setString('id', userChat.id);
-//         await prefs?.setString('nickname', userChat.nickname);
-//         await prefs?.setString('photoUrl', userChat.photoUrl);
-//         await prefs?.setString('aboutMe', userChat.aboutMe);
-//       }
-//       Fluttertoast.showToast(msg: "Sign in success");
-//       this.setState(() {
-//         isLoading = false;
-//       });
-//
-//       Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//               builder: (context) =>
-//                   ChatsScreen(currentUserId: firebaseUser.uid)));
-//     } else {
-//       Fluttertoast.showToast(msg: "Sign in fail");
-//       this.setState(() {
-//         isLoading = false;
-//       });
-//     }
-//   } else {
-//     Fluttertoast.showToast(msg: "Can not init google sign in");
-//     this.setState(() {
-//       isLoading = false;
-//     });
-//   }
-// }
 }

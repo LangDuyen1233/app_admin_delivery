@@ -55,13 +55,11 @@ class _AddToppings extends State<AddToppings> {
                   FormAddWidget(
                     widget: Column(
                       children: [
-                        // Avatar(icon: Icons.add_a_photo,name: "Image",),
                         ItemField(
                           hintText: "Tên topping",
                           controller: name,
                           type: TextInputType.text,
                           validator: (val) {
-                            print(val);
                             if (val.length == 0) {
                               return 'Vui lòng nhập tên topping';
                             } else
@@ -73,7 +71,6 @@ class _AddToppings extends State<AddToppings> {
                           controller: price,
                           type: TextInputType.number,
                           validator: (val) {
-                            print(val);
                             if (val.length == 0) {
                               return 'Vui lòng nhập giá bán';
                             } else
@@ -100,7 +97,6 @@ class _AddToppings extends State<AddToppings> {
 
   @override
   void initState() {
-    print(Get.arguments['category_id']);
     getCategory();
     name = TextEditingController();
     price = TextEditingController();
@@ -113,7 +109,6 @@ class _AddToppings extends State<AddToppings> {
 
   Future<void> addTopping(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       if (name.text.isNotEmpty && price.text.isNotEmpty) {
         try {
@@ -126,7 +121,6 @@ class _AddToppings extends State<AddToppings> {
               foodId += tp[i].id.toString() + ",";
             }
           }
-          print(foodId);
 
           http.Response response = await http.post(
             Uri.parse(Apis.addToppingUrl),
@@ -140,13 +134,11 @@ class _AddToppings extends State<AddToppings> {
               'food': foodId,
             }),
           );
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
             print(parsedJson['success']);
             Topping topping = Topping.fromJson(parsedJson['topping']);
-            // Get.back(result: food);
             Get.off(ListProduct(),
                 arguments: {'topping': topping, 'category_id': category_id});
             showToast("Tạo thành công");
@@ -154,7 +146,6 @@ class _AddToppings extends State<AddToppings> {
           if (response.statusCode == 404) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
           showError(e.toString());
@@ -180,15 +171,12 @@ class ChooseFood extends StatefulWidget {
 class _ChooseFood extends State<ChooseFood> {
   static RxList<Food> food = new RxList<Food>();
 
-  var _items = food.map((f) => MultiSelectItem<Food>(f, f.name)).toList();
-
   final _multiSelectKey = GlobalKey<FormFieldState>();
 
   @override
   void initState() {
     fetchFood();
     _selectedAnimals3 = [];
-    // print(_items);
     super.initState();
   }
 
@@ -239,7 +227,6 @@ class _ChooseFood extends State<ChooseFood> {
   Future<void> fetchFood() async {
     var listFood = await getFood();
     if (listFood != null) {
-      printInfo(info: listFood.length.toString());
       food.assignAll(listFood);
       food.refresh();
     }
@@ -249,7 +236,6 @@ class _ChooseFood extends State<ChooseFood> {
     List<Food> list;
     String token = (await getToken());
     int categoryId = Get.arguments['category_id'];
-    print(categoryId.toString() + " dduj mas m");
     Map<String, String> queryParams = {
       'category_id': categoryId.toString(),
     };
@@ -266,9 +252,7 @@ class _ChooseFood extends State<ChooseFood> {
       print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['food']);
         list = ListFoodJson.fromJson(parsedJson).food;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {

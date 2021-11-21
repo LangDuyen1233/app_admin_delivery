@@ -15,10 +15,8 @@ class ImageController extends GetxController {
     if (pickedFile != null) {
       image = File(pickedFile.path);
       imagePath = pickedFile.path;
-      print(imagePath);
       update();
     } else {
-      print('No image selected.');
     }
   }
 }

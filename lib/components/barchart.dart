@@ -7,8 +7,6 @@ import 'package:app_delivery/screen/widget/loading.dart';
 import 'package:app_delivery/utils.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class BarChartSample2 extends StatefulWidget {
@@ -29,44 +27,6 @@ class BarChartSample2State extends State<BarChartSample2> {
   @override
   void initState() {
     super.initState();
-
-    // revenueWeek();
-    // List<RevenueWeek> rw = revenueWeek() as List<RevenueWeek>;
-    // double t2 = 4.0;
-    // double t3 = 0.0;
-    // double t4 = 0.0;
-    // double t5 = 0.0;
-    // double t6 = 0.0;
-    // double t7 = 0.0;
-    // double cn = 0.0;
-    //
-    // // for (int i = 0; i < rw.length; i++) {
-    // //   if (rw[i].dayOfWeek == 2) {
-    // //     t2 += rw[i].dayOfWeek;
-    // //   }
-    // // }
-    //
-    // final barGroup1 = makeGroupData(0, t2);
-    // final barGroup2 = makeGroupData(1, t3);
-    // final barGroup3 = makeGroupData(2, t4);
-    // final barGroup4 = makeGroupData(3, t5);
-    // final barGroup5 = makeGroupData(4, t6);
-    // final barGroup6 = makeGroupData(5, t7);
-    // final barGroup7 = makeGroupData(6, cn);
-    //
-    // final items = [
-    //   barGroup1,
-    //   barGroup2,
-    //   barGroup3,
-    //   barGroup4,
-    //   barGroup5,
-    //   barGroup6,
-    //   barGroup7,
-    // ];
-    //
-    // rawBarGroups = items;
-    //
-    // showingBarGroups = rawBarGroups;
   }
 
   @override
@@ -117,56 +77,12 @@ class BarChartSample2State extends State<BarChartSample2> {
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: BarChart(
                               BarChartData(
-                                maxY: 20,
+                                maxY: 100,
                                 barTouchData: BarTouchData(
                                   touchTooltipData: BarTouchTooltipData(
                                     tooltipBgColor: Colors.grey,
                                     getTooltipItem: (_a, _b, _c, _d) => null,
                                   ),
-                                  // touchCallback: (response) {
-                                  // if (response.spot == null) {
-                                  //   setState(() {
-                                  //     touchedGroupIndex = -1;
-                                  //     showingBarGroups = List.of(rawBarGroups);
-                                  //   });
-                                  //   return;
-                                  // }
-                                  //
-                                  // touchedGroupIndex =
-                                  //     response.spot.touchedBarGroupIndex;
-                                  //
-                                  // setState(() {
-                                  //   if (response.touchInput is PointerExitEvent ||
-                                  //       response.touchInput is PointerUpEvent) {
-                                  //     touchedGroupIndex = -1;
-                                  //     showingBarGroups = List.of(rawBarGroups);
-                                  //   } else {
-                                  //     showingBarGroups = List.of(rawBarGroups);
-                                  //     if (touchedGroupIndex != -1) {
-                                  //       var sum = 0.0;
-                                  //       for (var rod
-                                  //           in showingBarGroups[touchedGroupIndex]
-                                  //               .barRods) {
-                                  //         sum += rod.y;
-                                  //       }
-                                  //       final avg = sum /
-                                  //           showingBarGroups[touchedGroupIndex]
-                                  //               .barRods
-                                  //               .length;
-                                  //
-                                  //       showingBarGroups[touchedGroupIndex] =
-                                  //           showingBarGroups[touchedGroupIndex]
-                                  //               .copyWith(
-                                  //         barRods: showingBarGroups[touchedGroupIndex]
-                                  //             .barRods
-                                  //             .map((rod) {
-                                  //           return rod.copyWith(y: avg);
-                                  //         }).toList(),
-                                  //       );
-                                  //     }
-                                  //   }
-                                  // });
-                                  // }
                                 ),
                                 titlesData: FlTitlesData(
                                   show: true,
@@ -209,14 +125,16 @@ class BarChartSample2State extends State<BarChartSample2> {
                                     getTitles: (value) {
                                       if (value == 0) {
                                         return '0';
-                                      } else if (value == 5) {
-                                        return '50K';
-                                      } else if (value == 10) {
-                                        return '100K';
-                                      } else if (value == 15) {
-                                        return '150K';
                                       } else if (value == 20) {
                                         return '200K';
+                                      } else if (value == 40) {
+                                        return '400K';
+                                      } else if (value == 60) {
+                                        return '600K';
+                                      } else if (value == 80) {
+                                        return '800k';
+                                      } else if (value == 100) {
+                                        return '1tr';
                                       } else {
                                         return '';
                                       }
@@ -253,11 +171,6 @@ class BarChartSample2State extends State<BarChartSample2> {
         colors: [leftBarColor],
         width: width,
       ),
-      // BarChartRodData(
-      //   y: y2,
-      //   colors: [rightBarColor],
-      //   width: width,
-      // ),
     ]);
   }
 
@@ -393,23 +306,12 @@ class BarChartSample2State extends State<BarChartSample2> {
         List<RevenueWeek> listRevenueWeek =
             ListRevenueWeek.fromJson(parsedJson).revenueWeek;
         return listRevenueWeek;
-        // double th2 = 0;
-        // var revenueWeek = parsedJson['revenueWeek'];
-        // for (int i = 0; i < revenueWeek.length; i++) {
-        //   print('vào đay k ${revenueWeek[i]['day_of_week']}');
-        //   if (revenueWeek[i]['day_of_week'] == 2) {
-        //     print(revenueWeek[i]['price']);
-        //     th2 += revenueWeek[i]['price'];
-        //   }
-        // }
-        // print(th2);
       }
       if (response.statusCode == 401) {}
     } on TimeoutException catch (e) {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }

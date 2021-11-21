@@ -58,13 +58,11 @@ class _AddMaterials extends State<AddMaterials> {
                         FormAddWidget(
                           widget: Column(
                             children: [
-                              // Avatar(icon: Icons.add_a_photo,name: "Image",),
                               ItemField(
                                 hintText: "Tên nguyên liệu",
                                 controller: name,
                                 type: TextInputType.text,
                                 validator: (val) {
-                                  print(val);
                                   if (val.length == 0) {
                                     return 'Vui lòng nhập tên nguyên liệu';
                                   } else
@@ -76,7 +74,6 @@ class _AddMaterials extends State<AddMaterials> {
                                 controller: quantity,
                                 type: TextInputType.number,
                                 validator: (val) {
-                                  print(val);
                                   if (val.length == 0) {
                                     return 'Vui lòng nhập số lượng';
                                   } else
@@ -98,7 +95,6 @@ class _AddMaterials extends State<AddMaterials> {
 
   Future<void> addMaterials(BuildContext context) async {
     String token = await getToken();
-    print(token);
     if (Form.of(context).validate()) {
       String nameImage;
       if (controller.imagePath != null) {
@@ -124,20 +120,15 @@ class _AddMaterials extends State<AddMaterials> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
-            // print(parsedJson['success']);
             Materials material = Materials.fromJson(parsedJson['materials']);
-            // Get.back(result: food);
             Get.back(result: material);
             showToast("Tạo thành công");
           }
           if (response.statusCode == 404) {
             EasyLoading.dismiss();
-            var parsedJson = jsonDecode(response.body);
-            print(parsedJson['error']);
           }
         } on TimeoutException catch (e) {
           showError(e.toString());
@@ -148,9 +139,6 @@ class _AddMaterials extends State<AddMaterials> {
         showToast('Vui lòng điền đầy đủ các trường');
       }
     } else {
-      // controller.imagePath == ''
-      //     ? validateImage = ''
-      //     : validateImage = 'Vui lòng chọn hình ảnh cho món ăn';
       showToast('Vui lòng điền đầy đủ các trường');
     }
   }
@@ -171,7 +159,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(
@@ -194,8 +181,6 @@ class ListImages extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(5)),
                               child: Image.file(
                                 controller.image,
-                                // width: 90.w,
-                                // height: 90.h,
                                 fit: BoxFit.cover,
                               ),
                             ),

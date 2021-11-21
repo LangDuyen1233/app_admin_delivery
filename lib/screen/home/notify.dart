@@ -27,7 +27,6 @@ class _Notify extends State<NotifyScreen> {
   @override
   void initState() {
     notify = new RxList<Notify>();
-    // fetch();
     super.initState();
   }
 
@@ -53,6 +52,7 @@ class _Notify extends State<NotifyScreen> {
                     child: RefreshIndicator(
                       onRefresh: () => fetch(),
                       child: ListView.builder(
+                        reverse: true,
                         shrinkWrap: true,
                         itemCount: notify.length,
                         itemBuilder: (context, index) {
@@ -77,7 +77,6 @@ class _Notify extends State<NotifyScreen> {
   Future<bool> fetch() async {
     var list = await getNotify();
     if (list != null) {
-      print(list);
       notify.assignAll(list);
       notify.refresh();
     }
@@ -86,9 +85,7 @@ class _Notify extends State<NotifyScreen> {
 
   Future<List<Notify>> getNotify() async {
     String token = (await getToken());
-    print(token);
     try {
-      print(Apis.getNotifyUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getNotifyUrl),
         headers: <String, String>{
@@ -96,12 +93,9 @@ class _Notify extends State<NotifyScreen> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['notify']);
         var list = ListNotifyJson.fromJson(parsedJson).notify;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {

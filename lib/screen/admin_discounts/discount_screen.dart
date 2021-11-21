@@ -67,7 +67,6 @@ class _DiscountScreen extends State<DiscountScreen> {
                 if (snapshot.hasError) {
                   return EmptyScreen(text: 'Bạn chưa có discount nào.');
                 } else {
-                  // return buildLoading();
                   return RefreshIndicator(
                     onRefresh: () => fetchDiscount(),
                     child: Obx(
@@ -156,10 +155,6 @@ class _DiscountScreen extends State<DiscountScreen> {
                                                             showToast(
                                                                 "Xóa thành công");
                                                           });
-
-                                                          // Get.to(ListProduct());
-
-                                                          // food.refresh();
                                                         },
                                                         child: const Text(
                                                           'Xóa',
@@ -196,11 +191,8 @@ class _DiscountScreen extends State<DiscountScreen> {
   Future<void> fetchDiscount() async {
     var list = await getDiscount();
     if (list != null) {
-      // printInfo(info: listFood.length.toString());
-      print(list.length);
       discount.assignAll(list);
       discount.refresh();
-      // print(food.length);
     }
   }
 
@@ -208,7 +200,6 @@ class _DiscountScreen extends State<DiscountScreen> {
     List<Discount> list;
     String token = (await getToken());
     try {
-      print(Apis.getDiscountUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getDiscountUrl),
         headers: <String, String>{
@@ -216,12 +207,9 @@ class _DiscountScreen extends State<DiscountScreen> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['discount']);
         list = ListDiscountJson.fromJson(parsedJson).discount;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -231,14 +219,12 @@ class _DiscountScreen extends State<DiscountScreen> {
       showError(e.toString());
     } on SocketException catch (e) {
       showError(e.toString());
-      print(e.toString());
     }
     return null;
   }
 
   Future<Discount> deleteDiscountVoucher(int discount_id) async {
     String token = await getToken();
-    print(token);
 
     try {
       EasyLoading.show(status: 'Loading...');
@@ -253,18 +239,14 @@ class _DiscountScreen extends State<DiscountScreen> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Discount discount = Discount.fromJson(parsedJson['discount']);
         return discount;
       }
       if (response.statusCode == 404) {
         EasyLoading.dismiss();
-        var parsedJson = jsonDecode(response.body);
-        print(parsedJson['error']);
       }
     } on TimeoutException catch (e) {
       showError(e.toString());
@@ -275,7 +257,6 @@ class _DiscountScreen extends State<DiscountScreen> {
 
   Future<Discount> deleteDiscountFood(int discount_id) async {
     String token = await getToken();
-    print(token);
 
     try {
       EasyLoading.show(status: 'Loading...');
@@ -290,18 +271,14 @@ class _DiscountScreen extends State<DiscountScreen> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Discount discount = Discount.fromJson(parsedJson['discount']);
         return discount;
       }
       if (response.statusCode == 404) {
         EasyLoading.dismiss();
-        var parsedJson = jsonDecode(response.body);
-        print(parsedJson['error']);
       }
     } on TimeoutException catch (e) {
       showError(e.toString());
@@ -348,7 +325,6 @@ class DiscountItem extends StatelessWidget {
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 15.w, right: 10.w),
-                  // height: 92.h,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -57,7 +57,6 @@ class _EditMaterials extends State<EditMaterials> {
                       FormAddWidget(
                         widget: Column(
                           children: [
-                            // Avatar(icon: Icons.add_a_photo,name: "Image",),
                             ItemField(
                               hintText: "Tên nguyên liệu",
                               controller: name,
@@ -106,7 +105,6 @@ class _EditMaterials extends State<EditMaterials> {
   @override
   void initState() {
     materialsId = Get.arguments['materials_id'];
-    // print(staffId);
     super.initState();
   }
 
@@ -115,7 +113,6 @@ class _EditMaterials extends State<EditMaterials> {
     if (materials != null) {
       s = materials;
     }
-    print(s.name);
     name = TextEditingController(text: s.name);
     quantity = TextEditingController(text: s.quantity.toString());
 
@@ -126,13 +123,11 @@ class _EditMaterials extends State<EditMaterials> {
     Materials materials;
     String token = (await getToken());
     materialsId = Get.arguments['materials_id'];
-    print(materials);
     Map<String, String> queryParams = {
       'materialsId': materialsId.toString(),
     };
     String queryString = Uri(queryParameters: queryParams).query;
     try {
-      print(Apis.editMaterialsUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.editMaterialsUrl + '?' + queryString),
         headers: <String, String>{
@@ -140,12 +135,9 @@ class _EditMaterials extends State<EditMaterials> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['materials']);
         materials = MaterialsJson.fromJson(parsedJson).materials;
-        print(materials);
         return materials;
       }
       if (response.statusCode == 401) {
@@ -162,7 +154,6 @@ class _EditMaterials extends State<EditMaterials> {
 
   Future<void> updateMaterials(BuildContext context) async {
     String token = await getToken();
-    print(token);
     String nameImage;
 
     if (Form.of(context).validate()) {
@@ -175,7 +166,7 @@ class _EditMaterials extends State<EditMaterials> {
         } else {
           nameImage = s.image.split('/').last;
         }
-      }else{
+      } else {
         if (controller.imagePath != null) {
           int code = await uploadImage(controller.image, controller.imagePath);
           if (code == 200) {
@@ -201,7 +192,6 @@ class _EditMaterials extends State<EditMaterials> {
             }),
           );
 
-          print(response.statusCode);
           if (response.statusCode == 200) {
             EasyLoading.dismiss();
             var parsedJson = jsonDecode(response.body);
@@ -241,7 +231,6 @@ class ListImages extends StatelessWidget {
             child: RaisedButton(
               onPressed: () {
                 controller.getImage();
-                // img = controller.imagePath;
               },
               color: Colors.white,
               shape: new RoundedRectangleBorder(
@@ -266,8 +255,6 @@ class ListImages extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5)),
                                   child: Image.file(
                                     controller.image,
-                                    // width: 90.w,
-                                    // height: 90.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -289,8 +276,6 @@ class ListImages extends StatelessWidget {
                                       BorderRadius.all(Radius.circular(5)),
                                   child: Image.file(
                                     controller.image,
-                                    // width: 90.w,
-                                    // height: 90.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),

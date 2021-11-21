@@ -1,5 +1,5 @@
 class Apis {
-  static final String baseURL = 'http://192.168.1.10:8000';
+  static final String baseURL = 'http://fooddelivery.gtnlu.site';
   static final String root = '$baseURL/api';
 
   //auth

@@ -86,12 +86,8 @@ class _PersonInformation extends State<PersonInformation> {
                                                   Radius.circular(50)),
                                               child: Image.file(
                                                 controller.image,
-                                                // width: 90.w,
-                                                // height: 90.h,
                                                 fit: BoxFit.cover,
                                               ),
-                                              // ),
-                                              // ),
                                             )
                                       : controller.image == null
                                           ? Icon(
@@ -104,12 +100,8 @@ class _PersonInformation extends State<PersonInformation> {
                                                   Radius.circular(50)),
                                               child: Image.file(
                                                 controller.image,
-                                                // width: 90.w,
-                                                // height: 90.h,
                                                 fit: BoxFit.cover,
                                               ),
-                                              // ),
-                                              // ),
                                             );
                                 },
                               )),
@@ -148,8 +140,6 @@ class _PersonInformation extends State<PersonInformation> {
                                     top: BorderSide(
                                         width: 0.2, color: Colors.black12))),
                           ),
-                          // Obx(
-                          //   () =>
                           Container(
                             margin: EdgeInsets.only(top: 0.2.h),
                             color: defaulColorThem,
@@ -245,7 +235,6 @@ class _PersonInformation extends State<PersonInformation> {
                                                                   username,
                                                               hintText:
                                                                   "Tên người dùng",
-                                                              // controller: quantity,
                                                               type:
                                                                   TextInputType
                                                                       .text,
@@ -298,12 +287,9 @@ class _PersonInformation extends State<PersonInformation> {
                       ),
                     ),
                     Container(
-                      // margin: EdgeInsets.only(top: 5.h),
                       color: defaulColorThem,
                       child: Column(
                         children: [
-                          // Obx(
-                          //   () =>
                           Container(
                             margin: EdgeInsets.only(left: 15.w, right: 10.w),
                             decoration: BoxDecoration(
@@ -314,7 +300,6 @@ class _PersonInformation extends State<PersonInformation> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // LineDecoration(),
                                 Container(
                                   child: Text(
                                     'Email',
@@ -346,7 +331,6 @@ class _PersonInformation extends State<PersonInformation> {
                                                             ItemField(
                                                               controller: email,
                                                               hintText: "Email",
-                                                              // controller: quantity,
                                                               type:
                                                                   TextInputType
                                                                       .text,
@@ -403,8 +387,6 @@ class _PersonInformation extends State<PersonInformation> {
                       color: defaulColorThem,
                       child: Column(
                         children: [
-                          // Obx(
-                          //   () =>
                           Container(
                             margin: EdgeInsets.only(left: 15.w, right: 10.w),
                             decoration: BoxDecoration(
@@ -415,7 +397,6 @@ class _PersonInformation extends State<PersonInformation> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // LineDecoration(),
                                 Container(
                                   child: Text(
                                     'Giới tính',
@@ -530,8 +511,6 @@ class _PersonInformation extends State<PersonInformation> {
                       color: defaulColorThem,
                       child: Column(
                         children: [
-                          // Obx(
-                          //   () =>
                           Container(
                             margin: EdgeInsets.only(left: 15.w, right: 10.w),
                             decoration: BoxDecoration(
@@ -542,7 +521,6 @@ class _PersonInformation extends State<PersonInformation> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // LineDecoration(),
                                 Container(
                                   child: Text(
                                     'Ngày sinh',
@@ -562,12 +540,10 @@ class _PersonInformation extends State<PersonInformation> {
                                       ),
                                       IconButton(
                                           onPressed: () {
-                                            // controller.selectDateDob(context);
                                             showDialog(
                                                 context: context,
                                                 builder: (context) {
                                                   return AlertDialog(
-                                                      // title: Text('Tên'),
                                                       content: Date(),
                                                       actions: <Widget>[
                                                         TextButton(
@@ -641,7 +617,9 @@ class _PersonInformation extends State<PersonInformation> {
                                                   return null;
                                               },
                                             ),
-                                            SizedBox(height: 5.h,),
+                                            SizedBox(
+                                              height: 5.h,
+                                            ),
                                             InputField(
                                               controller: passwordNew,
                                               hintText: "Mật khẩu mới",
@@ -657,7 +635,9 @@ class _PersonInformation extends State<PersonInformation> {
                                                   return null;
                                               },
                                             ),
-                                            SizedBox(height: 5,),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
                                             InputField(
                                               controller: re_passwordNew,
                                               obscureText: true,
@@ -747,8 +727,6 @@ class _PersonInformation extends State<PersonInformation> {
 
   final ImageController controller = Get.put(ImageController());
 
-  // TextEditingController dob;
-
   @override
   void initState() {
     super.initState();
@@ -756,8 +734,6 @@ class _PersonInformation extends State<PersonInformation> {
 
   Future<int> changePass(BuildContext context) async {
     String token = (await getToken());
-    print(passwordOld.text);
-    print(passwordNew.text);
     if (Form.of(context).validate()) {
       http.Response response = await http.post(
         Uri.parse(Apis.changePassUrl),
@@ -770,7 +746,6 @@ class _PersonInformation extends State<PersonInformation> {
           'passwordNew': passwordNew.text,
         }),
       );
-      print(response.statusCode);
       return response.statusCode;
     } else {
       showToast('Vui lòng điền đầy đủ thông tin');
@@ -787,7 +762,6 @@ class _PersonInformation extends State<PersonInformation> {
     email = TextEditingController(text: lu.email);
     phone = TextEditingController(text: lu.phone.toString());
     gender = TextEditingController(text: lu.gender);
-    // dob = TextEditingController(text: lu.dob.toString());
     return user.isBlank;
   }
 
@@ -795,7 +769,6 @@ class _PersonInformation extends State<PersonInformation> {
     Users users;
     String token = (await getToken());
     try {
-      print(Apis.getUsersUrl);
       http.Response response = await http.get(
         Uri.parse(Apis.getUsersUrl),
         headers: <String, String>{
@@ -803,12 +776,9 @@ class _PersonInformation extends State<PersonInformation> {
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['users']);
         users = UsersJson.fromJson(parsedJson).users;
-        print(users);
         return users;
       }
       if (response.statusCode == 401) {
@@ -825,8 +795,6 @@ class _PersonInformation extends State<PersonInformation> {
 
   Future<Users> changeName() async {
     String token = await getToken();
-    print(token);
-    print(username.text);
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -840,11 +808,9 @@ class _PersonInformation extends State<PersonInformation> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Users users = Users.fromJson(parsedJson['user']);
         return users;
       }
@@ -857,7 +823,6 @@ class _PersonInformation extends State<PersonInformation> {
 
   Future<Users> changeEmail() async {
     String token = await getToken();
-    print(token);
 
     try {
       EasyLoading.show(status: 'Loading...');
@@ -872,11 +837,9 @@ class _PersonInformation extends State<PersonInformation> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Users users = Users.fromJson(parsedJson['user']);
         return users;
       }
@@ -889,10 +852,7 @@ class _PersonInformation extends State<PersonInformation> {
 
   Future<Users> changeDob() async {
     String token = await getToken();
-    print(token);
-    // print(username.text);
     String dob = controllerDate.dob;
-    print(dob);
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -906,11 +866,9 @@ class _PersonInformation extends State<PersonInformation> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Users users = Users.fromJson(parsedJson['user']);
         return users;
       }
@@ -923,7 +881,6 @@ class _PersonInformation extends State<PersonInformation> {
 
   Future<Users> changeGender() async {
     String token = await getToken();
-    print(token);
     if (selected != null || selected != '') {
       try {
         EasyLoading.show(status: 'Loading...');
@@ -938,11 +895,9 @@ class _PersonInformation extends State<PersonInformation> {
           }),
         );
 
-        print(response.statusCode);
         if (response.statusCode == 200) {
           EasyLoading.dismiss();
           var parsedJson = jsonDecode(response.body);
-          // print(parsedJson['success']);
           Users users = Users.fromJson(parsedJson['user']);
           return users;
         }
@@ -958,9 +913,7 @@ class _PersonInformation extends State<PersonInformation> {
 
   Future<Users> changeAvatar() async {
     String token = await getToken();
-    print(token);
     String nameImage;
-    print(lu.avatar);
     if (lu.avatar != null) {
       if (controller.imagePath != null) {
         int code = await uploadAvatar(controller.image, controller.imagePath);
@@ -979,11 +932,7 @@ class _PersonInformation extends State<PersonInformation> {
           nameImage = controller.imagePath.split('/').last;
         }
       }
-      // else {
-      //   nameImage = lu.avatar.split('/').last;
-      // }
     }
-    // if (selected != null || selected != '') {
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -997,11 +946,9 @@ class _PersonInformation extends State<PersonInformation> {
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
-        // print(parsedJson['success']);
         Users users = Users.fromJson(parsedJson['user']);
         return users;
       }
@@ -1010,32 +957,8 @@ class _PersonInformation extends State<PersonInformation> {
     } on SocketException catch (e) {
       showError(e.toString());
     }
-    // } else {
-    //   showToast('Vui lòng chọn giới tính');
-    // }
   }
 }
-
-// class AvatarInf extends StatelessWidget {
-//   final ImageController controller = Get.put(ImageController());
-//   final String avatar;
-//
-//   AvatarInf({Key key, this.avatar}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: () async {
-//         print('voo ddaay nafo');
-//         controller.getImage();
-//         await changeAvatar();
-//       },
-//       child: ,
-//     );
-//   }
-//
-//
-// }
 
 class Date extends StatelessWidget {
   final DiscountController controller = Get.put(DiscountController());

@@ -22,7 +22,6 @@ class AddressMap extends StatefulWidget {
 class _AddressMap extends State<AddressMap> {
   LatLng center;
 
-  // = new LatLng(10.873286, 106.7914436);
   GoogleMapController controller;
 
   LatLng newLocation;
@@ -68,7 +67,6 @@ class _AddressMap extends State<AddressMap> {
                 ),
                 onMapCreated: _onMapCreated,
                 markers: Set.from(allMarkers),
-                // onTap: handleTap,
               ),
             ),
             InkWell(
@@ -131,12 +129,9 @@ class _AddressMap extends State<AddressMap> {
               markerId: MarkerId('myMarker'),
               draggable: true,
               onTap: () {
-                print('Marker Tapped');
               },
               position: center,
               onDragEnd: ((newPosition) {
-                print(newPosition.latitude);
-                print(newPosition.longitude);
                 setState(() {
                   newLocation =
                       new LatLng(newPosition.latitude, newPosition.longitude);
@@ -184,7 +179,6 @@ class _AddressMap extends State<AddressMap> {
       if (placemarks[i].administrativeArea.isNotEmpty &&
           placemarks[i].subAdministrativeArea.isNotEmpty &&
           placemarks[i].country.isNotEmpty) {
-        print('vào dât đi bạn');
         address = placemarks[i].subAdministrativeArea +
             ', ' +
             placemarks[i].administrativeArea +
@@ -196,7 +190,6 @@ class _AddressMap extends State<AddressMap> {
   }
 
   Future<void> updateLocationAddress() async {
-    print(newLocation);
     String token = (await getToken());
     String address = '';
 
@@ -222,7 +215,6 @@ class _AddressMap extends State<AddressMap> {
           'lattitude': newLocation.latitude,
         }),
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
         Restaurants restaurant =

@@ -38,8 +38,6 @@ class _ListProduct extends State<ListProduct>
   @override
   void initState() {
     category_id = Get.arguments['category_id'];
-    print('lisst product$category_id');
-    // food = new RxList<Food>();
     fetchFood();
     fetchTopping();
     super.initState();
@@ -56,11 +54,9 @@ class _ListProduct extends State<ListProduct>
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () async {
-              print("Thêm một món ăn mới");
               Get.to(() => ChooseProducts(),
                   arguments: {'category_id': category_id});
               final result = await Get.arguments['food'];
-              print(result);
               if (result != null) {
                 food.add(result);
                 food.refresh();
@@ -92,7 +88,6 @@ class _ListProduct extends State<ListProduct>
               Expanded(
                 child: Container(
                   child: TabBarView(children: [
-                    // list product food
                     FutureBuilder(
                         future: fetchFood(),
                         builder: (context, snapshot) {
@@ -174,18 +169,17 @@ class _ListProduct extends State<ListProduct>
                                                                   TextButton(
                                                                     onPressed:
                                                                         () async {
-                                                                      print(index);
-                                                                          await deleteFood(
-                                                                              food[index].id);
-                                                                        // setState(
-                                                                        //     () {
-                                                                          food.removeAt(
-                                                                              index);
-                                                                          food.refresh();
-                                                                          Get.back();
-                                                                          showToast(
+                                                                      print(
+                                                                          index);
+                                                                      await deleteFood(
+                                                                          food[index]
+                                                                              .id);
+                                                                      food.removeAt(
+                                                                          index);
+                                                                      food.refresh();
+                                                                      Get.back();
+                                                                      showToast(
                                                                           "Xóa thành công");
-                                                                        // });
                                                                     },
                                                                     child:
                                                                         const Text(
@@ -209,7 +203,6 @@ class _ListProduct extends State<ListProduct>
                             }
                           }
                         }),
-                    // list topping and size food
                     FutureBuilder(
                         future: fetchTopping(),
                         builder: (context, snapshot) {
@@ -221,7 +214,6 @@ class _ListProduct extends State<ListProduct>
                               return EmptyScreen(
                                   text: 'Bạn chưa có món ăn nào.');
                             } else {
-                              // return buildLoading();
                               return RefreshIndicator(
                                 onRefresh: () => fetchTopping(),
                                 child: Obx(
@@ -258,14 +250,9 @@ class _ListProduct extends State<ListProduct>
                                                                 topping[index]
                                                                     .id
                                                           });
-                                                      // final result =
-                                                      //     await Get.arguments['topping'];
-                                                      // print(result);
                                                       setState(() {
                                                         if (result != null) {
                                                           fetchTopping();
-                                                          // topping.add(result);
-                                                          // topping.refresh();
                                                         }
                                                       });
                                                     },
@@ -314,10 +301,6 @@ class _ListProduct extends State<ListProduct>
                                                                         showToast(
                                                                             'Xóa thành công');
                                                                       });
-
-                                                                      // Get.to(ListProduct());
-
-                                                                      // food.refresh();
                                                                     },
                                                                     child:
                                                                         const Text(
@@ -357,12 +340,8 @@ class _ListProduct extends State<ListProduct>
   Future<void> fetchFood() async {
     var listFood = await getFood();
     if (listFood != null) {
-      // printInfo(info: listFood.length.toString());
-      // print(listFood.length);
       food.assignAll(listFood);
       food.refresh();
-
-      // print(food.length);
     }
   }
 
@@ -424,12 +403,9 @@ class _ListProduct extends State<ListProduct>
           'Authorization': "Bearer $token",
         },
       );
-      print(response.statusCode);
       if (response.statusCode == 200) {
         var parsedJson = jsonDecode(response.body);
-        print(parsedJson['topping']);
         list = ListTopping.fromJson(parsedJson).topping;
-        print(list);
         return list;
       }
       if (response.statusCode == 401) {
@@ -446,10 +422,6 @@ class _ListProduct extends State<ListProduct>
 
   Future<Food> deleteFood(int food_id) async {
     String token = await getToken();
-    print(token);
-    print('category $category_id');
-    print('food id $food_id');
-
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -484,10 +456,6 @@ class _ListProduct extends State<ListProduct>
 
   Future<Topping> deleteTopping(int topping_id) async {
     String token = await getToken();
-    print(token);
-    print('category $category_id');
-    print('food id $food_id');
-
     try {
       EasyLoading.show(status: 'Loading...');
       http.Response response = await http.post(
@@ -501,7 +469,6 @@ class _ListProduct extends State<ListProduct>
         }),
       );
 
-      print(response.statusCode);
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
         var parsedJson = jsonDecode(response.body);
@@ -554,7 +521,6 @@ class ProductItem extends StatelessWidget {
               ),
               Container(
                 padding: EdgeInsets.only(left: 15.w, right: 10.w),
-                // height: 92.h,
                 width: 275.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
